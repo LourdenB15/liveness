@@ -178,13 +178,13 @@ export function LivenessChecker() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-2xl mx-auto">
-      <div className="flex bg-slate-100 p-1 rounded-xl mb-6 w-full max-w-sm">
+    <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+      <div className="mb-6 flex w-full max-w-sm rounded-xl bg-slate-100 p-1">
         <button
           onClick={() => setMode(MODE.ENROLL)}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
             mode === MODE.ENROLL
-              ? "bg-white shadow text-blue-600"
+              ? "bg-white text-blue-600 shadow"
               : "text-slate-500 hover:text-slate-700"
           }`}
         >
@@ -193,9 +193,9 @@ export function LivenessChecker() {
         <button
           onClick={() => setMode(MODE.VERIFY)}
           disabled={enrolledUsers.length === 0}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
             mode === MODE.VERIFY
-              ? "bg-white shadow text-blue-600"
+              ? "bg-white text-blue-600 shadow"
               : "text-slate-500 hover:text-slate-700 disabled:opacity-50"
           }`}
         >
@@ -210,25 +210,25 @@ export function LivenessChecker() {
             placeholder="Enter your full name"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
       )}
 
-      <div className="relative w-full aspect-4/3 bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-slate-900/10">
+      <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
         <video
           ref={videoRef}
           playsInline
           muted
-          className="absolute inset-0 w-full h-full object-cover transform scale-x-[-1]"
+          className="absolute inset-0 h-full w-full scale-x-[-1] transform object-cover"
         />
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          className="pointer-events-none absolute inset-0 h-full w-full"
         />
 
-        <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
-          <div className="bg-black/60 backdrop-blur-md text-white px-6 py-2 rounded-full font-medium text-sm shadow-lg border border-white/10">
+        <div className="absolute top-4 right-0 left-0 z-10 flex justify-center">
+          <div className="rounded-full border border-white/10 bg-black/60 px-6 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
             {uiState === UI_STATE.LOADING_MODELS
               ? "Loading AI Models..."
               : instruction}
@@ -236,8 +236,8 @@ export function LivenessChecker() {
         </div>
 
         {currentChallenge === "WAITING" && distanceHint && (
-          <div className="absolute top-1/2 left-0 right-0  justify-center z-10  flex">
-            <div className="bg-red-500/80 backdrop-blur-md text-white px-6 py-2 rounded-full font-medium text-sm shadow-lg border border-white/10">
+          <div className="absolute top-1/2 right-0 left-0 z-10 flex justify-center">
+            <div className="rounded-full border border-white/10 bg-red-500/80 px-6 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
               {`Move ${distanceHint}`}
             </div>
           </div>
@@ -245,14 +245,14 @@ export function LivenessChecker() {
 
         {(uiState === UI_STATE.READY_TO_START ||
           uiState === UI_STATE.FAILURE) && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-20">
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
             <button
               onClick={handleStartClick}
               disabled={mode === MODE.ENROLL && !userName.trim()}
-              className={`font-bold py-3 px-8 rounded-full shadow-lg transform transition-all flex items-center gap-2 ${
+              className={`flex transform items-center gap-2 rounded-full px-8 py-3 font-bold shadow-lg transition-all ${
                 mode === MODE.ENROLL && !userName.trim()
-                  ? "bg-slate-500 cursor-not-allowed opacity-75 text-slate-200"
-                  : "bg-blue-600 hover:bg-blue-500 text-white hover:scale-105 active:scale-95"
+                  ? "cursor-not-allowed bg-slate-500 text-slate-200 opacity-75"
+                  : "bg-blue-600 text-white hover:scale-105 hover:bg-blue-500 active:scale-95"
               }`}
             >
               {uiState === UI_STATE.READY_TO_START
@@ -264,7 +264,7 @@ export function LivenessChecker() {
 
         {(currentChallenge === "TURN_LEFT" ||
           currentChallenge === "TURN_RIGHT") && (
-          <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+          <div className="absolute right-0 bottom-0 left-0 z-10 p-6">
             <ProgressBar
               progress={progress}
               direction={currentChallenge === "TURN_LEFT" ? "left" : "right"}
@@ -274,16 +274,16 @@ export function LivenessChecker() {
 
         {uiState === UI_STATE.SUCCESS && (
           <div
-            className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md z-30 text-white ${
+            className={`absolute inset-0 z-30 flex flex-col items-center justify-center text-white backdrop-blur-md ${
               mode === MODE.VERIFY && matchScore < 0.8
                 ? "bg-red-500/90"
                 : "bg-green-500/90"
             }`}
           >
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl">
               {mode === MODE.VERIFY && matchScore < 0.8 ? (
                 <svg
-                  className="w-10 h-10 text-red-600"
+                  className="h-10 w-10 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -297,7 +297,7 @@ export function LivenessChecker() {
                 </svg>
               ) : (
                 <svg
-                  className="w-10 h-10 text-green-600"
+                  className="h-10 w-10 text-green-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -311,17 +311,17 @@ export function LivenessChecker() {
                 </svg>
               )}
             </div>
-            <h3 className="text-2xl font-bold text-center px-4">
+            <h3 className="px-4 text-center text-2xl font-bold">
               {instruction}
             </h3>
             {matchScore !== null && (
-              <p className="text-white/90 mt-2 font-mono">
+              <p className="mt-2 font-mono text-white/90">
                 Match Confidence: {(matchScore * 100).toFixed(2)}%
               </p>
             )}
             <button
               onClick={() => setUiState(UI_STATE.READY_TO_START)}
-              className="mt-6 bg-white text-slate-900 px-6 py-2 rounded-full font-bold text-sm shadow-sm hover:bg-slate-100"
+              className="mt-6 rounded-full bg-white px-6 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-slate-100"
             >
               Done
             </button>
@@ -330,33 +330,33 @@ export function LivenessChecker() {
       </div>
 
       {enrolledUsers.length > 0 && (
-        <div className="mt-8 w-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div className="mt-8 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
             <h3 className="font-bold text-slate-800">
               Enrolled Identities ({enrolledUsers.length})
             </h3>
             <button
               onClick={clearIdentity}
-              className="text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider"
+              className="text-xs font-bold tracking-wider text-red-500 uppercase hover:text-red-700"
             >
               Clear All
             </button>
           </div>
-          <ul className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+          <ul className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
             {enrolledUsers.map((user, index) => (
               <li
                 key={index}
-                className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-slate-50"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
                     {(user.name || "U").charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <p className="font-medium text-slate-900">
                       {user.name || "Unknown User"}
                     </p>
-                    <p className="text-xs text-slate-500 font-mono">
+                    <p className="font-mono text-xs text-slate-500">
                       ID:{" "}
                       {user.descriptor
                         .slice(0, 3)
@@ -368,11 +368,11 @@ export function LivenessChecker() {
                 </div>
                 <button
                   onClick={() => removeIdentity(index)}
-                  className="text-slate-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all"
+                  className="rounded-full p-2 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
                   title="Remove User"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="h-5 w-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

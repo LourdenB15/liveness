@@ -1,11 +1,11 @@
 // src/components/ProgressBar.jsx
 const Arrow = ({ direction }) => (
   <div
-    className={`flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-white`}
+    className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white`}
   >
     {direction === "left" ? (
       <svg
-        className="w-5 h-5"
+        className="h-5 w-5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -19,7 +19,7 @@ const Arrow = ({ direction }) => (
       </svg>
     ) : (
       <svg
-        className="w-5 h-5"
+        className="h-5 w-5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -39,14 +39,14 @@ export function ProgressBar({ progress, direction }) {
   const clampedProgress = Math.max(0, Math.min(progress, 1));
 
   return (
-    <div className="flex items-center gap-4 w-full bg-black/40 backdrop-blur-md rounded-xl p-3 shadow-lg border border-white/10">
+    <div className="flex w-full items-center gap-4 rounded-xl border border-white/10 bg-black/40 p-3 shadow-lg backdrop-blur-md">
       <div
-        className={`${direction === "right" ? "opacity-30" : "opacity-100 animate-pulse text-blue-400"}`}
+        className={`${direction === "right" ? "opacity-30" : "animate-pulse text-blue-400 opacity-100"}`}
       >
         <Arrow direction="left" />
       </div>
 
-      <div className="grow h-3 bg-white/20 rounded-full overflow-hidden">
+      <div className="h-3 grow overflow-hidden rounded-full bg-white/20">
         <div
           className="h-full bg-linear-to-r from-blue-500 to-indigo-500 transition-all duration-100 ease-out"
           style={{ width: `${clampedProgress * 100}%` }}
@@ -54,7 +54,7 @@ export function ProgressBar({ progress, direction }) {
       </div>
 
       <div
-        className={`${direction === "left" ? "opacity-30" : "opacity-100 animate-pulse text-blue-400"}`}
+        className={`${direction === "left" ? "opacity-30" : "animate-pulse text-blue-400 opacity-100"}`}
       >
         <Arrow direction="right" />
       </div>

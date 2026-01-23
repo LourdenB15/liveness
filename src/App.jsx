@@ -3,24 +3,24 @@ import { LivenessChecker } from "./components/LivenessChecker";
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900 flex flex-col">
-      <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
+    <div className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/70 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white shadow-sm">
                 L
               </div>
-              <span className="font-bold text-xl tracking-tight text-slate-800">
+              <span className="text-xl font-bold tracking-tight text-slate-800">
                 Liveness <span className="text-blue-600">SDK</span>
               </span>
             </div>
-            <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+            <div className="hidden gap-6 text-sm font-medium text-slate-600 md:flex">
               <a
                 href="https://github.com/johnpaulpatigas/liveness/blob/main/README.md"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-blue-600 transition-colors"
+                className="transition-colors hover:text-blue-600"
               >
                 Documentation
               </a>
@@ -28,7 +28,7 @@ function App() {
                 href="https://github.com/johnpaulpatigas/liveness"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-blue-600 transition-colors"
+                className="transition-colors hover:text-blue-600"
               >
                 GitHub
               </a>
@@ -37,15 +37,15 @@ function App() {
         </div>
       </nav>
 
-      <main className="grow flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-blue-600 uppercase bg-blue-100 rounded-full">
+      <main className="flex grow flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-10 max-w-3xl text-center">
+          <div className="mb-4 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold tracking-wider text-blue-600 uppercase">
             Information Technology Capstone 2026
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+          <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
             Liveness SDK
           </h1>
-          <p className="text-lg sm:text-xl text-slate-600 leading-relaxed">
+          <p className="text-lg leading-relaxed text-slate-600 sm:text-xl">
             A framework-agnostic SDK for active liveness detection and face
             matching using{" "}
             <span className="font-semibold text-slate-800">MediaPipe</span> and{" "}
@@ -53,17 +53,17 @@ function App() {
           </p>
         </div>
 
-        <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden ring-1 ring-slate-900/5">
-          <div className="p-1 bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-80"></div>
+        <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-900/5">
+          <div className="bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 p-1 opacity-80"></div>
           <div className="p-6 sm:p-10">
             <LivenessChecker />
           </div>
         </div>
       </main>
 
-      <footer className="bg-white border-t border-slate-200 mt-auto">
-        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-slate-500 text-sm">
+      <footer className="mt-auto border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 sm:px-6 md:flex-row lg:px-8">
+          <p className="text-sm text-slate-500">
             &copy; 2026 John Paul Patigas. All rights reserved.
           </p>
           <div className="flex gap-4 text-sm text-slate-500">
