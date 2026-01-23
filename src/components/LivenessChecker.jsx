@@ -27,6 +27,7 @@ export function LivenessChecker() {
   const [userName, setUserName] = useState("");
   const [matchScore, setMatchScore] = useState(null);
   const [currentChallenge, setCurrentChallenge] = useState(null);
+  const [distanceHint, setDistanceHint] = useState(null);
   const [progress, setProgress] = useState(0);
 
   const videoRef = useRef(null);
@@ -72,9 +73,10 @@ export function LivenessChecker() {
       setInstruction('Click "Start" to begin.');
     });
 
-    sdk.on("challenge", ({ type, instruction }) => {
+    sdk.on("challenge", ({ type, instruction, distance }) => {
       setCurrentChallenge(type);
       setInstruction(instruction);
+      setDistanceHint(distance);
       setProgress(0);
     });
 
@@ -232,6 +234,14 @@ export function LivenessChecker() {
               : instruction}
           </div>
         </div>
+
+        {currentChallenge === "WAITING" && distanceHint && (
+          <div className="absolute top-1/2 left-0 right-0  justify-center z-10  flex">
+            <div className="bg-red-500/80 backdrop-blur-md text-white px-6 py-2 rounded-full font-medium text-sm shadow-lg border border-white/10">
+              {`Move ${distanceHint}`}
+            </div>
+          </div>
+        )}
 
         {(uiState === UI_STATE.READY_TO_START ||
           uiState === UI_STATE.FAILURE) && (

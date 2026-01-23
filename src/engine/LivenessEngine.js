@@ -1,13 +1,15 @@
 // src/engine/LivenessEngine.js
 import { FaceMesh, FACEMESH_TESSELATION } from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
-import { calculateEAR, calculateHeadTurnV2 } from "./utils";
+import { calculateEAR, calculateFaceSize, calculateHeadTurnV2 } from "./utils";
 
 const DEFAULT_CONFIG = {
   blinkEARThreshold: 0.25,
   headTurnThreshold: 0.4,
   challengeTimeout: 5000,
   targetFPS: 30,
+  minFaceSize: 0.2,
+  maxFaceSize: 0.4,
 };
 
 export class LivenessEngine {
@@ -109,17 +111,12 @@ export class LivenessEngine {
   }
 
   #generateChallenges() {
-    const challenges = ["BLINK"];
+    const challenges = ["WAITING", "BLINK"];
 
     if (Math.random() > 0.5) {
       challenges.push("TURN_LEFT", "TURN_RIGHT");
     } else {
       challenges.push("TURN_RIGHT", "TURN_LEFT");
-    }
-
-    for (let i = challenges.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [challenges[i], challenges[j]] = [challenges[j], challenges[i]];
     }
 
     return challenges;
@@ -178,8 +175,21 @@ export class LivenessEngine {
     let challengePassed = false;
     let progress = 0;
     let rawValue;
+    let distance;
 
     switch (currentChallenge) {
+      case "WAITING": {
+        const faceSize = calculateFaceSize(landmarks);
+        if (faceSize < this.#config.minFaceSize) {
+          distance = "CLOSER";
+        } else if (faceSize > this.#config.maxFaceSize) {
+          distance = "FURTHER";
+        } else {
+          challengePassed = true;
+        }
+        this.#callbacks.onChallengeChanged(currentChallenge, distance);
+        break;
+      }
       case "BLINK": {
         const leftEAR = calculateEAR(landmarks, "left");
         const rightEAR = calculateEAR(landmarks, "right");
@@ -254,6 +264,7 @@ export class LivenessEngine {
       this.#lastChallengeTime = Date.now();
       this.#callbacks.onChallengeChanged(
         this.#challenges[this.#currentChallengeIndex],
+        null,
       );
       this.#isChallengeProcessing = false;
     }

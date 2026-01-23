@@ -15,6 +15,7 @@ export class LivenessSDK {
     };
 
     this.instructions = {
+      WAITING: "Please position your face in the center of the frame.",
       BLINK: "Please blink both eyes.",
       TURN_LEFT: "Slowly turn your head to your left.",
       TURN_RIGHT: "Slowly turn your head to your right.",
@@ -58,9 +59,13 @@ export class LivenessSDK {
             this._emit("ready");
             resolve();
           },
-          onChallengeChanged: (challengeType) => {
+          onChallengeChanged: (challengeType, distance) => {
             const instruction = this.instructions[challengeType] || "";
-            this._emit("challenge", { type: challengeType, instruction });
+            this._emit("challenge", {
+              type: challengeType,
+              instruction,
+              distance,
+            });
           },
           onSuccess: (descriptor) => {
             this._emit("success", { descriptor });
