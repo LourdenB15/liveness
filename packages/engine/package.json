@@ -1,0 +1,28 @@
+{
+  "name": "@liveness/engine",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/LivenessEngine.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/LivenessEngine.js"
+    },
+    "./utils": {
+      "types": "./utils.d.ts",
+      "default": "./src/utils.js"
+    },
+    "./assets/*": "./assets/*"
+  },
+  "dependencies": {
+    "@mediapipe/face_mesh": "^0.4.1633559619",
+    "@tensorflow/tfjs": "^4.22.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

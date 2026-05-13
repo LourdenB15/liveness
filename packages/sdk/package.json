@@ -1,0 +1,22 @@
+{
+  "name": "@liveness/sdk",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/LivenessSDK.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/LivenessSDK.js"
+    }
+  },
+  "dependencies": {
+    "@liveness/engine": "*"
+  },
+  "devDependencies": {
+    "vite": "^7.1.2"
+  },
+  "scripts": {
+    "build": "vite build"
+  }
+}

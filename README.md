@@ -13,10 +13,20 @@ Developed as a Bachelor of Science in Information Technology Capstone Project (2
 - **Framework Agnostic**: Core SDK is written in Vanilla JavaScript, compatible with React, Vue, Angular, Svelte, or plain HTML.
 - **Event-Driven API**: Simple subscription model for real-time UI synchronization.
 
+## Project Structure
+
+This project is organized as a monorepo:
+
+- **`apps/demo`**: The primary React-based demonstration and playground.
+- **`apps/saas-web`**: (Planned) The SaaS platform frontend dashboard.
+- **`apps/saas-api`**: (Planned) The SaaS orchestration and verification backend.
+- **`packages/engine`**: Core computer vision logic and mathematical utilities.
+- **`packages/sdk`**: The public-facing SDK wrapper for easy integration.
+
 ## Quick Start
 
 ```javascript
-import { LivenessSDK } from "./sdk/LivenessSDK";
+import { LivenessSDK } from "@liveness/sdk";
 
 // 1. Initialize with custom config
 const sdk = new LivenessSDK({
@@ -65,6 +75,9 @@ Identity verification is performed using **Cosine Similarity**, which measures t
 - **`blinkEARThreshold`** _(number, default: 0.25)_: EAR value indicating a closed eye.
 - **`challengeTimeout`** _(number, default: 5000)_: Max duration (ms) allowed per challenge.
 - **`targetFPS`** _(number, default: 30)_: Limits detection loop frame rate.
+- **`minFaceSize`** _(number, default: 0.2)_: Minimum face size relative to frame (0-1).
+- **`maxFaceSize`** _(number, default: 0.4)_: Maximum face size relative to frame (0-1).
+- **`basePath`** _(string, default: "")_: Base path for model assets (e.g., "/assets").
 
 ### Methods
 
@@ -158,7 +171,7 @@ app.post("/api/verify", async (req, res) => {
 
 ### 1. React Implementation (Main App)
 
-The primary demonstration is built with **React 19** and **Tailwind CSS**.
+The primary demonstration is built with **React 19** and **Tailwind CSS**, located in `apps/demo`.
 
 ```bash
 npm install
@@ -174,22 +187,16 @@ Demonstrates SDK interoperability without any frontend framework.
 
 ### 3. Testing & Validation
 
-The core algorithms of the system are rigorously tested using **Vitest** to ensure mathematical accuracy.
+The core algorithms of the system are rigorously tested using **Vitest** in `packages/engine`.
 
 - **Run Tests**: `npm test`
-- **Coverage**:
-  - `calculateEAR`: Verifies Eye Aspect Ratio logic for open vs. closed eyes.
-  - `calculateHeadTurnV2`: Validates depth-based yaw estimation logic.
-  - `calculateCosineSimilarity`: Ensures vector matching returns correct similarity scores (-1 to 1).
 
 ### 4. SDK Distribution
 
-To distribute the Liveness SDK as a standalone library for other developers:
+To distribute the Liveness SDK as a standalone library:
 
 - **Build Command**: `npm run build:sdk`
-- **Output**: Generates a `dist-sdk/` directory containing:
-  - `liveness-sdk.js` (ES Module for React/Vue/Angular)
-  - `liveness-sdk.umd.cjs` (UMD bundle for legacy `<script>` tags)
+- **Output**: Generates a `packages/sdk/dist/` directory.
 
 ## Error Codes
 
@@ -197,3 +204,8 @@ To distribute the Liveness SDK as a standalone library for other developers:
 - `CHALLENGE_TIMEOUT`: User failed to complete the action in time.
 - `CAMERA_ACCESS_DENIED`: Camera permissions blocked by user or browser.
 - `MODEL_LOAD_FAILED`: CDN connection or model initialization error.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details (Developed for educational purposes as a Capstone Project 2026).
+
