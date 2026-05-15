@@ -1,7 +1,13 @@
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { api } from "../services/api";
+
+const loginSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -13,6 +19,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    const validation = loginSchema.safeParse({ username, password });
+    if (!validation.success) {
+      return setError(validation.error.errors[0].message);
+    }
+
     setLoading(true);
 
     try {

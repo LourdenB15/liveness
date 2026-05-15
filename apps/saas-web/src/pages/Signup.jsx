@@ -1,7 +1,17 @@
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { api } from "../services/api";
+
+const signupSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -15,12 +25,9 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
-      return setError("Passwords do not match");
-    }
-
-    if (password.length < 6) {
-      return setError("Password must be at least 6 characters long");
+    const validation = signupSchema.safeParse({ username, password, confirmPassword });
+    if (!validation.success) {
+      return setError(validation.error.errors[0].message);
     }
 
     setLoading(true);

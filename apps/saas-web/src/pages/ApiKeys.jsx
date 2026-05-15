@@ -1,11 +1,17 @@
 import { Copy, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { api } from "../services/api";
+
+const apiKeySchema = z.object({
+  name: z.string().min(1, "Key name is required"),
+});
 
 export default function ApiKeys() {
   const [keys, setKeys] = useState([]);
   const [newKeyName, setNewKeyName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchKeys();
@@ -18,12 +24,21 @@ export default function ApiKeys() {
 
   const handleCreateKey = async (e) => {
     e.preventDefault();
-    if (!newKeyName.trim()) return;
+    setError("");
 
-    await api.apiKeys.create(newKeyName);
-    setNewKeyName("");
-    setIsCreating(false);
-    fetchKeys();
+    const validation = apiKeySchema.safeParse({ name: newKeyName });
+    if (!validation.success) {
+      return setError(validation.error.errors[0].message);
+    }
+
+    try {
+      await api.apiKeys.create(newKeyName);
+      setNewKeyName("");
+      setIsCreating(false);
+      fetchKeys();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -48,7 +63,10 @@ export default function ApiKeys() {
           </p>
         </div>
         <button
-          onClick={() => setIsCreating(true)}
+          onClick={() => {
+            setIsCreating(true);
+            setError("");
+          }}
           className="flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition-colors"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -58,28 +76,35 @@ export default function ApiKeys() {
 
       {isCreating && (
         <div className="rounded-xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
-          <form onSubmit={handleCreateKey} className="flex gap-4">
-            <input
-              type="text"
-              placeholder="Enter key name (e.g., Production)"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              autoFocus
-            />
-            <button
-              type="submit"
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
-            >
-              Generate
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsCreating(false)}
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
+          <form onSubmit={handleCreateKey} className="flex flex-col gap-4">
+            {error && (
+              <div className="text-sm text-red-600 font-medium">
+                {error}
+              </div>
+            )}
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="Enter key name (e.g., Production)"
+                value={newKeyName}
+                onChange={(e) => setNewKeyName(e.target.value)}
+                className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+              >
+                Generate
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCreating(false)}
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+            </div>
           </form>
         </div>
       )}
