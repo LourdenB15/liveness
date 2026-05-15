@@ -4,6 +4,19 @@ import pool from "../db.js";
 const router = express.Router();
 
 /**
+ * POST /api/dashboard/login
+ * Body: { username, password }
+ */
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  if (username === "admin" && password === "admin") {
+    res.json({ id: "admin", username: "admin", token: "mock_session_token" });
+  } else {
+    res.status(401).json({ error: "Invalid credentials" });
+  }
+});
+
+/**
  * GET /api/dashboard/stats
  */
 router.get("/stats", async (req, res) => {
@@ -31,11 +44,25 @@ router.get("/stats", async (req, res) => {
  */
 router.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, name, enrolled_at FROM users ORDER BY enrolled_at DESC");
+    const result = await pool.query("SELECT id, name, enrolled_at as \"enrolledAt\" FROM users ORDER BY enrolled_at DESC");
     res.json(result.rows);
   } catch (error) {
     console.error("Users list error:", error);
     res.status(500).json({ error: "Failed to fetch users." });
+  }
+});
+
+/**
+ * DELETE /api/dashboard/users/:id
+ */
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query("DELETE FROM users WHERE id = $1", [id]);
+    res.status(204).send();
+  } catch (error) {
+    console.error("User delete error:", error);
+    res.status(500).json({ error: "Failed to delete user." });
   }
 });
 
@@ -57,12 +84,45 @@ router.get("/logs", async (req, res) => {
  */
 router.get("/api-keys", async (req, res) => {
   try {
-    // In a real app, you wouldn't return the hash, and you'd handle key management securely
-    const result = await pool.query("SELECT id, name, created_at FROM api_keys ORDER BY created_at DESC");
+    const result = await pool.query("SELECT id, name, key_hash as \"key\", created_at as \"createdAt\" FROM api_keys ORDER BY created_at DESC");
     res.json(result.rows);
   } catch (error) {
     console.error("API keys error:", error);
     res.status(500).json({ error: "Failed to fetch API keys." });
+  }
+});
+
+/**
+ * POST /api/dashboard/api-keys
+ */
+router.post("/api-keys", async (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: "Name is required" });
+
+  try {
+    const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;
+    const result = await pool.query(
+      "INSERT INTO api_keys (name, key_hash) VALUES ($1, $2) RETURNING id, name, key_hash as \"key\", created_at as \"createdAt\"",
+      [name, mockKey]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("API key creation error:", error);
+    res.status(500).json({ error: "Failed to create API key." });
+  }
+});
+
+/**
+ * DELETE /api/dashboard/api-keys/:id
+ */
+router.delete("/api-keys/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query("DELETE FROM api_keys WHERE id = $1", [id]);
+    res.status(204).send();
+  } catch (error) {
+    console.error("API key delete error:", error);
+    res.status(500).json({ error: "Failed to delete API key." });
   }
 });
 
