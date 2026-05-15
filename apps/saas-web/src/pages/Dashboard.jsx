@@ -9,12 +9,41 @@ export default function Dashboard() {
     passRate: 0,
   });
 
+  const [systemStatus, setSystemStatus] = useState({
+    api: "Checking...",
+    database: "Checking...",
+  });
+
   useEffect(() => {
     const fetchStats = async () => {
-      const data = await api.stats.getOverview();
-      setStats(data);
+      try {
+        const data = await api.stats.getOverview();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch stats", error);
+      }
     };
+
+    const fetchHealth = async () => {
+      try {
+        const health = await api.system.getHealth();
+        setSystemStatus({
+          api: health.status === "ok" ? "Operational" : "Error",
+          database: health.database === "connected" ? "Connected" : "Disconnected",
+        });
+      } catch (error) {
+        setSystemStatus({
+          api: "Offline",
+          database: "Unknown",
+        });
+      }
+    };
+
     fetchStats();
+    fetchHealth();
+
+    const interval = setInterval(fetchHealth, 30000); // Check health every 30s
+    return () => clearInterval(interval);
   }, []);
 
   const cards = [
@@ -73,24 +102,36 @@ export default function Dashboard() {
             <span className="text-sm font-medium text-slate-600">
               API Status
             </span>
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-              Operational
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                systemStatus.api === "Operational"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {systemStatus.api}
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-slate-50 pb-4">
             <span className="text-sm font-medium text-slate-600">
-              Model Engine
+              Database Connectivity
             </span>
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-              Active
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                systemStatus.database === "Connected"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {systemStatus.database}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-slate-600">
-              Storage Usage
+              Environment
             </span>
-            <span className="text-sm font-semibold text-slate-900">
-              1.2 GB / 10 GB
+            <span className="text-sm font-semibold text-slate-900 capitalize">
+              {import.meta.env.MODE}
             </span>
           </div>
         </div>

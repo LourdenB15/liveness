@@ -75,4 +75,11 @@ export const api = {
   stats: {
     getOverview: () => request("/dashboard/stats"),
   },
+
+  system: {
+    getHealth: () => {
+      // Direct fetch for health since it's not under /api/dashboard
+      return fetch("http://localhost:3000/health").then((res) => res.json());
+    },
+  },
 };
