@@ -25,10 +25,10 @@ const request = async (endpoint, options = {}) => {
 
 export const api = {
   auth: {
-    signup: (username, password) =>
+    signup: (username, password, firstName, lastName, email) =>
       request("/dashboard/signup", {
         method: "POST",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, firstName, lastName, email }),
       }),
     login: async (username, password) => {
       const admin = await request("/dashboard/login", {
