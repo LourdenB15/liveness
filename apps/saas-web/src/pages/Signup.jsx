@@ -3,9 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 
-export default function Login() {
+export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -13,9 +14,20 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match");
+    }
+
+    if (password.length < 6) {
+      return setError("Password must be at least 6 characters long");
+    }
+
     setLoading(true);
 
     try {
+      await api.auth.signup(username, password);
+      // Auto-login after signup
       await api.auth.login(username, password);
       navigate("/dashboard");
     } catch (err) {
@@ -32,10 +44,10 @@ export default function Login() {
           <ShieldCheck className="h-12 w-12 text-blue-600" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Liveness Admin
+          Create Admin Account
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
-          Sign in to manage your liveness verification
+          Get started with your liveness verification platform
         </p>
       </div>
 
@@ -64,7 +76,7 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                  placeholder="admin"
+                  placeholder="Choose a username"
                 />
               </div>
             </div>
@@ -85,7 +97,28 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                  placeholder="admin"
+                  placeholder="Create a password"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-1">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  placeholder="Repeat your password"
                 />
               </div>
             </div>
@@ -96,7 +129,7 @@ export default function Login() {
                 disabled={loading}
                 className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? "Creating account..." : "Create account"}
               </button>
             </div>
           </form>
@@ -108,12 +141,12 @@ export default function Login() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="bg-white px-2 text-slate-500">
-                  New to Liveness?{" "}
+                  Already have an account?{" "}
                   <Link
-                    to="/signup"
+                    to="/login"
                     className="font-medium text-blue-600 hover:text-blue-500"
                   >
-                    Create an account
+                    Sign in
                   </Link>
                 </span>
               </div>

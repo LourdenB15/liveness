@@ -25,6 +25,11 @@ const request = async (endpoint, options = {}) => {
 
 export const api = {
   auth: {
+    signup: (username, password) =>
+      request("/dashboard/signup", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      }),
     login: async (username, password) => {
       const admin = await request("/dashboard/login", {
         method: "POST",

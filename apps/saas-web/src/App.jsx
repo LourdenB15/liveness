@@ -4,6 +4,7 @@ import ApiKeys from "./pages/ApiKeys";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
+import Signup from "./pages/Signup";
 import Users from "./pages/Users";
 import { api } from "./services/api";
 
@@ -17,6 +18,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route
         path="/dashboard"
         element={
