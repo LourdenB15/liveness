@@ -6,7 +6,15 @@ import pool from "../db.js";
 const router = express.Router();
 
 // Validation Schemas
-const authSchema = z.object({
+const signupSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+});
+
+const loginSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -17,30 +25,35 @@ const apiKeySchema = z.object({
 
 /**
  * POST /api/dashboard/signup
- * Body: { username, password }
+ * Body: { username, password, firstName, lastName, email }
  */
 router.post("/signup", async (req, res) => {
-  const validation = authSchema.safeParse(req.body);
+  const validation = signupSchema.safeParse(req.body);
   if (!validation.success) {
     return res.status(400).json({ error: validation.error.errors[0].message });
   }
 
-  const { username, password } = validation.data;
+  const { username, password, firstName, lastName, email } = validation.data;
 
   try {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
-      "INSERT INTO admins (username, password_hash) VALUES ($1, $2) RETURNING id, username, created_at",
-      [username, passwordHash]
+      "INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as \"firstName\", last_name as \"lastName\", email, created_at",
+      [username, passwordHash, firstName, lastName, email]
     );
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
     if (error.code === "23505") {
       // Unique violation
-      return res.status(409).json({ error: "Username already exists" });
+      if (error.detail.includes("username")) {
+        return res.status(409).json({ error: "Username already exists" });
+      }
+      if (error.detail.includes("email")) {
+        return res.status(409).json({ error: "Email already exists" });
+      }
     }
     console.error("Signup error:", error);
     res.status(500).json({ error: "Failed to create administrator account" });
@@ -52,7 +65,7 @@ router.post("/signup", async (req, res) => {
  * Body: { username, password }
  */
 router.post("/login", async (req, res) => {
-  const validation = authSchema.safeParse(req.body);
+  const validation = loginSchema.safeParse(req.body);
   if (!validation.success) {
     return res.status(400).json({ error: validation.error.errors[0].message });
   }
@@ -80,6 +93,9 @@ router.post("/login", async (req, res) => {
     res.json({
       id: admin.id,
       username: admin.username,
+      firstName: admin.first_name,
+      lastName: admin.last_name,
+      email: admin.email,
       token: "mock_session_token_" + admin.id,
     });
   } catch (error) {
