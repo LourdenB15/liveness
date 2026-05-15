@@ -12,8 +12,15 @@ export default [
       "packages/engine/assets/**",
     ],
   },
+  // Browser-based code (Apps, SDK, and Engine Core)
   {
-    files: ["**/*.{js,jsx}"],
+    files: [
+      "apps/demo/**/*.{js,jsx}",
+      "apps/saas-web/**/*.{js,jsx}",
+      "packages/sdk/**/*.{js,jsx}",
+      "packages/engine/src/LivenessEngine.js",
+      "packages/engine/src/utils.js",
+    ],
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
@@ -37,6 +44,25 @@ export default [
         "warn",
         { allowConstantExport: true },
       ],
+      "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
+    },
+  },
+  // Node.js code (saas-api and engine tests)
+  {
+    files: ["apps/saas-api/**/*.js", "packages/engine/src/**/*.test.js"],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        ...globals.es2020,
+      },
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
     },
   },
