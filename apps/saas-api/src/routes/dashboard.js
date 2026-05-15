@@ -1,19 +1,31 @@
 import bcrypt from "bcrypt";
 import express from "express";
+import { z } from "zod";
 import pool from "../db.js";
 
 const router = express.Router();
+
+// Validation Schemas
+const authSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+const apiKeySchema = z.object({
+  name: z.string().min(1, "Key name is required"),
+});
 
 /**
  * POST /api/dashboard/signup
  * Body: { username, password }
  */
 router.post("/signup", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required" });
+  const validation = authSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.errors[0].message });
   }
+
+  const { username, password } = validation.data;
 
   try {
     const saltRounds = 10;
@@ -40,11 +52,12 @@ router.post("/signup", async (req, res) => {
  * Body: { username, password }
  */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required" });
+  const validation = authSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.errors[0].message });
   }
+
+  const { username, password } = validation.data;
 
   try {
     // 1. Find admin by username
@@ -155,8 +168,12 @@ router.get("/api-keys", async (req, res) => {
  * POST /api/dashboard/api-keys
  */
 router.post("/api-keys", async (req, res) => {
-  const { name } = req.body;
-  if (!name) return res.status(400).json({ error: "Name is required" });
+  const validation = apiKeySchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.errors[0].message });
+  }
+
+  const { name } = validation.data;
 
   try {
     const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;

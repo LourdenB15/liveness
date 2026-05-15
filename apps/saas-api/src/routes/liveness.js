@@ -1,4 +1,5 @@
 import express from "express";
+import { z } from "zod";
 import pool from "../db.js";
 
 const router = express.Router();
@@ -6,16 +7,28 @@ const router = express.Router();
 // Helper to format vector for Postgres
 const formatVector = (vector) => `[${vector.join(",")}]`;
 
+// Validation Schemas
+const enrollSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  descriptor: z.array(z.number()).length(128, "Descriptor must be exactly 128 dimensions"),
+});
+
+const verifySchema = z.object({
+  descriptor: z.array(z.number()).length(128, "Descriptor must be exactly 128 dimensions"),
+});
+
 /**
  * POST /api/enroll
  * Body: { name: string, descriptor: number[] }
  */
 router.post("/enroll", async (req, res) => {
-  const { name, descriptor } = req.body;
+  const validation = enrollSchema.safeParse(req.body);
 
-  if (!name || !descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
-    return res.status(400).json({ error: "Name and 128-dimensional descriptor are required." });
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.errors[0].message });
   }
+
+  const { name, descriptor } = validation.data;
 
   try {
     const result = await pool.query(
@@ -34,11 +47,13 @@ router.post("/enroll", async (req, res) => {
  * Body: { descriptor: number[] }
  */
 router.post("/verify", async (req, res) => {
-  const { descriptor } = req.body;
+  const validation = verifySchema.safeParse(req.body);
 
-  if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
-    return res.status(400).json({ error: "128-dimensional descriptor is required." });
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.errors[0].message });
   }
+
+  const { descriptor } = validation.data;
 
   try {
     // Find the closest user using Cosine Distance (<=>)
