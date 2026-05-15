@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
+import ApiKeys from "./pages/ApiKeys";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
@@ -46,9 +47,7 @@ function App() {
         path="/api-keys"
         element={
           <ProtectedRoute>
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm text-slate-500">
-              API Keys management coming soon
-            </div>
+            <ApiKeys />
           </ProtectedRoute>
         }
       />
