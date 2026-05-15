@@ -9,7 +9,10 @@
   ],
   "scripts": {
     "dev": "npm run dev -w apps/demo",
+    "dev:saas": "npm run dev -w apps/saas-web",
+    "dev:api": "npm run dev -w apps/saas-api",
     "build": "npm run build -w apps/demo",
+    "build:saas": "npm run build -w apps/saas-web",
     "build:sdk": "npm run build -w packages/sdk",
     "lint": "eslint .",
     "test": "npm run test -w packages/engine"
