@@ -31,7 +31,7 @@ export default function Dashboard() {
           api: health.status === "ok" ? "Operational" : "Error",
           database: health.database === "connected" ? "Connected" : "Disconnected",
         });
-      } catch (error) {
+      } catch {
         setSystemStatus({
           api: "Offline",
           database: "Unknown",
