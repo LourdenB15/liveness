@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Logs from "./pages/Logs";
+import Users from "./pages/Users";
 import { mockApi } from "./services/mockApi";
 
 function ProtectedRoute({ children }) {
@@ -24,14 +26,11 @@ function App() {
       />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      {/* Placeholders for next steps */}
       <Route
         path="/users"
         element={
           <ProtectedRoute>
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm">
-              Users list coming soon
-            </div>
+            <Users />
           </ProtectedRoute>
         }
       />
@@ -39,9 +38,7 @@ function App() {
         path="/logs"
         element={
           <ProtectedRoute>
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm">
-              Logs history coming soon
-            </div>
+            <Logs />
           </ProtectedRoute>
         }
       />
@@ -49,7 +46,7 @@ function App() {
         path="/api-keys"
         element={
           <ProtectedRoute>
-            <div className="rounded-xl bg-white p-8 text-center shadow-sm">
+            <div className="rounded-xl bg-white p-8 text-center shadow-sm text-slate-500">
               API Keys management coming soon
             </div>
           </ProtectedRoute>
