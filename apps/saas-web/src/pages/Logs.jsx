@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function Logs() {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     const fetchLogs = async () => {
-      const data = await mockApi.logs.list();
+      const data = await api.logs.list();
       setLogs(data);
     };
     fetchLogs();

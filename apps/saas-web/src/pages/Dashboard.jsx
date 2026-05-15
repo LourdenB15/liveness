@@ -1,6 +1,6 @@
 import { BarChart3, CheckCircle2, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -11,7 +11,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const data = await mockApi.stats.getOverview();
+      const data = await api.stats.getOverview();
       setStats(data);
     };
     fetchStats();

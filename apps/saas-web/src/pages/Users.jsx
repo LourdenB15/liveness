@@ -1,6 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -10,13 +10,13 @@ export default function Users() {
   }, []);
 
   const fetchUsers = async () => {
-    const data = await mockApi.users.list();
+    const data = await api.users.list();
     setUsers(data);
   };
 
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this user?")) {
-      await mockApi.users.delete(id);
+      await api.users.delete(id);
       fetchUsers();
     }
   };

@@ -1,6 +1,6 @@
 import { Copy, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function ApiKeys() {
   const [keys, setKeys] = useState([]);
@@ -12,7 +12,7 @@ export default function ApiKeys() {
   }, []);
 
   const fetchKeys = async () => {
-    const data = await mockApi.apiKeys.list();
+    const data = await api.apiKeys.list();
     setKeys(data);
   };
 
@@ -20,7 +20,7 @@ export default function ApiKeys() {
     e.preventDefault();
     if (!newKeyName.trim()) return;
 
-    await mockApi.apiKeys.create(newKeyName);
+    await api.apiKeys.create(newKeyName);
     setNewKeyName("");
     setIsCreating(false);
     fetchKeys();
@@ -28,7 +28,7 @@ export default function ApiKeys() {
 
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to revoke this API key?")) {
-      await mockApi.apiKeys.delete(id);
+      await api.apiKeys.delete(id);
       fetchKeys();
     }
   };

@@ -5,10 +5,10 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
 import Users from "./pages/Users";
-import { mockApi } from "./services/mockApi";
+import { api } from "./services/api";
 
 function ProtectedRoute({ children }) {
-  const user = mockApi.auth.getCurrentUser();
+  const user = api.auth.getCurrentUser();
   if (!user) return <Navigate to="/login" replace />;
   return <DashboardLayout>{children}</DashboardLayout>;
 }

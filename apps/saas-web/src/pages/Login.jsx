@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await mockApi.auth.login(username, password);
+      await api.auth.login(username, password);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);

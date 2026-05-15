@@ -7,14 +7,14 @@ import {
   Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { mockApi } from "../services/mockApi";
+import { api } from "../services/api";
 
 export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await mockApi.auth.logout();
+    await api.auth.logout();
     navigate("/login");
   };
 
