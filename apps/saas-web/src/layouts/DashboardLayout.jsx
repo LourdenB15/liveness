@@ -12,6 +12,7 @@ import { api } from "../services/api";
 export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = api.auth.getCurrentUser();
 
   const handleLogout = async () => {
     await api.auth.logout();
@@ -24,6 +25,15 @@ export default function DashboardLayout({ children }) {
     { path: "/logs", icon: BarChart3, label: "Logs" },
     { path: "/api-keys", icon: Key, label: "API Keys" },
   ];
+
+  // Calculate initials
+  const initials = user
+    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase() || "AD"
+    : "AD";
+
+  const fullName = user
+    ? `${user.firstName} ${user.lastName}`
+    : "Administrator";
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
@@ -74,9 +84,9 @@ export default function DashboardLayout({ children }) {
           </h2>
           <div className="flex items-center gap-4">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
-              AD
+              {initials}
             </div>
-            <span className="text-sm font-medium text-slate-700">Admin</span>
+            <span className="text-sm font-medium text-slate-700">{fullName}</span>
           </div>
         </header>
 
