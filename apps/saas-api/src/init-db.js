@@ -30,6 +30,14 @@ CREATE TABLE IF NOT EXISTS api_keys (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Admins table for dashboard access
+CREATE TABLE IF NOT EXISTS admins (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create index for faster vector similarity search
 CREATE INDEX IF NOT EXISTS users_descriptor_idx ON users USING ivfflat (descriptor vector_cosine_ops) WITH (lists = 100);
 `;
