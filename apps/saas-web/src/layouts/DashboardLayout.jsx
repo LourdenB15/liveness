@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }) {
       <aside className="w-64 border-r border-slate-200 bg-white">
         <div className="flex h-16 items-center border-b border-slate-200 px-6">
           <ShieldCheck className="mr-2 h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold tracking-tight">Liveness Admin</span>
+          <span className="text-xl font-bold tracking-tight">Liveness Cloud</span>
         </div>
 
         <nav className="mt-6 px-4">

@@ -34,5 +34,5 @@ app.get("/health", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Liveness SaaS API running on port ${PORT}`);
+  console.log(`Liveness Cloud API running on port ${PORT}`);
 });

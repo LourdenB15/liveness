@@ -44,10 +44,10 @@ export default function Login() {
           <ShieldCheck className="h-12 w-12 text-blue-600" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Liveness Admin
+          Liveness Cloud
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
-          Sign in to manage your liveness verification
+          Sign in to your cloud console
         </p>
       </div>
 

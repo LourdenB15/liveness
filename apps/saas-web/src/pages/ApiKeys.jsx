@@ -59,7 +59,7 @@ export default function ApiKeys() {
         <div>
           <h3 className="text-lg font-bold text-slate-800">API Keys</h3>
           <p className="text-sm text-slate-500">
-            Manage your keys to authenticate with the Liveness API.
+            Manage your keys to authenticate with the Liveness Cloud API.
           </p>
         </div>
         <button
