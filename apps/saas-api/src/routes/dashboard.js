@@ -213,9 +213,15 @@ router.get("/logs", async (req, res) => {
  * GET /api/dashboard/api-keys
  */
 router.get("/api-keys", async (req, res) => {
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
     const result = await pool.query(
-      'SELECT id, name, key_hash as "key", created_at as "createdAt" FROM api_keys ORDER BY created_at DESC',
+      'SELECT id, name, key_hash as "key", created_at as "createdAt" FROM api_keys WHERE admin_id = $1 ORDER BY created_at DESC',
+      [adminId],
     );
     res.json(result.rows);
   } catch (error) {
@@ -234,12 +240,17 @@ router.post("/api-keys", async (req, res) => {
   }
 
   const { name } = validation.data;
+  const { adminId } = req.body;
+
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
 
   try {
     const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;
     const result = await pool.query(
-      'INSERT INTO api_keys (name, key_hash) VALUES ($1, $2) RETURNING id, name, key_hash as "key", created_at as "createdAt"',
-      [name, mockKey],
+      'INSERT INTO api_keys (admin_id, name, key_hash) VALUES ($1, $2, $3) RETURNING id, name, key_hash as "key", created_at as "createdAt"',
+      [adminId, name, mockKey],
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -253,8 +264,17 @@ router.post("/api-keys", async (req, res) => {
  */
 router.delete("/api-keys/:id", async (req, res) => {
   const { id } = req.params;
+  const { adminId } = req.query;
+
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
-    await pool.query("DELETE FROM api_keys WHERE id = $1", [id]);
+    await pool.query("DELETE FROM api_keys WHERE id = $1 AND admin_id = $2", [
+      id,
+      adminId,
+    ]);
     res.status(204).send();
   } catch (error) {
     console.error("API key delete error:", error);

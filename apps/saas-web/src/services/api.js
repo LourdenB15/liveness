@@ -72,8 +72,8 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ name, adminId }),
       }),
-    delete: (id) =>
-      request(`/dashboard/api-keys/${id}`, {
+    delete: (id, adminId) =>
+      request(`/dashboard/api-keys/${id}?adminId=${adminId}`, {
         method: "DELETE",
       }),
   },
