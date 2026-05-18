@@ -3,6 +3,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import ApiKeys from "./pages/ApiKeys";
 import Billing from "./pages/Billing";
 import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
 import Signup from "./pages/Signup";
@@ -18,8 +19,10 @@ function ProtectedRoute({ children }) {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+
       <Route
         path="/dashboard"
         element={
@@ -28,8 +31,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
       <Route
         path="/users"
         element={

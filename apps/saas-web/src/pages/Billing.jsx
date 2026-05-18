@@ -38,7 +38,7 @@ const Billing = () => {
       localStorage.setItem("liveness_admin", JSON.stringify(updatedUser));
       setUser(updatedUser);
       setMessage("Successfully upgraded to PRO!");
-    } catch (error) {
+    } catch {
       setMessage("Failed to upgrade. Please try again.");
     } finally {
       setUpgrading(false);
