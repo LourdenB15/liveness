@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ApiKeys from "./pages/ApiKeys";
+import Billing from "./pages/Billing";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
@@ -50,6 +51,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ApiKeys />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/billing"
+        element={
+          <ProtectedRoute>
+            <Billing />
           </ProtectedRoute>
         }
       />

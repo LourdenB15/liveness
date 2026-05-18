@@ -40,8 +40,8 @@ router.post("/signup", async (req, res) => {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const result = await pool.query(
-      "INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as \"firstName\", last_name as \"lastName\", email, created_at",
-      [username, passwordHash, firstName, lastName, email]
+      'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, subscription_tier as "subscriptionTier", created_at',
+      [username, passwordHash, firstName, lastName, email],
     );
 
     res.status(201).json(result.rows[0]);
@@ -74,7 +74,10 @@ router.post("/login", async (req, res) => {
 
   try {
     // 1. Find admin by username
-    const result = await pool.query("SELECT * FROM admins WHERE username = $1", [username]);
+    const result = await pool.query(
+      "SELECT * FROM admins WHERE username = $1",
+      [username],
+    );
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -96,6 +99,7 @@ router.post("/login", async (req, res) => {
       firstName: admin.first_name,
       lastName: admin.last_name,
       email: admin.email,
+      subscriptionTier: admin.subscription_tier,
       token: "mock_session_token_" + admin.id,
     });
   } catch (error) {
@@ -110,8 +114,12 @@ router.post("/login", async (req, res) => {
 router.get("/stats", async (req, res) => {
   try {
     const usersCount = await pool.query("SELECT COUNT(*) FROM users");
-    const logsCount = await pool.query("SELECT COUNT(*) FROM verification_logs");
-    const successLogsCount = await pool.query("SELECT COUNT(*) FROM verification_logs WHERE status = 'SUCCESS'");
+    const logsCount = await pool.query(
+      "SELECT COUNT(*) FROM verification_logs",
+    );
+    const successLogsCount = await pool.query(
+      "SELECT COUNT(*) FROM verification_logs WHERE status = 'SUCCESS'",
+    );
 
     const totalLogs = parseInt(logsCount.rows[0].count);
     const successLogs = parseInt(successLogsCount.rows[0].count);
@@ -119,7 +127,7 @@ router.get("/stats", async (req, res) => {
     res.json({
       totalUsers: parseInt(usersCount.rows[0].count),
       totalChecks: totalLogs,
-      passRate: totalLogs > 0 ? (successLogs / totalLogs) * 100 : 0
+      passRate: totalLogs > 0 ? (successLogs / totalLogs) * 100 : 0,
     });
   } catch (error) {
     console.error("Stats error:", error);
@@ -132,7 +140,9 @@ router.get("/stats", async (req, res) => {
  */
 router.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, name, enrolled_at as \"enrolledAt\" FROM users ORDER BY enrolled_at DESC");
+    const result = await pool.query(
+      'SELECT id, name, enrolled_at as "enrolledAt" FROM users ORDER BY enrolled_at DESC',
+    );
     res.json(result.rows);
   } catch (error) {
     console.error("Users list error:", error);
@@ -159,7 +169,9 @@ router.delete("/users/:id", async (req, res) => {
  */
 router.get("/logs", async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, user_name as \"userName\", score, status, timestamp FROM verification_logs ORDER BY timestamp DESC LIMIT 100");
+    const result = await pool.query(
+      'SELECT id, user_name as "userName", score, status, timestamp FROM verification_logs ORDER BY timestamp DESC LIMIT 100',
+    );
     res.json(result.rows);
   } catch (error) {
     console.error("Logs history error:", error);
@@ -172,7 +184,9 @@ router.get("/logs", async (req, res) => {
  */
 router.get("/api-keys", async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, name, key_hash as \"key\", created_at as \"createdAt\" FROM api_keys ORDER BY created_at DESC");
+    const result = await pool.query(
+      'SELECT id, name, key_hash as "key", created_at as "createdAt" FROM api_keys ORDER BY created_at DESC',
+    );
     res.json(result.rows);
   } catch (error) {
     console.error("API keys error:", error);
@@ -194,8 +208,8 @@ router.post("/api-keys", async (req, res) => {
   try {
     const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;
     const result = await pool.query(
-      "INSERT INTO api_keys (name, key_hash) VALUES ($1, $2) RETURNING id, name, key_hash as \"key\", created_at as \"createdAt\"",
-      [name, mockKey]
+      'INSERT INTO api_keys (name, key_hash) VALUES ($1, $2) RETURNING id, name, key_hash as "key", created_at as "createdAt"',
+      [name, mockKey],
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -215,6 +229,46 @@ router.delete("/api-keys/:id", async (req, res) => {
   } catch (error) {
     console.error("API key delete error:", error);
     res.status(500).json({ error: "Failed to delete API key." });
+  }
+});
+
+/**
+ * GET /api/dashboard/billing/:adminId
+ */
+router.get("/billing/:adminId", async (req, res) => {
+  const { adminId } = req.params;
+  try {
+    const result = await pool.query(
+      'SELECT subscription_tier as "subscriptionTier" FROM admins WHERE id = $1',
+      [adminId],
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Billing fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch billing info." });
+  }
+});
+
+/**
+ * POST /api/dashboard/billing/upgrade
+ */
+router.post("/billing/upgrade", async (req, res) => {
+  const { adminId } = req.body;
+  try {
+    const result = await pool.query(
+      "UPDATE admins SET subscription_tier = 'pro' WHERE id = $1 RETURNING subscription_tier as \"subscriptionTier\"",
+      [adminId],
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Billing upgrade error:", error);
+    res.status(500).json({ error: "Failed to upgrade subscription." });
   }
 });
 

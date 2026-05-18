@@ -28,7 +28,13 @@ export const api = {
     signup: (username, password, firstName, lastName, email) =>
       request("/dashboard/signup", {
         method: "POST",
-        body: JSON.stringify({ username, password, firstName, lastName, email }),
+        body: JSON.stringify({
+          username,
+          password,
+          firstName,
+          lastName,
+          email,
+        }),
       }),
     login: async (username, password) => {
       const admin = await request("/dashboard/login", {
@@ -74,6 +80,15 @@ export const api = {
 
   stats: {
     getOverview: () => request("/dashboard/stats"),
+  },
+
+  billing: {
+    getTier: (adminId) => request(`/dashboard/billing/${adminId}`),
+    upgrade: (adminId) =>
+      request("/dashboard/billing/upgrade", {
+        method: "POST",
+        body: JSON.stringify({ adminId }),
+      }),
   },
 
   system: {

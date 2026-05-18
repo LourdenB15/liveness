@@ -38,8 +38,12 @@ CREATE TABLE IF NOT EXISTS admins (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    subscription_tier VARCHAR(50) DEFAULT 'free',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Ensure subscription_tier exists for existing tables
+ALTER TABLE admins ADD COLUMN IF NOT EXISTS subscription_tier VARCHAR(50) DEFAULT 'free';
 
 -- Create index for faster vector similarity search
 CREATE INDEX IF NOT EXISTS users_descriptor_idx ON users USING ivfflat (descriptor vector_cosine_ops) WITH (lists = 100);

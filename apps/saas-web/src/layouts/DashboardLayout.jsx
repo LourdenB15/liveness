@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  CreditCard,
   Key,
   LayoutDashboard,
   LogOut,
@@ -24,11 +25,13 @@ export default function DashboardLayout({ children }) {
     { path: "/users", icon: Users, label: "Users" },
     { path: "/logs", icon: BarChart3, label: "Logs" },
     { path: "/api-keys", icon: Key, label: "API Keys" },
+    { path: "/billing", icon: CreditCard, label: "Billing" },
   ];
 
   // Calculate initials
   const initials = user
-    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase() || "AD"
+    ? `${user.firstName?.charAt(0) || ""}${user.lastName?.charAt(0) || ""}`.toUpperCase() ||
+      "AD"
     : "AD";
 
   const fullName = user
@@ -41,7 +44,9 @@ export default function DashboardLayout({ children }) {
       <aside className="w-64 border-r border-slate-200 bg-white">
         <div className="flex h-16 items-center border-b border-slate-200 px-6">
           <ShieldCheck className="mr-2 h-8 w-8 text-blue-600" />
-          <span className="text-xl font-bold tracking-tight">Liveness Cloud</span>
+          <span className="text-xl font-bold tracking-tight">
+            Liveness Cloud
+          </span>
         </div>
 
         <nav className="mt-6 px-4">
@@ -86,7 +91,9 @@ export default function DashboardLayout({ children }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
               {initials}
             </div>
-            <span className="text-sm font-medium text-slate-700">{fullName}</span>
+            <span className="text-sm font-medium text-slate-700">
+              {fullName}
+            </span>
           </div>
         </header>
 
