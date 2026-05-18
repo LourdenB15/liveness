@@ -112,13 +112,23 @@ router.post("/login", async (req, res) => {
  * GET /api/dashboard/stats
  */
 router.get("/stats", async (req, res) => {
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
-    const usersCount = await pool.query("SELECT COUNT(*) FROM users");
+    const usersCount = await pool.query(
+      "SELECT COUNT(*) FROM users WHERE admin_id = $1",
+      [adminId],
+    );
     const logsCount = await pool.query(
-      "SELECT COUNT(*) FROM verification_logs",
+      "SELECT COUNT(*) FROM verification_logs WHERE admin_id = $1",
+      [adminId],
     );
     const successLogsCount = await pool.query(
-      "SELECT COUNT(*) FROM verification_logs WHERE status = 'SUCCESS'",
+      "SELECT COUNT(*) FROM verification_logs WHERE admin_id = $1 AND status = 'SUCCESS'",
+      [adminId],
     );
 
     const totalLogs = parseInt(logsCount.rows[0].count);
@@ -139,9 +149,15 @@ router.get("/stats", async (req, res) => {
  * GET /api/dashboard/users
  */
 router.get("/users", async (req, res) => {
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
     const result = await pool.query(
-      'SELECT id, name, enrolled_at as "enrolledAt" FROM users ORDER BY enrolled_at DESC',
+      'SELECT id, name, enrolled_at as "enrolledAt" FROM users WHERE admin_id = $1 ORDER BY enrolled_at DESC',
+      [adminId],
     );
     res.json(result.rows);
   } catch (error) {
@@ -155,8 +171,16 @@ router.get("/users", async (req, res) => {
  */
 router.delete("/users/:id", async (req, res) => {
   const { id } = req.params;
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
-    await pool.query("DELETE FROM users WHERE id = $1", [id]);
+    await pool.query("DELETE FROM users WHERE id = $1 AND admin_id = $2", [
+      id,
+      adminId,
+    ]);
     res.status(204).send();
   } catch (error) {
     console.error("User delete error:", error);
@@ -168,9 +192,15 @@ router.delete("/users/:id", async (req, res) => {
  * GET /api/dashboard/logs
  */
 router.get("/logs", async (req, res) => {
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
   try {
     const result = await pool.query(
-      'SELECT id, user_name as "userName", score, status, timestamp FROM verification_logs ORDER BY timestamp DESC LIMIT 100',
+      'SELECT id, user_name as "userName", score, status, timestamp FROM verification_logs WHERE admin_id = $1 ORDER BY timestamp DESC LIMIT 100',
+      [adminId],
     );
     res.json(result.rows);
   } catch (error) {

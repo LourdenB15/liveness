@@ -7,12 +7,15 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetchUsers();
+    const user = api.auth.getCurrentUser();
+    if (user) {
+      fetchUsers(user.id);
+    }
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (adminId) => {
     try {
-      const data = await api.users.list();
+      const data = await api.users.list(adminId);
       setUsers(data);
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -20,13 +23,16 @@ export default function Users() {
   };
 
   const handleDelete = async (id) => {
+    const user = api.auth.getCurrentUser();
+    if (!user) return;
+
     if (
       confirm(
         "Are you sure you want to delete this user? This action cannot be undone.",
       )
     ) {
-      await api.users.delete(id);
-      fetchUsers();
+      await api.users.delete(id, user.id);
+      fetchUsers(user.id);
     }
   };
 

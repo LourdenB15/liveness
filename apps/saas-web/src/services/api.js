@@ -54,23 +54,23 @@ export const api = {
   },
 
   users: {
-    list: () => request("/dashboard/users"),
-    delete: (id) =>
-      request(`/dashboard/users/${id}`, {
+    list: (adminId) => request(`/dashboard/users?adminId=${adminId}`),
+    delete: (id, adminId) =>
+      request(`/dashboard/users/${id}?adminId=${adminId}`, {
         method: "DELETE",
       }),
   },
 
   logs: {
-    list: () => request("/dashboard/logs"),
+    list: (adminId) => request(`/dashboard/logs?adminId=${adminId}`),
   },
 
   apiKeys: {
-    list: () => request("/dashboard/api-keys"),
-    create: (name) =>
+    list: (adminId) => request(`/dashboard/api-keys?adminId=${adminId}`),
+    create: (name, adminId) =>
       request("/dashboard/api-keys", {
         method: "POST",
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, adminId }),
       }),
     delete: (id) =>
       request(`/dashboard/api-keys/${id}`, {
@@ -79,7 +79,7 @@ export const api = {
   },
 
   stats: {
-    getOverview: () => request("/dashboard/stats"),
+    getOverview: (adminId) => request(`/dashboard/stats?adminId=${adminId}`),
   },
 
   billing: {

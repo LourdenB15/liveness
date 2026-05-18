@@ -6,16 +6,20 @@ export default function Logs() {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const data = await api.logs.list();
-        setLogs(data);
-      } catch (error) {
-        console.error("Failed to fetch logs", error);
-      }
-    };
-    fetchLogs();
+    const user = api.auth.getCurrentUser();
+    if (user) {
+      fetchLogs(user.id);
+    }
   }, []);
+
+  const fetchLogs = async (adminId) => {
+    try {
+      const data = await api.logs.list(adminId);
+      setLogs(data);
+    } catch (error) {
+      console.error("Failed to fetch logs", error);
+    }
+  };
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-500">

@@ -15,9 +15,12 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
+    const user = api.auth.getCurrentUser();
+    
     const fetchStats = async () => {
+      if (!user) return;
       try {
-        const data = await api.stats.getOverview();
+        const data = await api.stats.getOverview(user.id);
         setStats(data);
       } catch (error) {
         console.error("Failed to fetch stats", error);
