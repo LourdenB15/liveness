@@ -1,20 +1,22 @@
-import { ShieldCheck } from "lucide-react";
+import { Lock as LockIcon, Mail, ShieldCheck, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { api } from "../services/api";
 
-const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string(),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+const signupSchema = z
+  .object({
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email("Invalid email address"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -50,7 +52,7 @@ export default function Signup() {
         formData.password,
         formData.firstName,
         formData.lastName,
-        formData.email
+        formData.email,
       );
       // Auto-login after signup
       await api.auth.login(formData.username, formData.password);
@@ -63,84 +65,85 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-slate-50 py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-          <ShieldCheck className="h-12 w-12 text-blue-600" />
+    <div className="flex min-h-screen flex-col justify-center bg-linear-to-br from-slate-50 to-white py-12 sm:px-6 lg:px-8">
+      <div className="text-center sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mb-6 flex justify-center">
+          <div className="rounded-2xl bg-blue-600 p-3 shadow-xl shadow-blue-200">
+            <ShieldCheck className="h-10 w-10 text-white" />
+          </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-          Create Cloud Account
+        <h2 className="text-4xl font-black tracking-tight text-slate-900">
+          Join the Cloud
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-600">
-          Get started with Liveness Cloud
+        <p className="mt-3 font-medium text-slate-500">
+          Get started with Liveness Cloud today
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div className="mx-4 rounded-[2.5rem] border border-slate-100 bg-white px-8 py-10 shadow-2xl shadow-slate-200 sm:mx-0">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+              <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-semibold text-red-600">
                 {error}
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label
                   htmlFor="firstName"
-                  className="block text-sm font-medium text-slate-700"
+                  className="mb-2 ml-1 block text-sm font-bold text-slate-700"
                 >
                   First Name
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="firstName"
-                    type="text"
-                    required
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="John"
-                  />
-                </div>
+                <input
+                  id="firstName"
+                  type="text"
+                  required
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
+                  placeholder="John"
+                />
               </div>
               <div>
                 <label
                   htmlFor="lastName"
-                  className="block text-sm font-medium text-slate-700"
+                  className="mb-2 ml-1 block text-sm font-bold text-slate-700"
                 >
                   Last Name
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="lastName"
-                    type="text"
-                    required
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Doe"
-                  />
-                </div>
+                <input
+                  id="lastName"
+                  type="text"
+                  required
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
+                  placeholder="Doe"
+                />
               </div>
             </div>
 
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-700"
+                className="mb-2 ml-1 block text-sm font-bold text-slate-700"
               >
                 Email Address
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                  <Mail className="h-5 w-5 text-slate-400" />
+                </div>
                 <input
                   id="email"
                   type="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                  className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-11 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
                   placeholder="john@example.com"
                 />
               </div>
@@ -149,91 +152,100 @@ export default function Signup() {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-slate-700"
+                className="mb-2 ml-1 block text-sm font-bold text-slate-700"
               >
                 Username
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                  <User className="h-5 w-5 text-slate-400" />
+                </div>
                 <input
                   id="username"
                   type="text"
                   required
                   value={formData.username}
                   onChange={handleChange}
-                  className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                  placeholder="Choose a username"
+                  className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-11 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
+                  placeholder="johndoe123"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-slate-700"
+                  className="mb-2 ml-1 block text-sm font-bold text-slate-700"
                 >
                   Password
                 </label>
-                <div className="mt-1">
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <LockIcon className="h-5 w-5 text-slate-400" />
+                  </div>
                   <input
                     id="password"
                     type="password"
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Create a password"
+                    className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-11 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
+                    placeholder="••••••••"
                   />
                 </div>
               </div>
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-slate-700"
+                  className="mb-2 ml-1 block text-sm font-bold text-slate-700"
                 >
                   Confirm
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="block w-full appearance-none rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Repeat"
-                  />
-                </div>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="block w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-4 py-3 font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none sm:text-sm"
+                  placeholder="Repeat"
+                />
               </div>
             </div>
 
-            <div>
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                className="flex w-full justify-center rounded-2xl bg-blue-600 px-4 py-4 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:translate-y-0 disabled:opacity-50"
               >
-                {loading ? "Creating account..." : "Create account"}
+                {loading
+                  ? "Creating your account..."
+                  : "Start Building for Free"}
               </button>
             </div>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-300" />
+                <div className="w-full border-t border-slate-100" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-slate-500">
-                  Already have an account?{" "}
-                  <Link
-                    to="/login"
-                    className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    Sign in
-                  </Link>
+                <span className="bg-white px-4 font-medium text-slate-500">
+                  Already have an account?
                 </span>
               </div>
+            </div>
+
+            <div className="mt-6 text-center">
+              <Link
+                to="/login"
+                className="text-sm font-bold text-blue-600 transition-colors hover:text-blue-700"
+              >
+                Log in to your console &rarr;
+              </Link>
             </div>
           </div>
         </div>

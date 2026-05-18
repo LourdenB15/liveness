@@ -1,4 +1,4 @@
-import { Copy, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, Check, Copy, Key, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { api } from "../services/api";
@@ -12,14 +12,19 @@ export default function ApiKeys() {
   const [newKeyName, setNewKeyName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
     fetchKeys();
   }, []);
 
   const fetchKeys = async () => {
-    const data = await api.apiKeys.list();
-    setKeys(data);
+    try {
+      const data = await api.apiKeys.list();
+      setKeys(data);
+    } catch (error) {
+      console.error("Failed to fetch keys", error);
+    }
   };
 
   const handleCreateKey = async (e) => {
@@ -42,126 +47,195 @@ export default function ApiKeys() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to revoke this API key?")) {
+    if (
+      confirm(
+        "Are you sure you want to revoke this API key? Applications using this key will lose access immediately.",
+      )
+    ) {
       await api.apiKeys.delete(id);
       fetchKeys();
     }
   };
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text, id) => {
     navigator.clipboard.writeText(text);
-    alert("Copied to clipboard!");
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-8 duration-500">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h3 className="text-lg font-bold text-slate-800">API Keys</h3>
-          <p className="text-sm text-slate-500">
-            Manage your keys to authenticate with the Liveness Cloud API.
+          <h1 className="text-3xl font-black tracking-tight text-slate-900">
+            API Access
+          </h1>
+          <p className="mt-1 font-medium text-slate-500">
+            Manage cryptographic keys for application integration
           </p>
         </div>
-        <button
-          onClick={() => {
-            setIsCreating(true);
-            setError("");
-          }}
-          className="flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Create New Key
-        </button>
+        {!isCreating && (
+          <button
+            onClick={() => {
+              setIsCreating(true);
+              setError("");
+            }}
+            className="flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0"
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            Issue New Key
+          </button>
+        )}
       </div>
 
       {isCreating && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50 p-6 shadow-sm">
+        <div className="animate-in zoom-in-95 rounded-4xl border-2 border-blue-100 bg-blue-50/50 p-8 shadow-xl shadow-blue-100/20 duration-200">
+          <h3 className="mb-2 text-lg font-black text-blue-900">
+            Create Security Key
+          </h3>
+          <p className="mb-6 text-sm font-medium text-blue-700/70">
+            Give your key a descriptive name to track its usage.
+          </p>
+
           <form onSubmit={handleCreateKey} className="flex flex-col gap-4">
             {error && (
-              <div className="text-sm text-red-600 font-medium">
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-600">
+                <AlertCircle className="h-4 w-4" />
                 {error}
               </div>
             )}
-            <div className="flex gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <input
                 type="text"
-                placeholder="Enter key name (e.g., Production)"
+                placeholder="e.g. Production Mobile App"
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
-                className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 rounded-2xl border border-blue-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                 autoFocus
               />
-              <button
-                type="submit"
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
-              >
-                Generate
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsCreating(false)}
-                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-              >
-                Cancel
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="flex-1 rounded-2xl bg-blue-600 px-8 py-3 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 sm:flex-none"
+                >
+                  Generate Key
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCreating(false)}
+                  className="flex-1 rounded-2xl border border-slate-200 bg-white px-8 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 sm:flex-none"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </form>
         </div>
       )}
 
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              <tr>
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Key</th>
-                <th className="px-6 py-3">Created At</th>
-                <th className="px-6 py-3 text-right">Actions</th>
+            <thead>
+              <tr className="bg-slate-50/50 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase">
+                <th className="px-10 py-6">Label</th>
+                <th className="px-10 py-6">Secret Key</th>
+                <th className="px-10 py-6">Issued Date</th>
+                <th className="px-10 py-6 text-right">Control</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-50">
               {keys.map((key) => (
-                <tr key={key.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-900">
-                    {key.name}
+                <tr
+                  key={key.id}
+                  className="group transition-colors hover:bg-slate-50/30"
+                >
+                  <td className="px-10 py-6">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                      <span className="text-base font-bold text-slate-900">
+                        {key.name}
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center font-mono text-xs text-slate-500">
-                      <span className="max-w-[150px] truncate">{key.key}</span>
+                  <td className="px-10 py-6">
+                    <div className="flex max-w-xs items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-2 transition-colors group-hover:bg-white">
+                      <code className="truncate font-mono text-xs font-bold text-slate-500">
+                        {key.key}
+                      </code>
                       <button
-                        onClick={() => copyToClipboard(key.key)}
-                        className="ml-2 rounded p-1 hover:bg-slate-200 transition-colors"
+                        onClick={() => copyToClipboard(key.key, key.id)}
+                        className={`rounded-lg p-1.5 transition-all active:scale-90 ${
+                          copiedId === key.id
+                            ? "bg-emerald-100 text-emerald-600"
+                            : "text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                        }`}
+                        title="Copy to clipboard"
                       >
-                        <Copy className="h-3 w-3" />
+                        {copiedId === key.id ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
-                    {new Date(key.createdAt).toLocaleDateString()}
+                  <td className="px-10 py-6 font-bold text-slate-500">
+                    {new Date(key.createdAt).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-10 py-6 text-right">
                     <button
                       onClick={() => handleDelete(key.id)}
-                      className="text-slate-400 hover:text-red-600 transition-colors"
+                      className="rounded-2xl p-3 text-slate-300 transition-all hover:bg-red-50 hover:text-red-600 active:scale-95"
+                      title="Revoke access"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </td>
                 </tr>
               ))}
               {keys.length === 0 && (
                 <tr>
-                  <td
-                    colSpan="4"
-                    className="px-6 py-8 text-center text-slate-500"
-                  >
-                    No API keys found. Create one to get started.
+                  <td colSpan="4" className="px-10 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-4xl bg-slate-50">
+                        <Key className="h-8 w-8 text-slate-200" />
+                      </div>
+                      <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+                        No active keys issued
+                      </p>
+                      <button
+                        onClick={() => setIsCreating(true)}
+                        className="mt-4 font-bold text-blue-600 hover:underline"
+                      >
+                        Create your first key &rarr;
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div className="flex items-start gap-5 rounded-4xl border-2 border-amber-100 bg-amber-50 p-8">
+        <div className="rounded-2xl bg-amber-100 p-3">
+          <AlertCircle className="h-6 w-6 text-amber-600" />
+        </div>
+        <div>
+          <h4 className="text-lg font-black text-amber-900">
+            Security Recommendation
+          </h4>
+          <p className="mt-1 leading-relaxed font-medium text-amber-800/70">
+            Never share your API keys in public repositories or client-side
+            code. Use environment variables to store them securely. If a key is
+            compromised, revoke it immediately and issue a new one.
+          </p>
         </div>
       </div>
     </div>

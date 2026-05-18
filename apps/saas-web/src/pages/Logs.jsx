@@ -1,3 +1,4 @@
+import { Activity, Clock, ShieldAlert, ShieldCheck, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 
@@ -6,54 +7,109 @@ export default function Logs() {
 
   useEffect(() => {
     const fetchLogs = async () => {
-      const data = await api.logs.list();
-      setLogs(data);
+      try {
+        const data = await api.logs.list();
+        setLogs(data);
+      } catch (error) {
+        console.error("Failed to fetch logs", error);
+      }
     };
     fetchLogs();
   }, []);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-100 px-6 py-4">
-        <h3 className="text-lg font-bold text-slate-800">Verification Logs</h3>
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-500">
+      <div>
+        <h1 className="text-3xl font-black tracking-tight text-slate-900">
+          Audit Logs
+        </h1>
+        <p className="mt-1 font-medium text-slate-500">
+          Detailed history of verification requests
+        </p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            <tr>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">User</th>
-              <th className="px-6 py-3">Match Score</th>
-              <th className="px-6 py-3">Timestamp</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {logs.map((log) => (
-              <tr key={log.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      log.status === "SUCCESS"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {log.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 font-medium text-slate-900">
-                  {log.userName}
-                </td>
-                <td className="px-6 py-4 font-mono text-slate-600">
-                  {(log.score * 100).toFixed(2)}%
-                </td>
-                <td className="px-6 py-4 text-slate-600">
-                  {new Date(log.timestamp).toLocaleString()}
-                </td>
+
+      <div className="overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="bg-slate-50/50 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase">
+                <th className="px-8 py-5">Result</th>
+                <th className="px-8 py-5">Subject</th>
+                <th className="px-8 py-5">Confidence</th>
+                <th className="px-8 py-5 text-right">Timestamp</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {logs.map((log) => (
+                <tr
+                  key={log.id}
+                  className="group transition-colors hover:bg-slate-50/50"
+                >
+                  <td className="px-8 py-5">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1 text-[10px] font-black tracking-wider uppercase ${
+                        log.status === "SUCCESS"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {log.status === "SUCCESS" ? (
+                        <ShieldCheck className="h-3 w-3" />
+                      ) : (
+                        <ShieldAlert className="h-3 w-3" />
+                      )}
+                      {log.status}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5 font-bold text-slate-900 transition-colors group-hover:text-blue-600">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100">
+                        <User className="h-4 w-4 text-slate-400" />
+                      </div>
+                      {log.userName}
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-3">
+                      <div className="h-2 max-w-25 flex-1 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className={`h-full rounded-full ${log.status === "SUCCESS" ? "bg-emerald-500" : "bg-red-500"}`}
+                          style={{ width: `${log.score * 100}%` }}
+                        />
+                      </div>
+                      <span className="font-mono text-xs font-black text-slate-600">
+                        {(log.score * 100).toFixed(2)}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5 text-right font-semibold text-slate-500">
+                    <div className="flex items-center justify-end gap-2">
+                      <Clock className="h-3.5 w-3.5 text-slate-300" />
+                      {new Date(log.timestamp).toLocaleString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {logs.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="px-8 py-16 text-center">
+                    <div className="flex flex-col items-center">
+                      <Activity className="mb-4 h-12 w-12 text-slate-100" />
+                      <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+                        No activity logs found
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
