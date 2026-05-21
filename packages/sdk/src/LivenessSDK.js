@@ -53,7 +53,18 @@ export class LivenessSDK {
 
   async load() {
     if (typeof WebAssembly !== "object") {
-      this._emit("error", new Error("WebAssembly is not supported in this browser."));
+      this._emit("error", {
+        code: "WASM_NOT_SUPPORTED",
+        message: "WebAssembly is not supported in this browser. Liveness detection requires WASM."
+      });
+      return;
+    }
+
+    if (!window.WebGLRenderingContext) {
+      this._emit("error", {
+        code: "WEBGL_NOT_SUPPORTED",
+        message: "WebGL is not supported. Please enable hardware acceleration."
+      });
       return;
     }
 
@@ -85,12 +96,20 @@ export class LivenessSDK {
 
         this.engine = new LivenessEngine(callbacks, this.config);
         this.engine.load().catch((err) => {
-          this._emit("error", err);
-          reject(err);
+          const errorPayload = {
+            code: "MODEL_LOAD_FAILED",
+            message: `Failed to load AI models: ${err.message}`
+          };
+          this._emit("error", errorPayload);
+          reject(errorPayload);
         });
       } catch (error) {
-        this._emit("error", error);
-        reject(error);
+        const errorPayload = {
+          code: "INITIALIZATION_FAILED",
+          message: error.message
+        };
+        this._emit("error", errorPayload);
+        reject(errorPayload);
       }
     });
   }
@@ -103,7 +122,7 @@ export class LivenessSDK {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       this._emit("failure", {
         code: "BROWSER_NOT_SUPPORTED",
-        message: "Your browser does not support camera access.",
+        message: "Your browser does not support camera access or the secure context (HTTPS) requirements.",
       });
       return;
     }
@@ -111,15 +130,23 @@ export class LivenessSDK {
     try {
       if (!videoElement.srcObject) {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480, facingMode: "user" },
+          video: { 
+            width: { ideal: 1280 }, 
+            height: { ideal: 720 }, 
+            facingMode: "user" 
+          },
           audio: false,
         });
         videoElement.srcObject = stream;
 
-        await new Promise((resolve) => {
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error("Camera stream timed out."));
+          }, 10000);
+
           videoElement.onloadedmetadata = () => {
-            videoElement.play();
-            resolve();
+            clearTimeout(timeout);
+            videoElement.play().then(resolve).catch(reject);
           };
         });
       }
@@ -130,13 +157,25 @@ export class LivenessSDK {
 
       this.engine.start(videoElement, ctx);
     } catch (error) {
-      this._emit("error", error);
-      if (error.name === "NotAllowedError" || error.name === "NotFoundError") {
-        this._emit("failure", {
+      let errorPayload = {
+        code: "CAMERA_ERROR",
+        message: error.message
+      };
+
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorPayload = {
           code: "CAMERA_ACCESS_DENIED",
-          message: "Could not access camera. Please check permissions.",
-        });
+          message: "Camera access was denied by the user. Please update browser permissions.",
+        };
+      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+        errorPayload = {
+          code: "CAMERA_NOT_FOUND",
+          message: "No camera device was found on this system.",
+        };
       }
+
+      this._emit("error", errorPayload);
+      this._emit("failure", errorPayload);
     }
   }
 
