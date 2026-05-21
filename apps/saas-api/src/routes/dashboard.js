@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt";
 import express from "express";
+import jwt from "jsonwebtoken";
 import { z } from "zod";
 import pool from "../db.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
 
 const signupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -43,7 +46,10 @@ router.post("/signup", async (req, res) => {
       [username, passwordHash, firstName, lastName, email],
     );
 
-    res.status(201).json(result.rows[0]);
+    const admin = result.rows[0];
+    const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: "24h" });
+
+    res.status(201).json({ ...admin, token });
   } catch (error) {
     if (error.code === "23505") {
       if (error.detail.includes("username")) {
@@ -84,6 +90,8 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: "24h" });
+
     res.json({
       id: admin.id,
       username: admin.username,
@@ -91,7 +99,7 @@ router.post("/login", async (req, res) => {
       lastName: admin.last_name,
       email: admin.email,
       subscriptionTier: admin.subscription_tier,
-      token: "mock_session_token_" + admin.id,
+      token: token,
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -99,11 +107,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/stats", async (req, res) => {
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+router.get("/stats", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
     const usersCount = await pool.query(
@@ -139,11 +144,8 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-router.get("/users", async (req, res) => {
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+router.get("/users", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
     const result = await pool.query(
@@ -157,12 +159,9 @@ router.get("/users", async (req, res) => {
   }
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+  const adminId = req.user.id;
 
   try {
     await pool.query("DELETE FROM users WHERE id = $1 AND admin_id = $2", [
@@ -176,11 +175,8 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-router.get("/logs", async (req, res) => {
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+router.get("/logs", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
     const result = await pool.query(
@@ -194,11 +190,8 @@ router.get("/logs", async (req, res) => {
   }
 });
 
-router.get("/api-keys", async (req, res) => {
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+router.get("/api-keys", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
     const result = await pool.query(
@@ -212,18 +205,14 @@ router.get("/api-keys", async (req, res) => {
   }
 });
 
-router.post("/api-keys", async (req, res) => {
+router.post("/api-keys", authenticateToken, async (req, res) => {
   const validation = apiKeySchema.safeParse(req.body);
   if (!validation.success) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { name } = validation.data;
-  const { adminId } = req.body;
-
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+  const adminId = req.user.id;
 
   try {
     const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;
@@ -238,13 +227,9 @@ router.post("/api-keys", async (req, res) => {
   }
 });
 
-router.delete("/api-keys/:id", async (req, res) => {
+router.delete("/api-keys/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { adminId } = req.query;
-
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+  const adminId = req.user.id;
 
   try {
     await pool.query("DELETE FROM api_keys WHERE id = $1 AND admin_id = $2", [
@@ -258,11 +243,8 @@ router.delete("/api-keys/:id", async (req, res) => {
   }
 });
 
-router.get("/webhooks", async (req, res) => {
-  const { adminId } = req.query;
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+router.get("/webhooks", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
 
   try {
     const result = await pool.query(
@@ -276,18 +258,14 @@ router.get("/webhooks", async (req, res) => {
   }
 });
 
-router.post("/webhooks", async (req, res) => {
+router.post("/webhooks", authenticateToken, async (req, res) => {
   const validation = webhookSchema.safeParse(req.body);
   if (!validation.success) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { url } = validation.data;
-  const { adminId } = req.body;
-
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+  const adminId = req.user.id;
 
   try {
     const secret = `whsec_${Math.random().toString(36).substr(2, 24)}`;
@@ -302,13 +280,9 @@ router.post("/webhooks", async (req, res) => {
   }
 });
 
-router.delete("/webhooks/:id", async (req, res) => {
+router.delete("/webhooks/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { adminId } = req.query;
-
-  if (!adminId) {
-    return res.status(400).json({ error: "adminId is required" });
-  }
+  const adminId = req.user.id;
 
   try {
     await pool.query("DELETE FROM webhooks WHERE id = $1 AND admin_id = $2", [
@@ -322,8 +296,8 @@ router.delete("/webhooks/:id", async (req, res) => {
   }
 });
 
-router.get("/billing/:adminId", async (req, res) => {
-  const { adminId } = req.params;
+router.get("/billing", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
   try {
     const result = await pool.query(
       'SELECT subscription_tier as "subscriptionTier" FROM admins WHERE id = $1',
@@ -339,8 +313,8 @@ router.get("/billing/:adminId", async (req, res) => {
   }
 });
 
-router.post("/billing/upgrade", async (req, res) => {
-  const { adminId } = req.body;
+router.post("/billing/upgrade", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
   try {
     const result = await pool.query(
       "UPDATE admins SET subscription_tier = 'pro' WHERE id = $1 RETURNING subscription_tier as \"subscriptionTier\"",

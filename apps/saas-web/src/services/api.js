@@ -5,10 +5,14 @@ const ADMIN_KEY = "liveness_admin";
 
 const request = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
+  const savedAdmin = localStorage.getItem(ADMIN_KEY);
+  const token = savedAdmin ? JSON.parse(savedAdmin).token : null;
+
   const response = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
@@ -54,60 +58,59 @@ export const api = {
   },
 
   users: {
-    list: (adminId) => request(`/dashboard/users?adminId=${adminId}`),
-    delete: (id, adminId) =>
-      request(`/dashboard/users/${id}?adminId=${adminId}`, {
+    list: () => request("/dashboard/users"),
+    delete: (id) =>
+      request(`/dashboard/users/${id}`, {
         method: "DELETE",
       }),
   },
 
   logs: {
-    list: (adminId) => request(`/dashboard/logs?adminId=${adminId}`),
+    list: () => request("/dashboard/logs"),
   },
 
   apiKeys: {
-    list: (adminId) => request(`/dashboard/api-keys?adminId=${adminId}`),
-    create: (name, adminId) =>
+    list: () => request("/dashboard/api-keys"),
+    create: (name) =>
       request("/dashboard/api-keys", {
         method: "POST",
-        body: JSON.stringify({ name, adminId }),
+        body: JSON.stringify({ name }),
       }),
-    delete: (id, adminId) =>
-      request(`/dashboard/api-keys/${id}?adminId=${adminId}`, {
+    delete: (id) =>
+      request(`/dashboard/api-keys/${id}`, {
         method: "DELETE",
       }),
   },
 
   webhooks: {
-    list: (adminId) => request(`/dashboard/webhooks?adminId=${adminId}`),
-    create: (url, adminId) =>
+    list: () => request("/dashboard/webhooks"),
+    create: (url) =>
       request("/dashboard/webhooks", {
         method: "POST",
-        body: JSON.stringify({ url, adminId }),
+        body: JSON.stringify({ url }),
       }),
-    delete: (id, adminId) =>
-      request(`/dashboard/webhooks/${id}?adminId=${adminId}`, {
+    delete: (id) =>
+      request(`/dashboard/webhooks/${id}`, {
         method: "DELETE",
       }),
   },
 
   stats: {
-    getOverview: (adminId) => request(`/dashboard/stats?adminId=${adminId}`),
+    getOverview: () => request("/dashboard/stats"),
   },
 
   billing: {
-    getTier: (adminId) => request(`/dashboard/billing/${adminId}`),
-    upgrade: (adminId) =>
+    getTier: () => request("/dashboard/billing"),
+    upgrade: () =>
       request("/dashboard/billing/upgrade", {
         method: "POST",
-        body: JSON.stringify({ adminId }),
       }),
   },
 
   system: {
     getHealth: () => {
-      // Direct fetch for health since it's not under /api/dashboard
       return fetch("http://localhost:3000/health").then((res) => res.json());
     },
   },
 };
+

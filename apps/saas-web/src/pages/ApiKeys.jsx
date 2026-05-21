@@ -15,15 +15,12 @@ export default function ApiKeys() {
   const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
-    const user = api.auth.getCurrentUser();
-    if (user) {
-      fetchKeys(user.id);
-    }
+    fetchKeys();
   }, []);
 
-  const fetchKeys = async (adminId) => {
+  const fetchKeys = async () => {
     try {
-      const data = await api.apiKeys.list(adminId);
+      const data = await api.apiKeys.list();
       setKeys(data);
     } catch (error) {
       console.error("Failed to fetch keys", error);
@@ -39,30 +36,24 @@ export default function ApiKeys() {
       return setError(validation.error.issues[0].message);
     }
 
-    const user = api.auth.getCurrentUser();
-    if (!user) return;
-
     try {
-      await api.apiKeys.create(newKeyName, user.id);
+      await api.apiKeys.create(newKeyName);
       setNewKeyName("");
       setIsCreating(false);
-      fetchKeys(user.id);
+      fetchKeys();
     } catch (err) {
       setError(err.message);
     }
   };
 
   const handleDelete = async (id) => {
-    const user = api.auth.getCurrentUser();
-    if (!user) return;
-
     if (
       confirm(
         "Are you sure you want to revoke this API key? Applications using this key will lose access immediately.",
       )
     ) {
-      await api.apiKeys.delete(id, user.id);
-      fetchKeys(user.id);
+      await api.apiKeys.delete(id);
+      fetchKeys();
     }
   };
 

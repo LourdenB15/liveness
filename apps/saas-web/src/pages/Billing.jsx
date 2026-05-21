@@ -9,15 +9,12 @@ const Billing = () => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const currentUser = api.auth.getCurrentUser();
-    if (currentUser) {
-      fetchTier(currentUser.id);
-    }
+    fetchTier();
   }, []);
 
-  const fetchTier = async (adminId) => {
+  const fetchTier = async () => {
     try {
-      const { subscriptionTier } = await api.billing.getTier(adminId);
+      const { subscriptionTier } = await api.billing.getTier();
       const currentUser = api.auth.getCurrentUser();
       const updatedUser = { ...currentUser, subscriptionTier };
       localStorage.setItem("liveness_admin", JSON.stringify(updatedUser));
@@ -30,11 +27,10 @@ const Billing = () => {
   };
 
   const handleUpgrade = async () => {
-    if (!user) return;
     setUpgrading(true);
     setMessage("");
     try {
-      const { subscriptionTier } = await api.billing.upgrade(user.id);
+      const { subscriptionTier } = await api.billing.upgrade();
       const updatedUser = { ...user, subscriptionTier };
       localStorage.setItem("liveness_admin", JSON.stringify(updatedUser));
       setUser(updatedUser);

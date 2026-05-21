@@ -15,15 +15,12 @@ export default function Webhooks() {
   const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
-    const user = api.auth.getCurrentUser();
-    if (user) {
-      fetchWebhooks(user.id);
-    }
+    fetchWebhooks();
   }, []);
 
-  const fetchWebhooks = async (adminId) => {
+  const fetchWebhooks = async () => {
     try {
-      const data = await api.webhooks.list(adminId);
+      const data = await api.webhooks.list();
       setWebhooks(data);
     } catch (error) {
       console.error("Failed to fetch webhooks", error);
@@ -39,31 +36,25 @@ export default function Webhooks() {
       return setError(validation.error.issues[0].message);
     }
 
-    const user = api.auth.getCurrentUser();
-    if (!user) return;
-
     try {
-      await api.webhooks.create(newUrl, user.id);
+      await api.webhooks.create(newUrl);
       setNewUrl("");
       setIsCreating(false);
-      fetchWebhooks(user.id);
+      fetchWebhooks();
     } catch (err) {
       setError(err.message);
     }
   };
 
   const handleDelete = async (id) => {
-    const user = api.auth.getCurrentUser();
-    if (!user) return;
-
     if (
       confirm(
         "Are you sure you want to remove this webhook? You will stop receiving event notifications at this URL.",
       )
     ) {
       try {
-        await api.webhooks.delete(id, user.id);
-        fetchWebhooks(user.id);
+        await api.webhooks.delete(id);
+        fetchWebhooks();
       } catch (err) {
         console.error("Failed to delete webhook", err);
       }
