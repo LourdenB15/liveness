@@ -1,14 +1,20 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
+import pool from "./db.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import livenessRoutes from "./routes/liveness.js";
-import pool from "./db.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "x-api-key"],
+  }),
+);
 app.use(express.json({ limit: "1mb" }));
 
 // Routes

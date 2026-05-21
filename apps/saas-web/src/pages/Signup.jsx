@@ -41,7 +41,7 @@ export default function Signup() {
 
     const validation = signupSchema.safeParse(formData);
     if (!validation.success) {
-      return setError(validation.error.errors[0].message);
+      return setError(validation.error.issues[0].message);
     }
 
     setLoading(true);

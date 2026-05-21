@@ -42,13 +42,13 @@ const enrollSchema = z.object({
   name: z.string().min(1, "Name is required"),
   descriptor: z
     .array(z.number())
-    .length(128, "Descriptor must be exactly 128 dimensions"),
+    .length(1792, "Descriptor must be exactly 1792 dimensions"),
 });
 
 const verifySchema = z.object({
   descriptor: z
     .array(z.number())
-    .length(128, "Descriptor must be exactly 128 dimensions"),
+    .length(1792, "Descriptor must be exactly 1792 dimensions"),
 });
 
 /**
@@ -59,7 +59,7 @@ router.post("/enroll", authenticateApiKey, async (req, res) => {
   const validation = enrollSchema.safeParse(req.body);
 
   if (!validation.success) {
-    return res.status(400).json({ error: validation.error.errors[0].message });
+    return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { name, descriptor } = validation.data;
@@ -84,7 +84,7 @@ router.post("/verify", authenticateApiKey, async (req, res) => {
   const validation = verifySchema.safeParse(req.body);
 
   if (!validation.success) {
-    return res.status(400).json({ error: validation.error.errors[0].message });
+    return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { descriptor } = validation.data;

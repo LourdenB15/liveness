@@ -2,6 +2,7 @@
 import { calculateCosineSimilarity } from "@liveness/engine/utils";
 import { LivenessSDK } from "@liveness/sdk";
 import { useEffect, useRef, useState } from "react";
+import { ApiSettings } from "./ApiSettings";
 import { ProgressBar } from "./ProgressBar";
 
 const UI_STATE = {
@@ -30,11 +31,21 @@ export function LivenessChecker() {
   const [distanceHint, setDistanceHint] = useState(null);
   const [progress, setProgress] = useState(0);
 
+  const [apiConfig, setApiConfig] = useState(() => {
+    const saved = localStorage.getItem("cloud_api_config");
+    return saved
+      ? JSON.parse(saved)
+      : { apiKey: "", apiUrl: "http://localhost:3000/api/liveness" };
+  });
+
+  const isCloudEnabled = !!apiConfig.apiKey;
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const sdkRef = useRef(null);
   const userNameRef = useRef(userName);
   const enrolledUsersRef = useRef(enrolledUsers);
+  const apiConfigRef = useRef(apiConfig);
 
   useEffect(() => {
     userNameRef.current = userName;
@@ -45,19 +56,29 @@ export function LivenessChecker() {
   }, [enrolledUsers]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("face_identity");
-    if (saved) {
-      try {
-        const users = JSON.parse(saved);
-        if (Array.isArray(users) && users.length > 0) {
-          setEnrolledUsers(users);
-          setMode(MODE.VERIFY);
+    apiConfigRef.current = apiConfig;
+    localStorage.setItem("cloud_api_config", JSON.stringify(apiConfig));
+  }, [apiConfig]);
+
+  useEffect(() => {
+    if (!isCloudEnabled) {
+      const saved = localStorage.getItem("face_identity");
+      if (saved) {
+        try {
+          const users = JSON.parse(saved);
+          if (Array.isArray(users) && users.length > 0) {
+            setEnrolledUsers(users);
+            setMode(MODE.VERIFY);
+          }
+        } catch (e) {
+          console.error("Failed to parse enrolled identities", e);
         }
-      } catch (e) {
-        console.error("Failed to parse enrolled identities", e);
       }
+    } else {
+      setEnrolledUsers([]);
+      setMode(MODE.VERIFY);
     }
-  }, []);
+  }, [isCloudEnabled]);
 
   useEffect(() => {
     setUiState(UI_STATE.LOADING_MODELS);
@@ -84,42 +105,95 @@ export function LivenessChecker() {
       setProgress(progress);
     });
 
-    sdk.on("success", ({ descriptor }) => {
+    sdk.on("success", async ({ descriptor }) => {
       setCurrentChallenge(null);
 
-      if (mode === MODE.ENROLL) {
-        const newIdentity = { name: userNameRef.current || "User", descriptor };
-        setEnrolledUsers((prev) => {
-          const updated = [...prev, newIdentity];
-          localStorage.setItem("face_identity", JSON.stringify(updated));
-          return updated;
-        });
-        setUiState(UI_STATE.SUCCESS);
-        setInstruction(
-          `Identity Enrolled Successfully for ${newIdentity.name}!`,
-        );
-        setUserName("");
-      } else {
-        if (enrolledUsersRef.current.length > 0) {
-          let bestMatch = { score: -1, name: "Unknown" };
+      if (apiConfigRef.current.apiKey) {
+        try {
+          setInstruction("Syncing with Cloud API...");
+          const endpoint =
+            mode === MODE.ENROLL
+              ? `${apiConfigRef.current.apiUrl}/enroll`
+              : `${apiConfigRef.current.apiUrl}/verify`;
 
-          enrolledUsersRef.current.forEach((user) => {
-            const score = calculateCosineSimilarity(
-              descriptor,
-              user.descriptor,
-            );
-            if (score > bestMatch.score) {
-              bestMatch = { score, name: user.name };
-            }
+          const body =
+            mode === MODE.ENROLL
+              ? { name: userNameRef.current || "User", descriptor }
+              : { descriptor };
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": apiConfigRef.current.apiKey,
+            },
+            body: JSON.stringify(body),
           });
 
-          setMatchScore(bestMatch.score);
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "API Request failed");
+          }
+
+          const result = await response.json();
+
+          if (mode === MODE.ENROLL) {
+            setUiState(UI_STATE.SUCCESS);
+            setInstruction(
+              `Cloud Identity Enrolled Successfully for ${result.name}!`,
+            );
+            setUserName("");
+          } else {
+            setMatchScore(result.match?.similarity || 0);
+            setUiState(UI_STATE.SUCCESS);
+            setInstruction(
+              result.verified
+                ? `Identity Verified! Welcome, ${result.match.name}.`
+                : "Identity Mismatch!",
+            );
+          }
+        } catch (err) {
+          setUiState(UI_STATE.FAILURE);
+          setInstruction(`Cloud API Error: ${err.message}`);
+        }
+      } else {
+        if (mode === MODE.ENROLL) {
+          const newIdentity = {
+            name: userNameRef.current || "User",
+            descriptor,
+          };
+          setEnrolledUsers((prev) => {
+            const updated = [...prev, newIdentity];
+            localStorage.setItem("face_identity", JSON.stringify(updated));
+            return updated;
+          });
           setUiState(UI_STATE.SUCCESS);
           setInstruction(
-            bestMatch.score > 0.8
-              ? `Identity Verified! Welcome, ${bestMatch.name}.`
-              : "Identity Mismatch!",
+            `Identity Enrolled Successfully for ${newIdentity.name}!`,
           );
+          setUserName("");
+        } else {
+          if (enrolledUsersRef.current.length > 0) {
+            let bestMatch = { score: -1, name: "Unknown" };
+
+            enrolledUsersRef.current.forEach((user) => {
+              const score = calculateCosineSimilarity(
+                descriptor,
+                user.descriptor,
+              );
+              if (score > bestMatch.score) {
+                bestMatch = { score, name: user.name };
+              }
+            });
+
+            setMatchScore(bestMatch.score);
+            setUiState(UI_STATE.SUCCESS);
+            setInstruction(
+              bestMatch.score > 0.8
+                ? `Identity Verified! Welcome, ${bestMatch.name}.`
+                : "Identity Mismatch!",
+            );
+          }
         }
       }
     });
@@ -179,6 +253,18 @@ export function LivenessChecker() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+      <div className="mb-4 flex w-full items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div
+            className={`h-2 w-2 rounded-full ${isCloudEnabled ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-slate-400"}`}
+          ></div>
+          <span className="text-xs font-bold tracking-wide text-slate-500 uppercase">
+            {isCloudEnabled ? "Cloud Mode Enabled" : "Local Mode Only"}
+          </span>
+        </div>
+        <ApiSettings config={apiConfig} onSave={setApiConfig} />
+      </div>
+
       <div className="mb-6 flex w-full max-w-sm rounded-xl bg-slate-100 p-1">
         <button
           onClick={() => setMode(MODE.ENROLL)}
@@ -192,7 +278,7 @@ export function LivenessChecker() {
         </button>
         <button
           onClick={() => setMode(MODE.VERIFY)}
-          disabled={enrolledUsers.length === 0}
+          disabled={!isCloudEnabled && enrolledUsers.length === 0}
           className={`flex-1 rounded-lg py-2 text-sm font-semibold transition-all ${
             mode === MODE.VERIFY
               ? "bg-white text-blue-600 shadow"
@@ -227,8 +313,8 @@ export function LivenessChecker() {
           className="pointer-events-none absolute inset-0 h-full w-full"
         />
 
-        <div className="absolute top-4 right-0 left-0 z-10 flex justify-center">
-          <div className="rounded-full border border-white/10 bg-black/60 px-6 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
+        <div className="absolute top-4 right-0 left-0 z-10 flex justify-center px-4">
+          <div className="rounded-full border border-white/10 bg-black/60 px-6 py-2 text-center text-sm font-medium text-white shadow-lg backdrop-blur-md">
             {uiState === UI_STATE.LOADING_MODELS
               ? "Loading AI Models..."
               : instruction}
@@ -275,13 +361,15 @@ export function LivenessChecker() {
         {uiState === UI_STATE.SUCCESS && (
           <div
             className={`absolute inset-0 z-30 flex flex-col items-center justify-center text-white backdrop-blur-md ${
-              mode === MODE.VERIFY && matchScore < 0.8
+              (mode === MODE.VERIFY && matchScore < 0.8) ||
+              instruction.includes("Mismatch")
                 ? "bg-red-500/90"
                 : "bg-green-500/90"
             }`}
           >
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl">
-              {mode === MODE.VERIFY && matchScore < 0.8 ? (
+              {(mode === MODE.VERIFY && matchScore < 0.8) ||
+              instruction.includes("Mismatch") ? (
                 <svg
                   className="h-10 w-10 text-red-600"
                   fill="none"
@@ -311,7 +399,7 @@ export function LivenessChecker() {
                 </svg>
               )}
             </div>
-            <h3 className="px-4 text-center text-2xl font-bold">
+            <h3 className="px-6 text-center text-2xl leading-tight font-bold">
               {instruction}
             </h3>
             {matchScore !== null && (
@@ -329,11 +417,11 @@ export function LivenessChecker() {
         )}
       </div>
 
-      {enrolledUsers.length > 0 && (
+      {!isCloudEnabled && enrolledUsers.length > 0 && (
         <div className="mt-8 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
             <h3 className="font-bold text-slate-800">
-              Enrolled Identities ({enrolledUsers.length})
+              Local Identities ({enrolledUsers.length})
             </h3>
             <button
               onClick={clearIdentity}
@@ -388,6 +476,15 @@ export function LivenessChecker() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {isCloudEnabled && (
+        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 p-4 text-center">
+          <p className="text-sm text-blue-700">
+            <strong>Cloud Mode Active:</strong> All face data and logs are
+            processed and stored on your secure SaaS backend.
+          </p>
         </div>
       )}
     </div>

@@ -36,7 +36,7 @@ export default function ApiKeys() {
 
     const validation = apiKeySchema.safeParse({ name: newKeyName });
     if (!validation.success) {
-      return setError(validation.error.errors[0].message);
+      return setError(validation.error.issues[0].message);
     }
 
     const user = api.auth.getCurrentUser();

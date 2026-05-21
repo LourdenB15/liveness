@@ -28,7 +28,7 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
-    descriptor vector(128) NOT NULL,
+    descriptor vector(1792) NOT NULL,
     enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

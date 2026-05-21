@@ -58,7 +58,7 @@ The system employs **geometric landmarks** to differentiate between a live user 
 
 ### 2. Face Recognition & Feature Extraction
 
-Upon successful liveness verification, the system utilizes a pre-trained MobileNet V2 model via TensorFlow.js to extract a **128-dimensional feature vector** (embedding) from the detected face. This vector is normalized to unit length to ensure consistency.
+Upon successful liveness verification, the system utilizes a pre-trained MobileNet V2 model via TensorFlow.js to extract a **1792-dimensional feature vector** (embedding) from the detected face. This vector is normalized to unit length to ensure consistency.
 
 ### 3. Identity Matching Algorithm
 
@@ -171,7 +171,7 @@ If you have specific compliance requirements or prefer to maintain your own biom
 
 #### Data Payload Structure
 
-When the SDK's `success` event fires, send the 128-dimensional descriptor to your server:
+When the SDK's `success` event fires, send the 1792-dimensional descriptor to your server:
 
 ```json
 {

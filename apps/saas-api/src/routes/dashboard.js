@@ -30,7 +30,7 @@ const apiKeySchema = z.object({
 router.post("/signup", async (req, res) => {
   const validation = signupSchema.safeParse(req.body);
   if (!validation.success) {
-    return res.status(400).json({ error: validation.error.errors[0].message });
+    return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { username, password, firstName, lastName, email } = validation.data;
@@ -67,7 +67,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   const validation = loginSchema.safeParse(req.body);
   if (!validation.success) {
-    return res.status(400).json({ error: validation.error.errors[0].message });
+    return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { username, password } = validation.data;
@@ -236,7 +236,7 @@ router.get("/api-keys", async (req, res) => {
 router.post("/api-keys", async (req, res) => {
   const validation = apiKeySchema.safeParse(req.body);
   if (!validation.success) {
-    return res.status(400).json({ error: validation.error.errors[0].message });
+    return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
   const { name } = validation.data;
