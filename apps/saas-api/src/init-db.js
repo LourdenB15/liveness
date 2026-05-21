@@ -63,7 +63,7 @@ CREATE TABLE webhooks (
 );
 
 -- Create index for faster vector similarity search
-CREATE INDEX IF NOT EXISTS users_descriptor_idx ON users USING ivfflat (descriptor vector_cosine_ops) WITH (lists = 100);
+CREATE INDEX IF NOT EXISTS users_descriptor_hnsw_idx ON users USING hnsw (descriptor vector_cosine_ops) WITH (m = 16, ef_construction = 64);
 `;
 
 async function initDb() {
