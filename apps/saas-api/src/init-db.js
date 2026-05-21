@@ -52,6 +52,16 @@ CREATE TABLE api_keys (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Webhooks table
+CREATE TABLE webhooks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
+    url TEXT NOT NULL,
+    secret VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create index for faster vector similarity search
 CREATE INDEX IF NOT EXISTS users_descriptor_idx ON users USING ivfflat (descriptor vector_cosine_ops) WITH (lists = 100);
 `;

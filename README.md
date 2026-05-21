@@ -110,12 +110,34 @@ Integrate with the **Liveness Cloud** for a production-ready, zero-maintenance s
 - **Admin Dashboard**: Manage API keys, view verification logs, and monitor system metrics.
 - **Secure Infrastructure**: Enterprise-grade security with `pgvector`-backed biometric matching.
 - **Simplified Integration**: Use the SDK to capture descriptors and verify them against our managed endpoints.
+- **Real-time Webhooks**: Receive signed events (e.g., `user.enrolled`, `liveness.verified`) directly on your server to automate business workflows.
 
 #### Getting Started with the Cloud
 
-1.  **Access the Dashboard**: Navigate to our [Management Console](#) (Coming Soon).
+1.  **Access the Dashboard**: Navigate to our [Management Console](#).
 2.  **Create an Account**: Sign up and verify your organization email.
 3.  **Generate API Keys**: Create a new project and generate a `Public Key` (for frontend initialization) and a `Secret Key` (for backend verification).
+4.  **Configure Webhooks**: Register your server URL in the "Webhooks" section to receive real-time verification notifications.
+
+#### Webhook Security & Verification
+
+All webhook payloads are signed with a secret key using **HMAC-SHA256**. Your server should verify this signature to ensure the authenticity of the event.
+
+- **Header**: `x-liveness-signature`
+- **Secret**: Provided in your dashboard Webhook settings.
+
+```javascript
+// Example Node.js verification
+const signature = req.headers["x-liveness-signature"];
+const expected = crypto
+  .createHmac("sha256", WEBHOOK_SECRET)
+  .update(JSON.stringify(req.body))
+  .digest("hex");
+
+if (signature === expected) {
+  // Event is valid
+}
+```
 
 #### API & Integration Flow
 

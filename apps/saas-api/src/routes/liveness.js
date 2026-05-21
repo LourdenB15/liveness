@@ -1,10 +1,10 @@
+import crypto from "crypto";
 import express from "express";
 import { z } from "zod";
 import pool from "../db.js";
 
 const router = express.Router();
 
-// Helper to format vector for Postgres
 const formatVector = (vector) => `[${vector.join(",")}]`;
 
 const generateIntegrityHash = (descriptor, sessionToken, timestamp) => {
@@ -18,7 +18,41 @@ const generateIntegrityHash = (descriptor, sessionToken, timestamp) => {
   return hash.toString(16);
 };
 
-// Authentication Middleware
+const triggerWebhooks = async (adminId, event, data) => {
+  try {
+    const webhooks = await pool.query(
+      "SELECT url, secret FROM webhooks WHERE admin_id = $1 AND is_active = TRUE",
+      [adminId],
+    );
+
+    const payload = JSON.stringify({
+      event,
+      timestamp: Date.now(),
+      data,
+    });
+
+    for (const webhook of webhooks.rows) {
+      const signature = crypto
+        .createHmac("sha256", webhook.secret)
+        .update(payload)
+        .digest("hex");
+
+      fetch(webhook.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-liveness-signature": signature,
+        },
+        body: payload,
+      }).catch((err) =>
+        console.error(`Webhook delivery failed to ${webhook.url}:`, err.message),
+      );
+    }
+  } catch (err) {
+    console.error("Failed to trigger webhooks:", err);
+  }
+};
+
 const authenticateApiKey = async (req, res, next) => {
   const apiKey = req.headers["x-api-key"];
 
@@ -48,7 +82,6 @@ const authenticateApiKey = async (req, res, next) => {
   }
 };
 
-// Validation Schemas
 const commonPayload = {
   descriptor: z
     .array(z.number())
@@ -69,9 +102,6 @@ const verifySchema = z.object({
   ...commonPayload,
 });
 
-/**
- * Middleware to validate payload integrity and freshness
- */
 const validateIntegrity = (req, res, next) => {
   const { descriptor, sessionToken, timestamp, integrity } = req.body;
 
@@ -79,13 +109,11 @@ const validateIntegrity = (req, res, next) => {
     return res.status(400).json({ error: "Missing security metadata" });
   }
 
-  // 1. Check timestamp (must be within last 10 minutes)
   const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
   if (timestamp < tenMinutesAgo) {
     return res.status(400).json({ error: "Session expired or clock desync" });
   }
 
-  // 2. Validate integrity hash
   const expectedHash = generateIntegrityHash(
     descriptor,
     sessionToken,
@@ -98,10 +126,6 @@ const validateIntegrity = (req, res, next) => {
   next();
 };
 
-/**
- * POST /api/enroll
- * Body: { name: string, descriptor: number[], sessionToken, timestamp, challenges, integrity }
- */
 router.post(
   "/enroll",
   authenticateApiKey,
@@ -120,6 +144,9 @@ router.post(
         "INSERT INTO users (admin_id, name, descriptor) VALUES ($1, $2, $3) RETURNING id, name, enrolled_at",
         [req.adminId, name, formatVector(descriptor)],
       );
+
+      triggerWebhooks(req.adminId, "user.enrolled", result.rows[0]);
+
       res.status(201).json(result.rows[0]);
     } catch (error) {
       console.error("Enrollment error:", error);
@@ -128,10 +155,6 @@ router.post(
   },
 );
 
-/**
- * POST /api/verify
- * Body: { descriptor: number[], sessionToken, timestamp, challenges, integrity }
- */
 router.post(
   "/verify",
   authenticateApiKey,
@@ -146,7 +169,6 @@ router.post(
     const { descriptor } = validation.data;
 
     try {
-      // Find the closest user using Cosine Distance (<=>)
       const queryText = `
       SELECT id, name, 1 - (descriptor <=> $1) AS similarity
       FROM users
@@ -169,7 +191,6 @@ router.post(
         }
       }
 
-      // Log the attempt
       await pool.query(
         "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status) VALUES ($1, $2, $3, $4, $5)",
         [
@@ -181,11 +202,15 @@ router.post(
         ],
       );
 
-      res.json({
+      const responsePayload = {
         verified: status === "SUCCESS",
         match: match ? { name: match.name, similarity: match.similarity } : null,
         status,
-      });
+      };
+
+      triggerWebhooks(req.adminId, "liveness.verified", responsePayload);
+
+      res.json(responsePayload);
     } catch (error) {
       console.error("Verification error:", error);
       res.status(500).json({ error: "Failed to verify identity." });

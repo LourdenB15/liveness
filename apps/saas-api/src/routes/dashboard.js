@@ -5,7 +5,6 @@ import pool from "../db.js";
 
 const router = express.Router();
 
-// Validation Schemas
 const signupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -23,10 +22,10 @@ const apiKeySchema = z.object({
   name: z.string().min(1, "Key name is required"),
 });
 
-/**
- * POST /api/dashboard/signup
- * Body: { username, password, firstName, lastName, email }
- */
+const webhookSchema = z.object({
+  url: z.string().url("Invalid webhook URL"),
+});
+
 router.post("/signup", async (req, res) => {
   const validation = signupSchema.safeParse(req.body);
   if (!validation.success) {
@@ -47,7 +46,6 @@ router.post("/signup", async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     if (error.code === "23505") {
-      // Unique violation
       if (error.detail.includes("username")) {
         return res.status(409).json({ error: "Username already exists" });
       }
@@ -60,10 +58,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-/**
- * POST /api/dashboard/login
- * Body: { username, password }
- */
 router.post("/login", async (req, res) => {
   const validation = loginSchema.safeParse(req.body);
   if (!validation.success) {
@@ -73,7 +67,6 @@ router.post("/login", async (req, res) => {
   const { username, password } = validation.data;
 
   try {
-    // 1. Find admin by username
     const result = await pool.query(
       "SELECT * FROM admins WHERE username = $1",
       [username],
@@ -85,14 +78,12 @@ router.post("/login", async (req, res) => {
 
     const admin = result.rows[0];
 
-    // 2. Verify password
     const isMatch = await bcrypt.compare(password, admin.password_hash);
 
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 3. Success (Using a mock token for now)
     res.json({
       id: admin.id,
       username: admin.username,
@@ -108,9 +99,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/**
- * GET /api/dashboard/stats
- */
 router.get("/stats", async (req, res) => {
   const { adminId } = req.query;
   if (!adminId) {
@@ -145,9 +133,6 @@ router.get("/stats", async (req, res) => {
   }
 });
 
-/**
- * GET /api/dashboard/users
- */
 router.get("/users", async (req, res) => {
   const { adminId } = req.query;
   if (!adminId) {
@@ -166,9 +151,6 @@ router.get("/users", async (req, res) => {
   }
 });
 
-/**
- * DELETE /api/dashboard/users/:id
- */
 router.delete("/users/:id", async (req, res) => {
   const { id } = req.params;
   const { adminId } = req.query;
@@ -188,9 +170,6 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
-/**
- * GET /api/dashboard/logs
- */
 router.get("/logs", async (req, res) => {
   const { adminId } = req.query;
   if (!adminId) {
@@ -209,9 +188,6 @@ router.get("/logs", async (req, res) => {
   }
 });
 
-/**
- * GET /api/dashboard/api-keys
- */
 router.get("/api-keys", async (req, res) => {
   const { adminId } = req.query;
   if (!adminId) {
@@ -230,9 +206,6 @@ router.get("/api-keys", async (req, res) => {
   }
 });
 
-/**
- * POST /api/dashboard/api-keys
- */
 router.post("/api-keys", async (req, res) => {
   const validation = apiKeySchema.safeParse(req.body);
   if (!validation.success) {
@@ -259,9 +232,6 @@ router.post("/api-keys", async (req, res) => {
   }
 });
 
-/**
- * DELETE /api/dashboard/api-keys/:id
- */
 router.delete("/api-keys/:id", async (req, res) => {
   const { id } = req.params;
   const { adminId } = req.query;
@@ -282,9 +252,70 @@ router.delete("/api-keys/:id", async (req, res) => {
   }
 });
 
-/**
- * GET /api/dashboard/billing/:adminId
- */
+router.get("/webhooks", async (req, res) => {
+  const { adminId } = req.query;
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT id, url, secret, is_active as "isActive", created_at as "createdAt" FROM webhooks WHERE admin_id = $1 ORDER BY created_at DESC',
+      [adminId],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Webhooks fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch webhooks." });
+  }
+});
+
+router.post("/webhooks", async (req, res) => {
+  const validation = webhookSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+
+  const { url } = validation.data;
+  const { adminId } = req.body;
+
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
+  try {
+    const secret = `whsec_${Math.random().toString(36).substr(2, 24)}`;
+    const result = await pool.query(
+      'INSERT INTO webhooks (admin_id, url, secret) VALUES ($1, $2, $3) RETURNING id, url, secret, is_active as "isActive", created_at as "createdAt"',
+      [adminId, url, secret],
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Webhook creation error:", error);
+    res.status(500).json({ error: "Failed to create webhook." });
+  }
+});
+
+router.delete("/webhooks/:id", async (req, res) => {
+  const { id } = req.params;
+  const { adminId } = req.query;
+
+  if (!adminId) {
+    return res.status(400).json({ error: "adminId is required" });
+  }
+
+  try {
+    await pool.query("DELETE FROM webhooks WHERE id = $1 AND admin_id = $2", [
+      id,
+      adminId,
+    ]);
+    res.status(204).send();
+  } catch (error) {
+    console.error("Webhook delete error:", error);
+    res.status(500).json({ error: "Failed to delete webhook." });
+  }
+});
+
 router.get("/billing/:adminId", async (req, res) => {
   const { adminId } = req.params;
   try {
@@ -302,9 +333,6 @@ router.get("/billing/:adminId", async (req, res) => {
   }
 });
 
-/**
- * POST /api/dashboard/billing/upgrade
- */
 router.post("/billing/upgrade", async (req, res) => {
   const { adminId } = req.body;
   try {
