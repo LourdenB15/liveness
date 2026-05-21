@@ -105,7 +105,8 @@ export function LivenessChecker() {
       setProgress(progress);
     });
 
-    sdk.on("success", async ({ descriptor }) => {
+    sdk.on("success", async (result) => {
+      const { descriptor } = result;
       setCurrentChallenge(null);
 
       if (apiConfigRef.current.apiKey) {
@@ -118,8 +119,8 @@ export function LivenessChecker() {
 
           const body =
             mode === MODE.ENROLL
-              ? { name: userNameRef.current || "User", descriptor }
-              : { descriptor };
+              ? { name: userNameRef.current || "User", ...result }
+              : result;
 
           const response = await fetch(endpoint, {
             method: "POST",
@@ -222,6 +223,10 @@ export function LivenessChecker() {
     setMatchScore(null);
     setCurrentChallenge(null);
     setUiState(UI_STATE.CHECKING);
+
+    // Generate a new session token for this attempt
+    const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
+    sdkRef.current.config.sessionToken = sessionToken;
 
     try {
       await sdkRef.current.start(videoRef.current, canvasRef.current);

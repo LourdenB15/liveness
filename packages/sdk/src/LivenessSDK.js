@@ -52,6 +52,11 @@ export class LivenessSDK {
   }
 
   async load() {
+    if (typeof WebAssembly !== "object") {
+      this._emit("error", new Error("WebAssembly is not supported in this browser."));
+      return;
+    }
+
     return new Promise((resolve, reject) => {
       try {
         const callbacks = {
@@ -67,8 +72,8 @@ export class LivenessSDK {
               distance,
             });
           },
-          onSuccess: (descriptor) => {
-            this._emit("success", { descriptor });
+          onSuccess: (result) => {
+            this._emit("success", result);
           },
           onFailure: (error) => {
             this._emit("failure", error);
@@ -93,6 +98,14 @@ export class LivenessSDK {
   async start(videoElement, canvasElement) {
     if (!this.engine) {
       throw new Error("SDK not loaded. Call load() first.");
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      this._emit("failure", {
+        code: "BROWSER_NOT_SUPPORTED",
+        message: "Your browser does not support camera access.",
+      });
+      return;
     }
 
     try {

@@ -77,3 +77,14 @@ export function calculateFaceSize(landmarks) {
 
   return width * height;
 }
+
+export function generateIntegrityHash(descriptor, sessionToken, timestamp) {
+  const data = JSON.stringify(descriptor) + sessionToken + timestamp;
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    const char = data.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return hash.toString(16);
+}

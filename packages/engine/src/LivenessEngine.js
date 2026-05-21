@@ -1,7 +1,12 @@
 // src/engine/LivenessEngine.js
 import { FaceMesh, FACEMESH_TESSELATION } from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
-import { calculateEAR, calculateFaceSize, calculateHeadTurnV2 } from "./utils";
+import {
+  calculateEAR,
+  calculateFaceSize,
+  calculateHeadTurnV2,
+  generateIntegrityHash,
+} from "./utils";
 
 const DEFAULT_CONFIG = {
   blinkEARThreshold: 0.25,
@@ -11,6 +16,7 @@ const DEFAULT_CONFIG = {
   minFaceSize: 0.2,
   maxFaceSize: 0.4,
   basePath: "",
+  sessionToken: null,
 };
 
 export class LivenessEngine {
@@ -290,9 +296,24 @@ export class LivenessEngine {
         }
         return predictionTensor;
       });
-      const descriptorArray = await normalizedTensor.data();
+      const descriptorArray = Array.from(await normalizedTensor.data());
       tf.dispose([faceTensor, predictionTensor, normalizedTensor]);
-      this.#callbacks.onSuccess(Array.from(descriptorArray));
+
+      const timestamp = Date.now();
+      const sessionToken = this.#config.sessionToken || "local-session";
+      const integrity = generateIntegrityHash(
+        descriptorArray,
+        sessionToken,
+        timestamp,
+      );
+
+      this.#callbacks.onSuccess({
+        descriptor: descriptorArray,
+        sessionToken,
+        timestamp,
+        challenges: this.#challenges,
+        integrity,
+      });
     } catch (error) {
       console.error("Face recognition failed:", error);
       this.#failChallenge({
