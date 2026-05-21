@@ -1,4 +1,6 @@
 // src/engine/utils.js
+import * as tf from "@tensorflow/tfjs";
+
 const EYE_INDICES = {
   left: [362, 385, 387, 263, 373, 380],
   right: [33, 160, 158, 133, 153, 144],
@@ -76,6 +78,39 @@ export function calculateFaceSize(landmarks) {
   const height = yMax - yMin;
 
   return width * height;
+}
+
+export function calculateDepthVariance(landmarks) {
+  if (!landmarks || landmarks.length === 0) return 0;
+
+  const xs = landmarks.map((l) => l.x);
+  const faceWidth = Math.max(...xs) - Math.min(...xs);
+  if (faceWidth < 0.01) return 0;
+
+  const zs = landmarks.map((l) => l.z / faceWidth);
+  const meanZ = zs.reduce((sum, z) => sum + z, 0) / zs.length;
+  const variance =
+    zs.reduce((sum, z) => sum + Math.pow(z - meanZ, 2), 0) / zs.length;
+
+  return variance;
+}
+
+export async function calculateLaplacianVariance(imageTensor) {
+  return tf.tidy(() => {
+    const grayscale =
+      imageTensor.shape[3] === 3
+        ? tf.image.rgbToGrayscale(imageTensor)
+        : imageTensor;
+
+    const kernel = tf.tensor4d([0, 1, 0, 1, -4, 1, 0, 1, 0], [3, 3, 1, 1]);
+
+    const laplacian = tf.conv2d(grayscale, kernel, 1, "valid");
+
+    const mean = laplacian.mean();
+    const variance = laplacian.sub(mean).square().mean();
+
+    return variance.dataSync()[0];
+  });
 }
 
 export function generateIntegrityHash(descriptor, sessionToken, timestamp) {

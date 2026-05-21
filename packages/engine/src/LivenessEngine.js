@@ -2,9 +2,11 @@
 import { FaceMesh, FACEMESH_TESSELATION } from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
 import {
+  calculateDepthVariance,
   calculateEAR,
   calculateFaceSize,
   calculateHeadTurnV2,
+  calculateLaplacianVariance,
   generateIntegrityHash,
 } from "./utils";
 
@@ -17,6 +19,8 @@ const DEFAULT_CONFIG = {
   maxFaceSize: 0.4,
   basePath: "",
   sessionToken: null,
+  minDepthVariance: 0.0015,
+  minLaplacianVariance: 0.003,
 };
 
 export class LivenessEngine {
@@ -288,6 +292,26 @@ export class LivenessEngine {
     try {
       const inputSize = this.#recognitionModel.inputs[0].shape.slice(1, 3);
       const faceTensor = this.#getFaceTensor(inputSize, this.#lastLandmarks);
+
+      const depthVariance = calculateDepthVariance(this.#lastLandmarks);
+      const laplacianVariance = await calculateLaplacianVariance(faceTensor);
+
+      if (depthVariance < this.#config.minDepthVariance) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "SPOOF_DETECTED",
+          message: "Flat surface detected (Possible photo/screen spoof).",
+        });
+      }
+
+      if (laplacianVariance < this.#config.minLaplacianVariance) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "SPOOF_DETECTED",
+          message: "Low texture detail detected (Possible re-broadcast/print).",
+        });
+      }
+
       const predictionTensor = this.#recognitionModel.predict(faceTensor);
       const normalizedTensor = tf.tidy(() => {
         const norm = predictionTensor.norm();
@@ -313,6 +337,10 @@ export class LivenessEngine {
         timestamp,
         challenges: this.#challenges,
         integrity,
+        antiSpoofing: {
+          depthVariance,
+          laplacianVariance,
+        },
       });
     } catch (error) {
       console.error("Face recognition failed:", error);
