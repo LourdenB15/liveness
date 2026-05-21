@@ -1,5 +1,7 @@
 import { LivenessConfig } from "@liveness/engine";
 
+export { LivenessConfig };
+
 export class LivenessSDK {
   constructor(config?: LivenessConfig);
   on(event: string, callback: Function): this;

@@ -7,6 +7,9 @@ import {
   calculateFaceSize,
   calculateHeadTurnV2,
   calculateLaplacianVariance,
+  calculateFFTSpectrum,
+  calculateBrightness,
+  checkOcclusion,
   generateIntegrityHash,
 } from "./utils";
 
@@ -21,6 +24,9 @@ const DEFAULT_CONFIG = {
   sessionToken: null,
   minDepthVariance: 0.0015,
   minLaplacianVariance: 0.003,
+  minBrightness: 50,
+  maxBrightness: 240,
+  maxFFTPeak: 20.0,
 };
 
 export class LivenessEngine {
@@ -128,13 +134,9 @@ export class LivenessEngine {
 
   #generateChallenges() {
     const challenges = ["WAITING", "BLINK"];
-
-    if (Math.random() > 0.5) {
-      challenges.push("TURN_LEFT", "TURN_RIGHT");
-    } else {
-      challenges.push("TURN_RIGHT", "TURN_LEFT");
-    }
-
+    const pool = ["TURN_LEFT", "TURN_RIGHT"];
+    const shuffled = pool.sort(() => Math.random() - 0.5);
+    challenges.push(...shuffled);
     return challenges;
   }
 
@@ -293,8 +295,43 @@ export class LivenessEngine {
       const inputSize = this.#recognitionModel.inputs[0].shape.slice(1, 3);
       const faceTensor = this.#getFaceTensor(inputSize, this.#lastLandmarks);
 
+      const brightness = calculateBrightness(faceTensor);
+      const occlusionDetected = checkOcclusion(this.#lastLandmarks);
       const depthVariance = calculateDepthVariance(this.#lastLandmarks);
       const laplacianVariance = await calculateLaplacianVariance(faceTensor);
+      const fftPeak = await calculateFFTSpectrum(faceTensor);
+
+      if (brightness < this.#config.minBrightness) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "POOR_LIGHTING",
+          message: "Environment is too dark. Please move to a brighter area.",
+        });
+      }
+
+      if (brightness > this.#config.maxBrightness) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "POOR_LIGHTING",
+          message: "Environment is too bright (Glare detected). Please adjust lighting.",
+        });
+      }
+
+      if (occlusionDetected) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "OCCLUSION_DETECTED",
+          message: "Face is partially covered. Please remove any masks or obstructions.",
+        });
+      }
+
+      if (fftPeak > this.#config.maxFFTPeak) {
+        tf.dispose(faceTensor);
+        return this.#failChallenge({
+          code: "SPOOF_DETECTED",
+          message: "Digital screen pattern detected (Moiré interference).",
+        });
+      }
 
       if (depthVariance < this.#config.minDepthVariance) {
         tf.dispose(faceTensor);
@@ -340,6 +377,9 @@ export class LivenessEngine {
         antiSpoofing: {
           depthVariance,
           laplacianVariance,
+          brightness,
+          occlusionDetected,
+          fftPeak,
         },
       });
     } catch (error) {

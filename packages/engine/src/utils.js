@@ -113,6 +113,48 @@ export async function calculateLaplacianVariance(imageTensor) {
   });
 }
 
+export async function calculateFFTSpectrum(imageTensor) {
+  return tf.tidy(() => {
+    const grayscale = tf.image.rgbToGrayscale(imageTensor).squeeze([0, 3]);
+    const normalized = grayscale.sub(grayscale.mean());
+
+    const fft = tf.spectral.rfft(normalized);
+    const magnitude = fft.abs();
+
+    const mean = magnitude.mean();
+    const max = magnitude.max();
+
+    return max.div(mean).dataSync()[0];
+  });
+}
+
+export function calculateBrightness(imageTensor) {
+  return tf.tidy(() => {
+    const mean = imageTensor.mean();
+    return mean.dataSync()[0];
+  });
+}
+
+export function checkOcclusion(landmarks) {
+  if (!landmarks || landmarks.length < 468) return true;
+
+  const leftIndices = EYE_INDICES.left;
+  const rightIndices = EYE_INDICES.right;
+
+  const leftWidth = euclideanDistance(
+    landmarks[leftIndices[0]],
+    landmarks[leftIndices[3]],
+  );
+  const rightWidth = euclideanDistance(
+    landmarks[rightIndices[0]],
+    landmarks[rightIndices[3]],
+  );
+
+  if (leftWidth < 0.01 || rightWidth < 0.01) return true;
+
+  return false;
+}
+
 export function generateIntegrityHash(descriptor, sessionToken, timestamp) {
   const data = JSON.stringify(descriptor) + sessionToken + timestamp;
   let hash = 0;

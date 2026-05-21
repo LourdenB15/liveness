@@ -1,9 +1,13 @@
 // src/engine/utils.test.js
 import { describe, expect, it } from "vitest";
+import * as tf from "@tensorflow/tfjs";
 import {
+  calculateBrightness,
   calculateCosineSimilarity,
   calculateEAR,
+  calculateFFTSpectrum,
   calculateHeadTurnV2,
+  checkOcclusion,
 } from "./utils";
 
 const p = (x, y, z = 0) => ({ x, y, z });
@@ -92,6 +96,51 @@ describe("Liveness Algorithms", () => {
 
       const ratio = calculateHeadTurnV2(landmarks);
       expect(ratio).toBeGreaterThan(0);
+    });
+  });
+
+  describe("calculateBrightness", () => {
+    it("should calculate the mean brightness of a tensor", () => {
+      const img = tf.tensor4d([0.1, 0.2, 0.3, 0.4], [1, 2, 2, 1]);
+      const brightness = calculateBrightness(img);
+      expect(brightness).toBeCloseTo(0.25);
+      img.dispose();
+    });
+  });
+
+  describe("checkOcclusion", () => {
+    it("should return true if landmarks are missing", () => {
+      expect(checkOcclusion([])).toBe(true);
+      expect(checkOcclusion(Array(100).fill(p(0, 0)))).toBe(true);
+    });
+
+    it("should return false for fully visible face landmarks", () => {
+      const landmarks = Array(468).fill(p(0, 0, 0));
+      landmarks[362] = p(0, 0);
+      landmarks[263] = p(1, 0);
+      landmarks[33] = p(5, 0);
+      landmarks[133] = p(6, 0);
+
+      expect(checkOcclusion(landmarks)).toBe(false);
+    });
+
+    it("should return true if eyes are too close/collapsed (occlusion)", () => {
+      const landmarks = Array(468).fill(p(0, 0, 0));
+      landmarks[362] = p(0, 0);
+      landmarks[263] = p(0.005, 0);
+      landmarks[33] = p(5, 0);
+      landmarks[133] = p(6, 0);
+
+      expect(checkOcclusion(landmarks)).toBe(true);
+    });
+  });
+
+  describe("calculateFFTSpectrum", () => {
+    it("should return a number representing high-frequency energy", async () => {
+      const img = tf.tidy(() => tf.randomNormal([1, 4, 4, 3]));
+      const spectrum = await calculateFFTSpectrum(img);
+      expect(typeof spectrum).toBe("number");
+      img.dispose();
     });
   });
 });
