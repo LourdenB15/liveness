@@ -6,6 +6,7 @@ import {
   LogOut,
   ShieldCheck,
   Users,
+  Webhook,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../services/api";
@@ -25,6 +26,7 @@ export default function DashboardLayout({ children }) {
     { path: "/users", icon: Users, label: "Users" },
     { path: "/logs", icon: BarChart3, label: "Logs" },
     { path: "/api-keys", icon: Key, label: "API Keys" },
+    { path: "/webhooks", icon: Webhook, label: "Webhooks" },
     { path: "/billing", icon: CreditCard, label: "Billing" },
   ];
 

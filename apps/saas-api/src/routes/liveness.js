@@ -145,9 +145,23 @@ router.post(
         [req.adminId, name, formatVector(descriptor)],
       );
 
-      triggerWebhooks(req.adminId, "user.enrolled", result.rows[0]);
+      const enrolledUser = result.rows[0];
 
-      res.status(201).json(result.rows[0]);
+      await pool.query(
+        "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status, anti_spoofing) VALUES ($1, $2, $3, $4, $5, $6)",
+        [
+          req.adminId,
+          enrolledUser.id,
+          enrolledUser.name,
+          1.0,
+          "ENROLLED",
+          req.body.antiSpoofing ? JSON.stringify(req.body.antiSpoofing) : null,
+        ],
+      );
+
+      triggerWebhooks(req.adminId, "user.enrolled", enrolledUser);
+
+      res.status(201).json(enrolledUser);
     } catch (error) {
       console.error("Enrollment error:", error);
       res.status(500).json({ error: "Failed to enroll user." });
@@ -192,13 +206,14 @@ router.post(
       }
 
       await pool.query(
-        "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status, anti_spoofing) VALUES ($1, $2, $3, $4, $5, $6)",
         [
           req.adminId,
           match?.id || null,
           match?.name || "Unknown",
           match?.similarity || 0,
           status,
+          req.body.antiSpoofing ? JSON.stringify(req.body.antiSpoofing) : null,
         ],
       );
 

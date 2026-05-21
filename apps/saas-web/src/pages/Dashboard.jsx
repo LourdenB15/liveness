@@ -1,4 +1,4 @@
-import { Activity, Shield, Users, Zap } from "lucide-react";
+import { Activity as ActivityIcon, Shield, Users, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 
@@ -7,6 +7,7 @@ export default function Dashboard() {
     totalUsers: 0,
     totalChecks: 0,
     passRate: 0,
+    spoofAttempts: 0,
   });
 
   const [systemStatus, setSystemStatus] = useState({
@@ -16,7 +17,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const user = api.auth.getCurrentUser();
-    
+
     const fetchStats = async () => {
       if (!user) return;
       try {
@@ -46,7 +47,7 @@ export default function Dashboard() {
     fetchStats();
     fetchHealth();
 
-    const interval = setInterval(fetchHealth, 30000); // Check health every 30s
+    const interval = setInterval(fetchHealth, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -62,15 +63,23 @@ export default function Dashboard() {
     {
       label: "Verification Checks",
       value: stats.totalChecks.toLocaleString(),
-      icon: Activity,
+      icon: ActivityIcon,
       color: "text-indigo-600",
       bg: "bg-indigo-50",
       description: "Liveness requests processed",
     },
     {
+      label: "Spoof Attempts",
+      value: stats.spoofAttempts || 0,
+      icon: Shield,
+      color: "text-red-600",
+      bg: "bg-red-50",
+      description: "Blocked presentation attacks",
+    },
+    {
       label: "Pass Rate",
       value: `${stats.passRate.toFixed(1)}%`,
-      icon: Shield,
+      icon: Zap,
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       description: "Successful validation ratio",
@@ -96,7 +105,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <div
             key={card.label}

@@ -1,4 +1,11 @@
-import { Activity, Clock, ShieldAlert, ShieldCheck, User } from "lucide-react";
+import {
+  Activity,
+  Clock,
+  Fingerprint,
+  ShieldAlert,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 
@@ -40,6 +47,7 @@ export default function Logs() {
                 <th className="px-8 py-5">Result</th>
                 <th className="px-8 py-5">Subject</th>
                 <th className="px-8 py-5">Confidence</th>
+                <th className="px-8 py-5">Analysis</th>
                 <th className="px-8 py-5 text-right">Timestamp</th>
               </tr>
             </thead>
@@ -54,11 +62,15 @@ export default function Logs() {
                       className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1 text-[10px] font-black tracking-wider uppercase ${
                         log.status === "SUCCESS"
                           ? "bg-emerald-100 text-emerald-700"
-                          : "bg-red-100 text-red-700"
+                          : log.status === "ENROLLED"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-red-100 text-red-700"
                       }`}
                     >
                       {log.status === "SUCCESS" ? (
                         <ShieldCheck className="h-3 w-3" />
+                      ) : log.status === "ENROLLED" ? (
+                        <Fingerprint className="h-3 w-3" />
                       ) : (
                         <ShieldAlert className="h-3 w-3" />
                       )}
@@ -77,7 +89,7 @@ export default function Logs() {
                     <div className="flex items-center gap-3">
                       <div className="h-2 max-w-25 flex-1 overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className={`h-full rounded-full ${log.status === "SUCCESS" ? "bg-emerald-500" : "bg-red-500"}`}
+                          className={`h-full rounded-full ${log.status === "SUCCESS" || log.status === "ENROLLED" ? "bg-emerald-500" : "bg-red-500"}`}
                           style={{ width: `${log.score * 100}%` }}
                         />
                       </div>
@@ -85,6 +97,36 @@ export default function Logs() {
                         {(log.score * 100).toFixed(2)}%
                       </span>
                     </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    {log.antiSpoofing ? (
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-black tracking-wider text-slate-400 uppercase">
+                            Depth
+                          </span>
+                          <span
+                            className={`text-xs font-bold ${log.antiSpoofing.depthVariance < 0.0015 ? "text-red-600" : "text-emerald-600"}`}
+                          >
+                            {log.antiSpoofing.depthVariance.toFixed(4)}
+                          </span>
+                        </div>
+                        <div className="flex flex-col border-l border-slate-100 pl-4">
+                          <span className="text-[10px] font-black tracking-wider text-slate-400 uppercase">
+                            Texture
+                          </span>
+                          <span
+                            className={`text-xs font-bold ${log.antiSpoofing.laplacianVariance < 0.003 ? "text-red-600" : "text-emerald-600"}`}
+                          >
+                            {log.antiSpoofing.laplacianVariance.toFixed(4)}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-xs font-bold text-slate-300 italic">
+                        No metadata
+                      </span>
+                    )}
                   </td>
                   <td className="px-8 py-5 text-right font-semibold text-slate-500">
                     <div className="flex items-center justify-end gap-2">

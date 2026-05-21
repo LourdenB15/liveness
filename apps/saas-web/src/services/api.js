@@ -78,6 +78,19 @@ export const api = {
       }),
   },
 
+  webhooks: {
+    list: (adminId) => request(`/dashboard/webhooks?adminId=${adminId}`),
+    create: (url, adminId) =>
+      request("/dashboard/webhooks", {
+        method: "POST",
+        body: JSON.stringify({ url, adminId }),
+      }),
+    delete: (id, adminId) =>
+      request(`/dashboard/webhooks/${id}?adminId=${adminId}`, {
+        method: "DELETE",
+      }),
+  },
+
   stats: {
     getOverview: (adminId) => request(`/dashboard/stats?adminId=${adminId}`),
   },

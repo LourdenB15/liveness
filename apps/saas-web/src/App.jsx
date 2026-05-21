@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Logs from "./pages/Logs";
 import Signup from "./pages/Signup";
 import Users from "./pages/Users";
+import Webhooks from "./pages/Webhooks";
 import { api } from "./services/api";
 
 function ProtectedRoute({ children }) {
@@ -52,6 +53,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ApiKeys />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/webhooks"
+        element={
+          <ProtectedRoute>
+            <Webhooks />
           </ProtectedRoute>
         }
       />

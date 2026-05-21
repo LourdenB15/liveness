@@ -40,6 +40,7 @@ CREATE TABLE verification_logs (
     user_name VARCHAR(255),
     score FLOAT NOT NULL,
     status VARCHAR(50) NOT NULL,
+    anti_spoofing JSONB,
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

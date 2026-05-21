@@ -118,14 +118,20 @@ router.get("/stats", async (req, res) => {
       "SELECT COUNT(*) FROM verification_logs WHERE admin_id = $1 AND status = 'SUCCESS'",
       [adminId],
     );
+    const spoofLogsCount = await pool.query(
+      "SELECT COUNT(*) FROM verification_logs WHERE admin_id = $1 AND status = 'SPOOF_DETECTED'",
+      [adminId],
+    );
 
     const totalLogs = parseInt(logsCount.rows[0].count);
     const successLogs = parseInt(successLogsCount.rows[0].count);
+    const spoofLogs = parseInt(spoofLogsCount.rows[0].count);
 
     res.json({
       totalUsers: parseInt(usersCount.rows[0].count),
       totalChecks: totalLogs,
       passRate: totalLogs > 0 ? (successLogs / totalLogs) * 100 : 0,
+      spoofAttempts: spoofLogs,
     });
   } catch (error) {
     console.error("Stats error:", error);
@@ -178,7 +184,7 @@ router.get("/logs", async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT id, user_name as "userName", score, status, timestamp FROM verification_logs WHERE admin_id = $1 ORDER BY timestamp DESC LIMIT 100',
+      'SELECT id, user_name as "userName", score, status, anti_spoofing as "antiSpoofing", timestamp FROM verification_logs WHERE admin_id = $1 ORDER BY timestamp DESC LIMIT 100',
       [adminId],
     );
     res.json(result.rows);
