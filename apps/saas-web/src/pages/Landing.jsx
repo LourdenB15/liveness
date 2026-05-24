@@ -26,6 +26,12 @@ const Landing = () => {
             Pricing
           </a>
           <Link
+            to="/docs"
+            className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+          >
+            Docs
+          </Link>
+          <Link
             to="/login"
             className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
           >

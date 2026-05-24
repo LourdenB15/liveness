@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Book,
   CreditCard,
   Key,
   LayoutDashboard,
@@ -28,6 +29,7 @@ export default function DashboardLayout({ children }) {
     { path: "/api-keys", icon: Key, label: "API Keys" },
     { path: "/webhooks", icon: Webhook, label: "Webhooks" },
     { path: "/billing", icon: CreditCard, label: "Billing" },
+    { path: "/docs", icon: Book, label: "Documentation" },
   ];
 
   // Calculate initials
