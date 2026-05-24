@@ -1,9 +1,22 @@
 {
   "name": "@liveness/engine",
   "version": "1.0.0",
+  "description": "Core computer vision logic and mathematical utilities for Active Liveness Detection.",
+  "author": "John Paul Patigas <johnpaulpatigas@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnpaulpatigas/liveness.git"
+  },
   "type": "module",
   "main": "./src/LivenessEngine.js",
   "types": "./index.d.ts",
+  "files": [
+    "src",
+    "assets",
+    "index.d.ts",
+    "utils.d.ts"
+  ],
   "exports": {
     ".": {
       "types": "./index.d.ts",

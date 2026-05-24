@@ -1,17 +1,30 @@
 {
   "name": "@liveness/sdk",
   "version": "1.0.0",
+  "description": "An event-driven JavaScript SDK for browser-based Active Liveness Detection and Face Identity Verification.",
+  "author": "John Paul Patigas <johnpaulpatigas@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnpaulpatigas/liveness.git"
+  },
   "type": "module",
-  "main": "./src/LivenessSDK.js",
+  "main": "./dist/liveness-sdk.js",
+  "module": "./dist/liveness-sdk.js",
   "types": "./index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./src/LivenessSDK.js"
+      "import": "./dist/liveness-sdk.js",
+      "default": "./dist/liveness-sdk.js"
     }
   },
   "dependencies": {
-    "@liveness/engine": "*"
+    "@liveness/engine": "1.0.0"
   },
   "devDependencies": {
     "vite": "^7.1.2"
