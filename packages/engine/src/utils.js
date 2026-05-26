@@ -67,17 +67,13 @@ export function calculateCosineSimilarity(vecA, vecB) {
 export function calculateFaceSize(landmarks) {
   if (!landmarks || landmarks.length === 0) return 0;
 
-  const xs = landmarks.map((l) => l.x);
   const ys = landmarks.map((l) => l.y);
-  const xMin = Math.min(...xs);
-  const xMax = Math.max(...xs);
   const yMin = Math.min(...ys);
   const yMax = Math.max(...ys);
 
-  const width = xMax - xMin;
   const height = yMax - yMin;
 
-  return width * height;
+  return height;
 }
 
 export function calculateDepthVariance(landmarks) {

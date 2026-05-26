@@ -1,11 +1,12 @@
 // src/engine/utils.test.js
-import { describe, expect, it } from "vitest";
 import * as tf from "@tensorflow/tfjs";
+import { describe, expect, it } from "vitest";
 import {
   calculateBrightness,
   calculateCosineSimilarity,
   calculateEAR,
   calculateFFTSpectrum,
+  calculateFaceSize,
   calculateHeadTurnV2,
   checkOcclusion,
 } from "./utils";
@@ -141,6 +142,27 @@ describe("Liveness Algorithms", () => {
       const spectrum = await calculateFFTSpectrum(img);
       expect(typeof spectrum).toBe("number");
       img.dispose();
+    });
+  });
+
+  describe("calculateFaceSize", () => {
+    it("should return 0 if no landmarks", () => {
+      expect(calculateFaceSize([])).toBe(0);
+    });
+
+    it("should return height of the face", () => {
+      const landmarks = [
+        p(0.25, 0.25),
+        p(0.75, 0.25),
+        p(0.25, 0.75),
+        p(0.75, 0.75),
+      ];
+      expect(calculateFaceSize(landmarks)).toBeCloseTo(0.5);
+    });
+
+    it("should return height even for large coordinates", () => {
+      const landmarks = [p(100, 100), p(300, 100), p(100, 400), p(300, 400)];
+      expect(calculateFaceSize(landmarks)).toBe(300);
     });
   });
 });

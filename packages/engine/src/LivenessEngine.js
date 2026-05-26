@@ -2,13 +2,13 @@
 import { FaceMesh, FACEMESH_TESSELATION } from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
 import {
+  calculateBrightness,
   calculateDepthVariance,
   calculateEAR,
   calculateFaceSize,
+  calculateFFTSpectrum,
   calculateHeadTurnV2,
   calculateLaplacianVariance,
-  calculateFFTSpectrum,
-  calculateBrightness,
   checkOcclusion,
   generateIntegrityHash,
 } from "./utils";
@@ -18,8 +18,8 @@ const DEFAULT_CONFIG = {
   headTurnThreshold: 0.4,
   challengeTimeout: 5000,
   targetFPS: 30,
-  minFaceSize: 0.2,
-  maxFaceSize: 0.4,
+  minFaceSize: 0.3,
+  maxFaceSize: 0.6,
   basePath: "",
   sessionToken: null,
   minDepthVariance: 0.0015,
@@ -313,7 +313,8 @@ export class LivenessEngine {
         tf.dispose(faceTensor);
         return this.#failChallenge({
           code: "POOR_LIGHTING",
-          message: "Environment is too bright (Glare detected). Please adjust lighting.",
+          message:
+            "Environment is too bright (Glare detected). Please adjust lighting.",
         });
       }
 
@@ -321,7 +322,8 @@ export class LivenessEngine {
         tf.dispose(faceTensor);
         return this.#failChallenge({
           code: "OCCLUSION_DETECTED",
-          message: "Face is partially covered. Please remove any masks or obstructions.",
+          message:
+            "Face is partially covered. Please remove any masks or obstructions.",
         });
       }
 

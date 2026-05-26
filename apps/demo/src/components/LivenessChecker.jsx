@@ -315,7 +315,7 @@ export function LivenessChecker() {
         />
         <canvas
           ref={canvasRef}
-          className="pointer-events-none absolute inset-0 h-full w-full"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         />
 
         <div className="absolute top-4 right-0 left-0 z-10 flex justify-center px-4">
