@@ -26,7 +26,7 @@ const DEFAULT_CONFIG = {
   minLaplacianVariance: 0.003,
   minBrightness: -0.8,
   maxBrightness: 0.9,
-  maxFFTPeak: 20.0,
+  maxFFTPeak: 50.0,
 };
 
 export class LivenessEngine {
