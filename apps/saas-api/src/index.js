@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "x-api-key"],
+    allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
   }),
 );
 app.use(express.json({ limit: "1mb" }));
