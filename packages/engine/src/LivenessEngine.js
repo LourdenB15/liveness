@@ -24,8 +24,8 @@ const DEFAULT_CONFIG = {
   sessionToken: null,
   minDepthVariance: 0.0015,
   minLaplacianVariance: 0.003,
-  minBrightness: 50,
-  maxBrightness: 240,
+  minBrightness: -0.8,
+  maxBrightness: 0.9,
   maxFFTPeak: 20.0,
 };
 

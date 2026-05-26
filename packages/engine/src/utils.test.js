@@ -102,9 +102,9 @@ describe("Liveness Algorithms", () => {
 
   describe("calculateBrightness", () => {
     it("should calculate the mean brightness of a tensor", () => {
-      const img = tf.tensor4d([0.1, 0.2, 0.3, 0.4], [1, 2, 2, 1]);
+      const img = tf.tensor4d([-0.9, -0.85, -0.8, -0.75], [1, 2, 2, 1]);
       const brightness = calculateBrightness(img);
-      expect(brightness).toBeCloseTo(0.25);
+      expect(brightness).toBeCloseTo(-0.825);
       img.dispose();
     });
   });
