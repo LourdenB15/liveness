@@ -1,5 +1,5 @@
 // src/engine/LivenessEngine.js
-import { FaceMesh, FACEMESH_TESSELATION } from "@mediapipe/face_mesh";
+import * as mpFaceMesh from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
 import {
   calculateBrightness,
@@ -12,6 +12,10 @@ import {
   checkOcclusion,
   generateIntegrityHash,
 } from "./utils";
+
+const FaceMesh = mpFaceMesh.FaceMesh || mpFaceMesh.default.FaceMesh;
+const FACEMESH_TESSELATION =
+  mpFaceMesh.FACEMESH_TESSELATION || mpFaceMesh.default.FACEMESH_TESSELATION;
 
 const DEFAULT_CONFIG = {
   blinkEARThreshold: 0.25,
