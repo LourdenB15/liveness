@@ -105,8 +105,8 @@ export function LivenessChecker() {
       setProgress(progress);
     });
 
-    sdk.on("success", async (result) => {
-      const { descriptor } = result;
+    sdk.on("success", async (livenessResult) => {
+      const { descriptor } = livenessResult;
       setCurrentChallenge(null);
 
       if (apiConfigRef.current.apiKey) {
@@ -119,8 +119,8 @@ export function LivenessChecker() {
 
           const body =
             mode === MODE.ENROLL
-              ? { name: userNameRef.current || "User", ...result }
-              : result;
+              ? { name: userNameRef.current || "User", ...livenessResult }
+              : livenessResult;
 
           const response = await fetch(endpoint, {
             method: "POST",
@@ -136,21 +136,21 @@ export function LivenessChecker() {
             throw new Error(error.error || "API Request failed");
           }
 
-          const result = await response.json();
+          const cloudResult = await response.json();
 
           if (mode === MODE.ENROLL) {
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
-              `Cloud Identity Enrolled Successfully for ${result.name}!`,
+              `Cloud Identity Enrolled Successfully for ${cloudResult.name}!`,
             );
             setUserName("");
           } else {
-            setMatchScore(result.match?.similarity || 0);
+            setMatchScore(cloudResult.match?.similarity || 0);
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
-              result.verified
-                ? `Identity Verified! Welcome, ${result.match.name}.`
-                : "Identity Mismatch!",
+              cloudResult.verified
+                ? `Identity Verified: ${cloudResult.match?.name}`
+                : "Identity Could Not Be Verified",
             );
           }
         } catch (err) {
