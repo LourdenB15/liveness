@@ -2,6 +2,7 @@ import {
   Activity,
   Clock,
   Fingerprint,
+  Search,
   ShieldAlert,
   ShieldCheck,
   User,
@@ -11,6 +12,8 @@ import { api } from "../services/api";
 
 export default function Logs() {
   const [logs, setLogs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
     fetchLogs();
@@ -25,15 +28,49 @@ export default function Logs() {
     }
   };
 
+  const filteredLogs = logs.filter((log) => {
+    const matchesSearch = (log.userName || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "ALL" || log.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 duration-500">
-      <div>
-        <h1 className="text-3xl font-black tracking-tight text-slate-900">
-          Audit Logs
-        </h1>
-        <p className="mt-1 font-medium text-slate-500">
-          Detailed history of verification requests
-        </p>
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900">
+            Audit Logs
+          </h1>
+          <p className="mt-1 font-medium text-slate-500">
+            Detailed history of verification requests
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-sm">
+          <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search by subject name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-5 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="w-full sm:w-48 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="SUCCESS">Success</option>
+          <option value="FAILURE">Failure</option>
+          <option value="ENROLLED">Enrolled</option>
+        </select>
       </div>
 
       <div className="overflow-hidden rounded-4xl border border-slate-100 bg-white shadow-sm">
@@ -49,7 +86,7 @@ export default function Logs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {logs.map((log) => (
+              {filteredLogs.map((log) => (
                 <tr
                   key={log.id}
                   className="group transition-colors hover:bg-slate-50/50"
@@ -138,9 +175,9 @@ export default function Logs() {
                   </td>
                 </tr>
               ))}
-              {logs.length === 0 && (
+              {logs.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-8 py-16 text-center">
+                  <td colSpan="5" className="px-8 py-16 text-center">
                     <div className="flex flex-col items-center">
                       <Activity className="mb-4 h-12 w-12 text-slate-100" />
                       <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
@@ -149,7 +186,18 @@ export default function Logs() {
                     </div>
                   </td>
                 </tr>
-              )}
+              ) : filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-8 py-16 text-center">
+                    <div className="flex flex-col items-center">
+                      <Activity className="mb-4 h-12 w-12 text-slate-100" />
+                      <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
+                        No matching logs found
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
