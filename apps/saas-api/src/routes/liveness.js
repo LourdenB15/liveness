@@ -148,6 +148,7 @@ const enrollSchema = z.object({
 
 const verifySchema = z.object({
   ...commonPayload,
+  threshold: z.number().min(0).max(1).optional(),
 });
 
 const validateIntegrity = (req, res, next) => {
@@ -228,7 +229,8 @@ router.post(
       return res.status(400).json({ error: validation.error.issues[0].message });
     }
 
-    const { descriptor } = validation.data;
+    const { descriptor, threshold } = validation.data;
+    const similarityThreshold = threshold !== undefined ? threshold : 0.8;
 
     try {
       const queryText = `
@@ -248,7 +250,7 @@ router.post(
 
       if (result.rows.length > 0) {
         match = result.rows[0];
-        if (match.similarity > 0.8) {
+        if (match.similarity > similarityThreshold) {
           status = "SUCCESS";
         }
       }

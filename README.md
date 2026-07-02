@@ -99,13 +99,23 @@ Use the following commands from the root directory to start the services:
 
 ## Webhook Security
 
-All webhook payloads are signed with **HMAC-SHA256**. Verify the `x-liveness-signature` header.
+All webhook payloads are signed with **HMAC-SHA256**. To prevent formatting or key-ordering issues, verify the `x-liveness-signature` header using the raw request body buffer:
 
 ```javascript
 const expected = crypto
   .createHmac("sha256", WEBHOOK_SECRET)
-  .update(JSON.stringify(req.body))
+  .update(req.rawBody) // Use raw request body buffer
   .digest("hex");
+```
+
+To capture `req.rawBody` in an Express application:
+
+```javascript
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 ```
 
 ## Error Codes
