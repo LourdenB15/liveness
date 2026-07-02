@@ -267,6 +267,32 @@ const CloudUsageContent = () => (
             </p>
           </li>
         </ul>
+        <p className="mb-4 text-slate-600">
+          To verify incoming webhook payloads and avoid formatting issues, use the raw request body buffer:
+        </p>
+        <CodeBlock
+          language="javascript"
+          title="Webhook Signature Verification (Node.js/Express)"
+          code={`const crypto = require("crypto");
+
+app.post("/webhooks/liveness", (req, res) => {
+  const signature = req.headers["x-liveness-signature"];
+  const secret = process.env.WEBHOOK_SECRET;
+
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(req.rawBody) // Verify using the raw body buffer
+    .digest("hex");
+
+  if (signature !== expected) {
+    return res.status(401).send("Invalid signature");
+  }
+
+  // Handle verified payload
+  const { event, data } = req.body;
+  res.status(200).send("Verified!");
+});`}
+        />
       </div>
 
       <div>
