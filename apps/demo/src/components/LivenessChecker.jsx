@@ -30,6 +30,25 @@ export function LivenessChecker() {
   const [currentChallenge, setCurrentChallenge] = useState(null);
   const [distanceHint, setDistanceHint] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [selectedChallenges, setSelectedChallenges] = useState([
+    "WAITING",
+    "BLINK",
+    "TURN_LEFT",
+    "TURN_RIGHT",
+  ]);
+
+  const toggleChallenge = (type) => {
+    setSelectedChallenges((prev) => {
+      if (prev.includes(type)) {
+        if (prev.length === 1) return prev;
+        return prev.filter((c) => c !== type);
+      } else {
+        const order = ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"];
+        const next = [...prev, type];
+        return order.filter((c) => next.includes(c));
+      }
+    });
+  };
 
   const [apiConfig, setApiConfig] = useState(() => {
     const saved = localStorage.getItem("cloud_api_config");
@@ -227,6 +246,7 @@ export function LivenessChecker() {
     // Generate a new session token for this attempt
     const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
     sdkRef.current.config.sessionToken = sessionToken;
+    sdkRef.current.config.challenges = selectedChallenges;
 
     try {
       await sdkRef.current.start(videoRef.current, canvasRef.current);
@@ -303,6 +323,39 @@ export function LivenessChecker() {
             onChange={(e) => setUserName(e.target.value)}
             className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+        </div>
+      )}
+
+      {uiState === UI_STATE.READY_TO_START && (
+        <div className="mb-6 w-full max-w-sm rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h4 className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
+            Active Challenges Sequence
+          </h4>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: "WAITING", label: "Center Face" },
+              { id: "BLINK", label: "Eye Blink" },
+              { id: "TURN_LEFT", label: "Turn Left" },
+              { id: "TURN_RIGHT", label: "Turn Right" },
+            ].map((ch) => (
+              <label
+                key={ch.id}
+                className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 text-xs font-bold transition-all ${
+                  selectedChallenges.includes(ch.id)
+                    ? "border-blue-200 bg-blue-50 text-blue-700"
+                    : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                }`}
+              >
+                <span>{ch.label}</span>
+                <input
+                  type="checkbox"
+                  checked={selectedChallenges.includes(ch.id)}
+                  onChange={() => toggleChallenge(ch.id)}
+                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                />
+              </label>
+            ))}
+          </div>
         </div>
       )}
 
