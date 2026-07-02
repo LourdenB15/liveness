@@ -297,6 +297,18 @@ router.post("/webhooks", authenticateToken, async (req, res) => {
   const adminId = req.user.id;
 
   try {
+    const adminCheck = await pool.query(
+      'SELECT subscription_tier as "subscriptionTier" FROM admins WHERE id = $1',
+      [adminId],
+    );
+    const tier = adminCheck.rows[0]?.subscriptionTier || "free";
+
+    if (tier === "free") {
+      return res.status(403).json({
+        error: "Webhook integration is a Pro feature. Please upgrade to Pro to create webhooks.",
+      });
+    }
+
     const secret = `whsec_${Math.random().toString(36).substr(2, 24)}`;
     const result = await pool.query(
       'INSERT INTO webhooks (admin_id, url, secret) VALUES ($1, $2, $3) RETURNING id, url, secret, is_active as "isActive", created_at as "createdAt"',
