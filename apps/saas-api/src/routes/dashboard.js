@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
@@ -195,7 +196,7 @@ router.get("/api-keys", authenticateToken, async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT id, name, key_hash as "key", created_at as "createdAt" FROM api_keys WHERE admin_id = $1 ORDER BY created_at DESC',
+      'SELECT id, name, masked_key as "key", created_at as "createdAt" FROM api_keys WHERE admin_id = $1 ORDER BY created_at DESC',
       [adminId],
     );
     res.json(result.rows);
@@ -215,12 +216,21 @@ router.post("/api-keys", authenticateToken, async (req, res) => {
   const adminId = req.user.id;
 
   try {
-    const mockKey = `live_pk_mock_${Math.random().toString(36).substr(2, 16)}`;
+    const rawKey = `live_pk_${crypto.randomBytes(24).toString("hex")}`;
+    const hash = crypto.createHash("sha256").update(rawKey).digest("hex");
+    const maskedKey = `live_pk_••••${rawKey.slice(-4)}`;
+
     const result = await pool.query(
-      'INSERT INTO api_keys (admin_id, name, key_hash) VALUES ($1, $2, $3) RETURNING id, name, key_hash as "key", created_at as "createdAt"',
-      [adminId, name, mockKey],
+      'INSERT INTO api_keys (admin_id, name, key_hash, masked_key) VALUES ($1, $2, $3, $4) RETURNING id, name, created_at as "createdAt"',
+      [adminId, name, hash, maskedKey],
     );
-    res.status(201).json(result.rows[0]);
+    
+    const newKeyRecord = result.rows[0];
+    res.status(201).json({
+      ...newKeyRecord,
+      key: rawKey,
+      isNew: true,
+    });
   } catch (error) {
     console.error("API key creation error:", error);
     res.status(500).json({ error: "Failed to create API key." });

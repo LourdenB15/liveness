@@ -63,9 +63,10 @@ const authenticateApiKey = async (req, res, next) => {
   }
 
   try {
+    const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
     const result = await pool.query(
       "SELECT admin_id FROM api_keys WHERE key_hash = $1",
-      [apiKey],
+      [hash],
     );
 
     if (result.rows.length === 0) {

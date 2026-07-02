@@ -13,6 +13,7 @@ export default function ApiKeys() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState("");
   const [copiedId, setCopiedId] = useState(null);
+  const [showKeyModal, setShowKeyModal] = useState(null);
 
   useEffect(() => {
     fetchKeys();
@@ -37,9 +38,10 @@ export default function ApiKeys() {
     }
 
     try {
-      await api.apiKeys.create(newKeyName);
+      const createdKey = await api.apiKeys.create(newKeyName);
       setNewKeyName("");
       setIsCreating(false);
+      setShowKeyModal(createdKey);
       fetchKeys();
     } catch (err) {
       setError(err.message);
@@ -238,6 +240,61 @@ export default function ApiKeys() {
           </p>
         </div>
       </div>
+
+      {showKeyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md">
+          <div className="w-full max-w-xl animate-in zoom-in-95 rounded-[2.5rem] border border-slate-100 bg-white p-10 shadow-2xl duration-200">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-100 text-blue-600">
+              <Key className="h-8 w-8" />
+            </div>
+            
+            <h3 className="text-2xl font-black text-slate-900">
+              API Key Generated
+            </h3>
+            <p className="mt-2 text-sm font-medium text-slate-500">
+              Your new key for <strong className="text-slate-700">{showKeyModal.name}</strong> has been issued.
+            </p>
+
+            <div className="mt-6 flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 font-mono text-sm font-bold text-slate-800">
+              <span className="truncate select-all">{showKeyModal.key}</span>
+              <button
+                onClick={() => copyToClipboard(showKeyModal.key, "modal")}
+                className={`flex shrink-0 items-center justify-center rounded-xl px-4 py-2 text-xs font-bold transition-all active:scale-95 ${
+                  copiedId === "modal"
+                    ? "bg-emerald-100 text-emerald-600"
+                    : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
+                }`}
+              >
+                {copiedId === "modal" ? (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="mt-6 flex items-start gap-4 rounded-2xl border border-amber-100 bg-amber-50 p-5">
+              <AlertCircle className="h-5 w-5 shrink-0 text-amber-600" />
+              <p className="text-xs font-semibold leading-relaxed text-amber-800/80">
+                Make sure to copy your API key now. You won't be able to see it again for security reasons.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowKeyModal(null)}
+              className="mt-8 w-full rounded-2xl bg-slate-900 py-4 text-sm font-black text-white hover:bg-slate-800 transition-colors"
+            >
+              I have saved this key
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
