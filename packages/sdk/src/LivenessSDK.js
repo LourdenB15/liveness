@@ -20,6 +20,7 @@ export class LivenessSDK {
       TURN_LEFT: "Slowly turn your head to your left.",
       TURN_RIGHT: "Slowly turn your head to your right.",
       PROCESSING: "Processing...",
+      ...config.instructions,
     };
   }
 

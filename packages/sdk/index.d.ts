@@ -13,6 +13,13 @@ export interface LivenessConfig {
   minDepthVariance?: number;
   minLaplacianVariance?: number;
   challenges?: string[];
+  instructions?: {
+    WAITING?: string;
+    BLINK?: string;
+    TURN_LEFT?: string;
+    TURN_RIGHT?: string;
+    PROCESSING?: string;
+  };
 }
 
 export interface LivenessResult {
