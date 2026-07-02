@@ -36,6 +36,7 @@ export interface LivenessConfig {
   sessionToken?: string;
   minDepthVariance?: number;
   minLaplacianVariance?: number;
+  challenges?: string[];
 }
 
 export class LivenessEngine {

@@ -31,6 +31,7 @@ const DEFAULT_CONFIG = {
   minBrightness: -0.8,
   maxBrightness: 0.9,
   maxFFTPeak: 50.0,
+  challenges: null,
 };
 
 export class LivenessEngine {
@@ -137,6 +138,15 @@ export class LivenessEngine {
   }
 
   #generateChallenges() {
+    if (this.#config.challenges && Array.isArray(this.#config.challenges)) {
+      const validChallenges = ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"];
+      const filtered = this.#config.challenges.filter((c) =>
+        validChallenges.includes(c),
+      );
+      if (filtered.length > 0) {
+        return filtered;
+      }
+    }
     const challenges = ["WAITING", "BLINK"];
     const pool = ["TURN_LEFT", "TURN_RIGHT"];
     const shuffled = pool.sort(() => Math.random() - 0.5);
