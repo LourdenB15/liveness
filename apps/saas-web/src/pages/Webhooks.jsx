@@ -13,9 +13,11 @@ export default function Webhooks() {
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState("");
   const [copiedId, setCopiedId] = useState(null);
+  const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     fetchWebhooks();
+    fetchLogs();
   }, []);
 
   const fetchWebhooks = async () => {
@@ -24,6 +26,15 @@ export default function Webhooks() {
       setWebhooks(data);
     } catch (error) {
       console.error("Failed to fetch webhooks", error);
+    }
+  };
+
+  const fetchLogs = async () => {
+    try {
+      const data = await api.webhooks.logs();
+      setLogs(data);
+    } catch (error) {
+      console.error("Failed to fetch webhook logs", error);
     }
   };
 
@@ -41,6 +52,7 @@ export default function Webhooks() {
       setNewUrl("");
       setIsCreating(false);
       fetchWebhooks();
+      fetchLogs();
     } catch (err) {
       setError(err.message);
     }
@@ -55,6 +67,7 @@ export default function Webhooks() {
       try {
         await api.webhooks.delete(id);
         fetchWebhooks();
+        fetchLogs();
       } catch (err) {
         console.error("Failed to delete webhook", err);
       }
@@ -232,6 +245,81 @@ export default function Webhooks() {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-black tracking-tight text-slate-900">
+            Delivery Attempts
+          </h2>
+          <p className="text-sm font-medium text-slate-500">
+            Real-time webhook invocation history for your endpoints
+          </p>
+        </div>
+
+        <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="bg-slate-50/50 text-[10px] font-black tracking-[0.15em] text-slate-400 uppercase">
+                  <th className="px-10 py-6">Event</th>
+                  <th className="px-10 py-6">Endpoint</th>
+                  <th className="px-10 py-6">Status</th>
+                  <th className="px-10 py-6">Latency</th>
+                  <th className="px-10 py-6">Time</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {logs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="group transition-colors hover:bg-slate-50/30"
+                  >
+                    <td className="px-10 py-6 font-mono text-xs font-bold text-slate-700">
+                      {log.event}
+                    </td>
+                    <td className="px-10 py-6 font-medium text-slate-500 truncate max-w-xs">
+                      {log.url}
+                    </td>
+                    <td className="px-10 py-6">
+                      {log.statusCode ? (
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                            log.statusCode >= 200 && log.statusCode < 300
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                              : "bg-red-50 text-red-700 border border-red-100"
+                          }`}
+                        >
+                          {log.statusCode}
+                        </span>
+                      ) : (
+                        <span
+                          className="inline-flex items-center rounded-full bg-red-50 border border-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700"
+                          title={log.errorMessage}
+                        >
+                          Error
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-10 py-6 font-bold text-slate-500">
+                      {log.latencyMs ? `${log.latencyMs}ms` : "-"}
+                    </td>
+                    <td className="px-10 py-6 font-medium text-slate-400 text-xs">
+                      {new Date(log.timestamp).toLocaleTimeString()}
+                    </td>
+                  </tr>
+                ))}
+                {logs.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="px-10 py-12 text-center text-slate-400 font-bold text-xs">
+                      No webhook deliveries yet
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

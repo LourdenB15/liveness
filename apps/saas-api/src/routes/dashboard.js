@@ -306,6 +306,21 @@ router.delete("/webhooks/:id", authenticateToken, async (req, res) => {
   }
 });
 
+router.get("/webhooks/logs", authenticateToken, async (req, res) => {
+  const adminId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      'SELECT id, event, url, status_code as "statusCode", response_body as "responseBody", error_message as "errorMessage", latency_ms as "latencyMs", timestamp FROM webhook_logs WHERE admin_id = $1 ORDER BY timestamp DESC LIMIT 100',
+      [adminId],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Webhook logs fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch webhook logs." });
+  }
+});
+
 router.get("/billing", authenticateToken, async (req, res) => {
   const adminId = req.user.id;
   try {

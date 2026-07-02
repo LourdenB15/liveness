@@ -93,6 +93,7 @@ export const api = {
       request(`/dashboard/webhooks/${id}`, {
         method: "DELETE",
       }),
+    logs: () => request("/dashboard/webhooks/logs"),
   },
 
   stats: {

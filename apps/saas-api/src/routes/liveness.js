@@ -21,7 +21,7 @@ const generateIntegrityHash = (descriptor, sessionToken, timestamp) => {
 const triggerWebhooks = async (adminId, event, data) => {
   try {
     const webhooks = await pool.query(
-      "SELECT url, secret FROM webhooks WHERE admin_id = $1 AND is_active = TRUE",
+      "SELECT id, url, secret FROM webhooks WHERE admin_id = $1 AND is_active = TRUE",
       [adminId],
     );
 
@@ -37,6 +37,8 @@ const triggerWebhooks = async (adminId, event, data) => {
         .update(payload)
         .digest("hex");
 
+      const startTime = Date.now();
+
       fetch(webhook.url, {
         method: "POST",
         headers: {
@@ -44,9 +46,32 @@ const triggerWebhooks = async (adminId, event, data) => {
           "x-liveness-signature": signature,
         },
         body: payload,
-      }).catch((err) =>
-        console.error(`Webhook delivery failed to ${webhook.url}:`, err.message),
-      );
+      })
+        .then(async (res) => {
+          const latency = Date.now() - startTime;
+          let bodyText = "";
+          try {
+            bodyText = await res.text();
+            if (bodyText.length > 2000) {
+              bodyText = bodyText.substring(0, 2000) + "... (truncated)";
+            }
+          } catch (err) {
+            void err;
+          }
+
+          await pool.query(
+            "INSERT INTO webhook_logs (webhook_id, admin_id, event, url, status_code, response_body, latency_ms) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+            [webhook.id, adminId, event, webhook.url, res.status, bodyText, latency],
+          );
+        })
+        .catch(async (err) => {
+          const latency = Date.now() - startTime;
+          await pool.query(
+            "INSERT INTO webhook_logs (webhook_id, admin_id, event, url, error_message, latency_ms) VALUES ($1, $2, $3, $4, $5, $6)",
+            [webhook.id, adminId, event, webhook.url, err.message, latency],
+          );
+          console.error(`Webhook delivery failed to ${webhook.url}:`, err.message);
+        });
     }
   } catch (err) {
     console.error("Failed to trigger webhooks:", err);

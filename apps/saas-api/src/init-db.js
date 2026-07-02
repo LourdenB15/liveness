@@ -6,6 +6,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Drop existing tables to ensure UUID migration (destructive)
+DROP TABLE IF EXISTS webhook_logs CASCADE;
 DROP TABLE IF EXISTS verification_logs CASCADE;
 DROP TABLE IF EXISTS api_keys CASCADE;
 DROP TABLE IF EXISTS webhooks CASCADE;
@@ -63,6 +64,20 @@ CREATE TABLE webhooks (
     secret VARCHAR(255) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Webhook logs table
+CREATE TABLE webhook_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    webhook_id UUID REFERENCES webhooks(id) ON DELETE CASCADE,
+    admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
+    event VARCHAR(100) NOT NULL,
+    url TEXT NOT NULL,
+    status_code INTEGER,
+    response_body TEXT,
+    error_message TEXT,
+    latency_ms INTEGER,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index for faster vector similarity search
