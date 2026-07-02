@@ -216,6 +216,25 @@ router.post("/api-keys", authenticateToken, async (req, res) => {
   const adminId = req.user.id;
 
   try {
+    const adminCheck = await pool.query(
+      'SELECT subscription_tier as "subscriptionTier" FROM admins WHERE id = $1',
+      [adminId],
+    );
+    const tier = adminCheck.rows[0]?.subscriptionTier || "free";
+
+    if (tier === "free") {
+      const keysCheck = await pool.query(
+        "SELECT COUNT(*) FROM api_keys WHERE admin_id = $1",
+        [adminId],
+      );
+      const keyCount = parseInt(keysCheck.rows[0].count);
+      if (keyCount >= 1) {
+        return res.status(403).json({
+          error: "Starter plan is limited to 1 API key. Please upgrade to Pro to issue more keys.",
+        });
+      }
+    }
+
     const rawKey = `live_pk_${crypto.randomBytes(24).toString("hex")}`;
     const hash = crypto.createHash("sha256").update(rawKey).digest("hex");
     const maskedKey = `live_pk_••••${rawKey.slice(-4)}`;

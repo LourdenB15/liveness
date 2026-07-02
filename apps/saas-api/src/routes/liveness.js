@@ -90,7 +90,10 @@ const authenticateApiKey = async (req, res, next) => {
   try {
     const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
     const result = await pool.query(
-      "SELECT admin_id FROM api_keys WHERE key_hash = $1",
+      `SELECT k.admin_id as "adminId", a.subscription_tier as "subscriptionTier"
+       FROM api_keys k
+       JOIN admins a ON k.admin_id = a.id
+       WHERE k.key_hash = $1`,
       [hash],
     );
 
@@ -98,7 +101,26 @@ const authenticateApiKey = async (req, res, next) => {
       return res.status(401).json({ error: "Invalid API key" });
     }
 
-    req.adminId = result.rows[0].admin_id;
+    const { adminId, subscriptionTier } = result.rows[0];
+    req.adminId = adminId;
+
+    if (subscriptionTier === "free") {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const countResult = await pool.query(
+        "SELECT COUNT(*) FROM verification_logs WHERE admin_id = $1 AND timestamp >= $2",
+        [adminId, startOfMonth],
+      );
+      const count = parseInt(countResult.rows[0].count);
+      if (count >= 1000) {
+        return res.status(402).json({
+          error: "Verification monthly quota exceeded. Starter plan is limited to 1,000 checks per month. Please upgrade to Pro.",
+        });
+      }
+    }
+
     next();
   } catch (error) {
     console.error("API Key Auth Error:", error);
