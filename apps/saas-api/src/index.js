@@ -8,9 +8,13 @@ import livenessRoutes from "./routes/liveness.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : "*";
+
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
   }),

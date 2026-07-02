@@ -284,7 +284,7 @@ const CloudUsageContent = () => (
                 POST
               </span>
               <code className="text-lg font-bold text-slate-900">
-                /v1/enroll
+                /api/liveness/enroll
               </code>
             </div>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
@@ -313,7 +313,7 @@ const CloudUsageContent = () => (
                 POST
               </span>
               <code className="text-lg font-bold text-slate-900">
-                /v1/verify
+                /api/liveness/verify
               </code>
             </div>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
