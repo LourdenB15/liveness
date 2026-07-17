@@ -15,7 +15,8 @@
     "build:saas": "npm run build -w apps/saas-web",
     "build:sdk": "npm run build -w packages/sdk",
     "lint": "eslint .",
-    "test": "npm run test -w packages/engine"
+    "test": "npm run test -w packages/engine",
+    "postinstall": "node scripts/patch-mediapipe.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
