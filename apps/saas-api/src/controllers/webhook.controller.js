@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 import * as webhookServices from "../services/webhook.service.js";
 
 const webhookSchema = z.object({

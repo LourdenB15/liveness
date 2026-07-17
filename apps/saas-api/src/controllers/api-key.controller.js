@@ -1,5 +1,5 @@
 import * as apiKeyServices from "../services/api-key.service.js";
-import {z} from "zod";
+import { z } from "zod";
 
 const apiKeySchema = z.object({
   name: z.string().min(1, "Key name is required"),

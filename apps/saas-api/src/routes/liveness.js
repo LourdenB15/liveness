@@ -61,7 +61,15 @@ const triggerWebhooks = async (adminId, event, data) => {
 
           await pool.query(
             "INSERT INTO webhook_logs (webhook_id, admin_id, event, url, status_code, response_body, latency_ms) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-            [webhook.id, adminId, event, webhook.url, res.status, bodyText, latency],
+            [
+              webhook.id,
+              adminId,
+              event,
+              webhook.url,
+              res.status,
+              bodyText,
+              latency,
+            ],
           );
         })
         .catch(async (err) => {
@@ -70,7 +78,10 @@ const triggerWebhooks = async (adminId, event, data) => {
             "INSERT INTO webhook_logs (webhook_id, admin_id, event, url, error_message, latency_ms) VALUES ($1, $2, $3, $4, $5, $6)",
             [webhook.id, adminId, event, webhook.url, err.message, latency],
           );
-          console.error(`Webhook delivery failed to ${webhook.url}:`, err.message);
+          console.error(
+            `Webhook delivery failed to ${webhook.url}:`,
+            err.message,
+          );
         });
     }
   } catch (err) {
@@ -116,7 +127,8 @@ const authenticateApiKey = async (req, res, next) => {
       const count = parseInt(countResult.rows[0].count);
       if (count >= 1000) {
         return res.status(402).json({
-          error: "Verification monthly quota exceeded. Starter plan is limited to 1,000 checks per month. Please upgrade to Pro.",
+          error:
+            "Verification monthly quota exceeded. Starter plan is limited to 1,000 checks per month. Please upgrade to Pro.",
         });
       }
     }
@@ -183,7 +195,9 @@ router.post(
     const validation = enrollSchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(400).json({ error: validation.error.issues[0].message });
+      return res
+        .status(400)
+        .json({ error: validation.error.issues[0].message });
     }
 
     const { name, descriptor } = validation.data;
@@ -226,7 +240,9 @@ router.post(
     const validation = verifySchema.safeParse(req.body);
 
     if (!validation.success) {
-      return res.status(400).json({ error: validation.error.issues[0].message });
+      return res
+        .status(400)
+        .json({ error: validation.error.issues[0].message });
     }
 
     const { descriptor, threshold } = validation.data;
@@ -269,7 +285,9 @@ router.post(
 
       const responsePayload = {
         verified: status === "SUCCESS",
-        match: match ? { name: match.name, similarity: match.similarity } : null,
+        match: match
+          ? { name: match.name, similarity: match.similarity }
+          : null,
         status,
       };
 

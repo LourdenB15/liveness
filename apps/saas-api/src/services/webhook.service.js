@@ -1,5 +1,5 @@
-import * as webhooksRepository from "../repositories/webhook.repository.js";
 import { getSubscriptionTier } from "../repositories/api-key.repository.js";
+import * as webhooksRepository from "../repositories/webhook.repository.js";
 
 export async function getWebhooks(adminId) {
   const webhooks = await webhooksRepository.getWebhooks(adminId);
@@ -25,8 +25,7 @@ export async function deleteWebhook(id, adminId) {
   return deleteCount;
 }
 
-export async function getWebhookLogs(adminId){
-    const webhookLogs = await webhooksRepository.getWebhookLogs(adminId);
-    return webhookLogs;
+export async function getWebhookLogs(adminId) {
+  const webhookLogs = await webhooksRepository.getWebhookLogs(adminId);
+  return webhookLogs;
 }
-

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import authRoutes from "./auth.routes.js";
-import statsRoutes from "./stats.routes.js";
 import apiKeyRoutes from "./api-key.routes.js";
+import authRoutes from "./auth.routes.js";
 import billingRoutes from "./billing.routes.js";
 import logRoutes from "./log.routes.js";
-import webhookRoutes from "./webhook.routes.js";
+import statsRoutes from "./stats.routes.js";
 import userRoutes from "./user.routes.js";
+import webhookRoutes from "./webhook.routes.js";
 
 const router = Router();
 

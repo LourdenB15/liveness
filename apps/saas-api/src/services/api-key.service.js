@@ -37,5 +37,3 @@ export async function deleteApiKey(id, adminId) {
   const deleteCount = await apiKeyRepositories.deleteApiKey(id, adminId);
   return deleteCount;
 }
-
-

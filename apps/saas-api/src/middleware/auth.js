@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
+const JWT_SECRET =
+  process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
 
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];

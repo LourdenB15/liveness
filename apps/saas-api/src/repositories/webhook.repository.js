@@ -16,13 +16,12 @@ export async function addWebhook(adminId, url, secret) {
   return result.rows[0];
 }
 
-
-export async function deleteWebhook(id, adminId){
-      const result = await pool.query("DELETE FROM webhooks WHERE id = $1 AND admin_id = $2", [
-      id,
-      adminId,
-    ]);
-    return result.rowCount;
+export async function deleteWebhook(id, adminId) {
+  const result = await pool.query(
+    "DELETE FROM webhooks WHERE id = $1 AND admin_id = $2",
+    [id, adminId],
+  );
+  return result.rowCount;
 }
 
 export async function getWebhookLogs(adminId) {

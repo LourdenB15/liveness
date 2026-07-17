@@ -1,7 +1,6 @@
 import { Router } from "express";
-
-import { authenticateToken } from "../middleware/auth.js";
 import * as webhooksController from "../controllers/webhook.controller.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = Router();
 

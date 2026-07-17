@@ -3,8 +3,12 @@ import * as statsRepositories from "../repositories/stats.repository.js";
 export async function getStats(adminId) {
   const totalUsers = parseInt(await statsRepositories.getUsersCount(adminId));
   const totalLogs = parseInt(await statsRepositories.getLogsCount(adminId));
-  const successLogs = parseInt(await statsRepositories.getSuccessLogsCount(adminId));
-  const spoofLogs = parseInt(await statsRepositories.getSpoofLogsCount(adminId));
+  const successLogs = parseInt(
+    await statsRepositories.getSuccessLogsCount(adminId),
+  );
+  const spoofLogs = parseInt(
+    await statsRepositories.getSpoofLogsCount(adminId),
+  );
 
   return {
     totalUsers,

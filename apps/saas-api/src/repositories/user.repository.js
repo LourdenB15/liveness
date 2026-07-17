@@ -8,7 +8,10 @@ export async function getUsers(adminId) {
   return result.rows;
 }
 
-export async function deleteUser(id, adminId){
-    const result = await pool.query("DELETE FROM users WHERE id = $1 AND admin_id = $2", [id, adminId]);
-    return result.rowCount;
+export async function deleteUser(id, adminId) {
+  const result = await pool.query(
+    "DELETE FROM users WHERE id = $1 AND admin_id = $2",
+    [id, adminId],
+  );
+  return result.rowCount;
 }

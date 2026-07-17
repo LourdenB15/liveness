@@ -2,7 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as authRepositories from "../repositories/auth.repository.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
+const JWT_SECRET =
+  process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
 
 export async function signup(username, password, firstName, lastName, email) {
   const saltRounds = 10;

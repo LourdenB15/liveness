@@ -15,10 +15,10 @@ export async function deleteUser(req, res) {
   const { id } = req.params;
   const adminId = req.user.id;
   try {
-    await userServices.deleteUser(id,adminId);
+    await userServices.deleteUser(id, adminId);
     return res.status(204).send();
   } catch (error) {
     console.error("User delete error:", error);
-    res.status(500).json({error: "Failed to delete user."});
+    res.status(500).json({ error: "Failed to delete user." });
   }
 }
