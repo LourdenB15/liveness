@@ -1,7 +1,24 @@
-import { BarChart3, CheckCircle2, Lock, ShieldCheck, Zap } from "lucide-react";
+import {
+  BarChart3,
+  Check,
+  CheckCircle2,
+  Copy,
+  Lock,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Landing = () => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("npm i @liveness/sdk");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900">
       {/* Navigation */}
@@ -72,6 +89,35 @@ const Landing = () => {
               View Demo
             </Link>
           </div>
+
+          <div className="mx-auto mt-10 max-w-sm rounded-xl border border-slate-200 bg-slate-950 p-2.5 shadow-md transition-all hover:border-slate-300 md:max-w-md">
+            <div className="flex items-center justify-between font-mono text-sm">
+              <div className="flex items-center space-x-2 pl-2 text-slate-400">
+                <span className="font-bold text-blue-500">$</span>
+                <span className="font-medium text-slate-200 select-all">
+                  npm install @liveness/sdk
+                </span>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="flex cursor-pointer items-center space-x-1.5 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+                title="Copy package installation command"
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 text-green-500" />
+                    <span className="text-green-500">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3.5 w-3.5" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
           <div className="mt-16 flex justify-center space-x-8 text-slate-400">
             <div className="flex items-center">
               <CheckCircle2 className="mr-2 h-5 w-5 text-green-500" /> No Credit
