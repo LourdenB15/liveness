@@ -115,9 +115,26 @@ export class LivenessSDK {
     });
   }
 
-  async start(videoElement, canvasElement) {
+  updateConfig(newConfig = {}) {
+    this.config = { ...this.config, ...newConfig };
+    if (newConfig.instructions) {
+      this.instructions = { ...this.instructions, ...newConfig.instructions };
+    }
+    if (this.engine) {
+      this.engine.updateConfig(newConfig);
+    }
+    return this;
+  }
+
+  async start(videoElement, canvasElement, options = {}) {
     if (!this.engine) {
       throw new Error("SDK not loaded. Call load() first.");
+    }
+
+    if (options && typeof options === "object" && Object.keys(options).length > 0) {
+      this.updateConfig(options);
+    } else if (this.engine) {
+      this.engine.updateConfig(this.config);
     }
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {

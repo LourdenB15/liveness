@@ -101,6 +101,10 @@ export class LivenessEngine {
     }
   }
 
+  updateConfig(newConfig = {}) {
+    this.#config = { ...this.#config, ...newConfig };
+  }
+
   start(videoElement, canvasCtx) {
     if (!this.#isReady)
       throw new Error("Engine not loaded. Call load() first.");

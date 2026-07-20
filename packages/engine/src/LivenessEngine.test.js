@@ -75,4 +75,26 @@ describe("LivenessEngine Custom Challenges", () => {
 
     engine.stop();
   });
+
+  it("should update challenge configurations dynamically via updateConfig", async () => {
+    const callbacks = {
+      onReady: vi.fn(),
+      onSuccess: vi.fn(),
+      onFailure: vi.fn(),
+      onChallengeChanged: vi.fn(),
+    };
+
+    const engine = new LivenessEngine(callbacks);
+    await engine.load();
+
+    engine.updateConfig({ challenges: ["TURN_RIGHT", "BLINK"] });
+
+    const mockVideo = { readyState: 4, play: vi.fn().mockResolvedValue() };
+    const mockCanvasCtx = { clearRect: vi.fn(), canvas: { width: 640, height: 480 } };
+
+    engine.start(mockVideo, mockCanvasCtx);
+
+    expect(callbacks.onChallengeChanged).toHaveBeenCalledWith("TURN_RIGHT");
+    engine.stop();
+  });
 });

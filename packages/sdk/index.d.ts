@@ -70,9 +70,11 @@ export class LivenessSDK {
   on(event: string, callback: Function): this;
   off(event: string, callback: Function): this;
   load(): Promise<void>;
+  updateConfig(config?: Partial<LivenessConfig>): this;
   start(
     videoElement: HTMLVideoElement,
     canvasElement: HTMLCanvasElement,
+    options?: Partial<LivenessConfig>,
   ): Promise<void>;
   stop(videoElement?: HTMLVideoElement): void;
 }
