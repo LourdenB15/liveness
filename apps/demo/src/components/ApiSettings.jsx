@@ -8,7 +8,7 @@ export function ApiSettings({ config, onSave }) {
   );
 
   const handleSave = () => {
-    onSave({ apiKey, apiUrl });
+    onSave({ apiKey: apiKey.trim(), apiUrl: apiUrl.trim() });
     setIsOpen(false);
   };
 
@@ -69,6 +69,11 @@ export function ApiSettings({ config, onSave }) {
                 placeholder="Enter your API Key"
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
+              {(apiKey.includes("•") || apiKey.includes("*")) && (
+                <p className="mt-1 text-[11px] font-semibold text-amber-600">
+                  Note: Masked keys cannot authenticate API requests. Please enter your full unmasked key.
+                </p>
+              )}
               <p className="mt-1 text-[10px] text-slate-400">
                 Key is stored locally in your browser.
               </p>

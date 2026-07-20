@@ -21,7 +21,7 @@ export async function createApiKey(name, adminId) {
   }
   const rawKey = `live_pk_${crypto.randomBytes(24).toString("hex")}`;
   const hash = crypto.createHash("sha256").update(rawKey).digest("hex");
-  const maskedKey = `live_pk_••••${rawKey.slice(-4)}`;
+  const maskedKey = `live_pk_****${rawKey.slice(-4)}`;
 
   const newKeyRecord = await apiKeyRepositories.addApiKey(
     adminId,

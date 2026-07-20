@@ -130,6 +130,18 @@ export function LivenessChecker() {
 
       if (apiConfigRef.current.apiKey) {
         try {
+          const apiKey = apiConfigRef.current.apiKey.trim();
+          if (/[\u0080-\uFFFF]/.test(apiKey) || apiKey.includes("•")) {
+            throw new Error(
+              "Invalid API Key: Contains masked bullet characters ('•') or non-ASCII characters. Please enter your full, unmasked API key.",
+            );
+          }
+          if (apiKey.includes("*")) {
+            throw new Error(
+              "Invalid API Key: Masked keys cannot be used to authenticate. Please copy and use your full API key.",
+            );
+          }
+
           setInstruction("Syncing with Cloud API...");
           const endpoint =
             mode === MODE.ENROLL
@@ -145,7 +157,7 @@ export function LivenessChecker() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "x-api-key": apiConfigRef.current.apiKey,
+              "x-api-key": apiKey,
             },
             body: JSON.stringify(body),
           });
