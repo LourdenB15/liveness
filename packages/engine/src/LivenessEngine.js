@@ -322,7 +322,10 @@ export class LivenessEngine {
         [targetH, targetW],
       );
 
-      return cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
+      const normalized = cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
+      const mean = normalized.mean();
+      const std = normalized.sub(mean).square().mean().sqrt().add(tf.scalar(1e-5));
+      return normalized.sub(mean).div(std);
     });
   }
 }

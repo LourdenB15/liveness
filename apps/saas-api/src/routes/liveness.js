@@ -246,7 +246,7 @@ router.post(
     }
 
     const { descriptor, threshold } = validation.data;
-    const similarityThreshold = threshold !== undefined ? threshold : 0.8;
+    const similarityThreshold = threshold !== undefined ? threshold : 0.65;
 
     try {
       const queryText = `

@@ -344,7 +344,7 @@ app.post("/webhooks/liveness", (req, res) => {
             </div>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Compares a fresh liveness result against your enrolled user
-              database. Returns a match if similarity exceeds <strong>0.8</strong>.
+              database. Returns a match if similarity exceeds <strong>0.65</strong>.
             </p>
             <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
               Response Schema
