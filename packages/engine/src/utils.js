@@ -117,8 +117,17 @@ export async function calculateFFTSpectrum(imageTensor) {
     const fft = tf.spectral.rfft(normalized);
     const magnitude = fft.abs();
 
-    const mean = magnitude.mean();
-    const max = magnitude.max();
+    // Squeeze out low frequency bins (first 15%) corresponding to natural facial contours and lighting,
+    // isolating high spatial frequency grid spikes characteristic of screen Moiré interference.
+    const numBins = magnitude.shape[1];
+    const startBin = Math.floor(numBins * 0.15);
+    const highFreqMagnitude = magnitude.slice([0, startBin], [-1, numBins - startBin]);
+
+    const mean = highFreqMagnitude.mean();
+    const max = highFreqMagnitude.max();
+
+    const meanVal = mean.dataSync()[0];
+    if (meanVal === 0) return 0;
 
     return max.div(mean).dataSync()[0];
   });
