@@ -17,10 +17,10 @@ const DEFAULT_CONFIG = {
   basePath: "",
   sessionToken: null,
   minDepthVariance: 0.0015,
-  minLaplacianVariance: 0.003,
-  minBrightness: -0.8,
-  maxBrightness: 0.9,
-  maxFFTPeak: 150.0,
+  minLaplacianVariance: 0.0005,
+  minBrightness: -0.92,
+  maxBrightness: 0.95,
+  maxFFTPeak: 180.0,
   challenges: null,
 };
 
@@ -251,9 +251,20 @@ export class LivenessEngine {
         return this.#failChallenge(validationResult.error);
       }
 
+      const standardizedTensor = tf.tidy(() => {
+        const mean = faceTensor.mean();
+        const std = faceTensor
+          .sub(mean)
+          .square()
+          .mean()
+          .sqrt()
+          .add(tf.scalar(1e-5));
+        return faceTensor.sub(mean).div(std);
+      });
+
       const descriptorArray =
-        await this.#featureExtractor.extractDescriptor(faceTensor);
-      tf.dispose(faceTensor);
+        await this.#featureExtractor.extractDescriptor(standardizedTensor);
+      tf.dispose([faceTensor, standardizedTensor]);
 
       const timestamp = Date.now();
       const sessionToken = this.#config.sessionToken || "local-session";
@@ -322,10 +333,7 @@ export class LivenessEngine {
         [targetH, targetW],
       );
 
-      const normalized = cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
-      const mean = normalized.mean();
-      const std = normalized.sub(mean).square().mean().sqrt().add(tf.scalar(1e-5));
-      return normalized.sub(mean).div(std);
+      return cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
     });
   }
 }

@@ -3,6 +3,7 @@ import { calculateEAR } from "../utils";
 
 export class BlinkChallenge extends BaseChallenge {
   #hasDetectedOpenEyes = false;
+  #maxEAR = 0;
 
   constructor() {
     super("BLINK");
@@ -10,6 +11,7 @@ export class BlinkChallenge extends BaseChallenge {
 
   reset() {
     this.#hasDetectedOpenEyes = false;
+    this.#maxEAR = 0;
   }
 
   evaluate(landmarks, config) {
@@ -17,13 +19,21 @@ export class BlinkChallenge extends BaseChallenge {
     const rightEAR = calculateEAR(landmarks, "right");
     const rawValue = Math.min(leftEAR, rightEAR);
 
-    const OPEN_THRESHOLD = 0.3;
-    if (rawValue > OPEN_THRESHOLD) {
+    if (rawValue > this.#maxEAR) {
+      this.#maxEAR = rawValue;
+    }
+
+    const OPEN_THRESHOLD = 0.2;
+    if (rawValue >= OPEN_THRESHOLD) {
       this.#hasDetectedOpenEyes = true;
     }
 
-    const passed =
-      this.#hasDetectedOpenEyes && rawValue < config.blinkEARThreshold;
+    const targetThreshold = config.blinkEARThreshold ?? 0.25;
+    const isBlinking =
+      rawValue < targetThreshold ||
+      (this.#maxEAR > 0.22 && rawValue < this.#maxEAR * 0.7);
+
+    const passed = this.#hasDetectedOpenEyes && isBlinking;
 
     return {
       passed,

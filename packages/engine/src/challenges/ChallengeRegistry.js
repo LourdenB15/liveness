@@ -46,27 +46,38 @@ export class ChallengeRegistry {
   }
 
   /**
-   * Resolve a sequence of challenges given optional config preferences.
+   * Resolve a randomized sequence of challenges given optional config preferences.
+   * If WAITING challenge is in the sequence, it remains as the initial face positioning step.
+   * All active challenges are randomly shuffled to prevent replay attacks.
    * @param {string[]|null} customChallenges
    * @returns {import("./BaseChallenge").BaseChallenge[]}
    */
   resolveSequence(customChallenges) {
     const validTypes = this.getRegisteredTypes();
+    let selectedTypes;
+
     if (Array.isArray(customChallenges)) {
       const filtered = customChallenges.filter((c) => validTypes.includes(c));
       if (filtered.length > 0) {
-        return filtered.map((type) => {
-          const strategy = this.get(type);
-          strategy.reset();
-          return strategy;
-        });
+        selectedTypes = filtered;
       }
     }
 
-    // Default sequence: WAITING, BLINK, randomized TURN_LEFT & TURN_RIGHT
-    const sequenceTypes = ["WAITING", "BLINK"];
-    const turnPool = ["TURN_LEFT", "TURN_RIGHT"].sort(() => Math.random() - 0.5);
-    sequenceTypes.push(...turnPool);
+    if (!selectedTypes) {
+      selectedTypes = validTypes;
+    }
+
+    const hasWaiting = selectedTypes.includes("WAITING");
+    const activeTypes = selectedTypes.filter((type) => type !== "WAITING");
+
+    // Fisher-Yates random shuffle for active challenges
+    const shuffledActive = [...activeTypes];
+    for (let i = shuffledActive.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledActive[i], shuffledActive[j]] = [shuffledActive[j], shuffledActive[i]];
+    }
+
+    const sequenceTypes = hasWaiting ? ["WAITING", ...shuffledActive] : shuffledActive;
 
     return sequenceTypes.map((type) => {
       const strategy = this.get(type);

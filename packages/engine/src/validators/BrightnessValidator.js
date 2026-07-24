@@ -9,7 +9,12 @@ export class BrightnessValidator extends BaseValidator {
   async validate(faceTensor, landmarks, config) {
     const brightness = calculateBrightness(faceTensor);
 
-    if (brightness < config.minBrightness) {
+    let minB = config.minBrightness ?? -0.92;
+    let maxB = config.maxBrightness ?? 0.95;
+    if (minB > 1) minB = (minB - 127.5) / 127.5;
+    if (maxB > 1) maxB = (maxB - 127.5) / 127.5;
+
+    if (brightness < minB) {
       return {
         valid: false,
         error: {
@@ -20,7 +25,7 @@ export class BrightnessValidator extends BaseValidator {
       };
     }
 
-    if (brightness > config.maxBrightness) {
+    if (brightness > maxB) {
       return {
         valid: false,
         error: {

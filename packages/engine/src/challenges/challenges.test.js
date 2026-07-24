@@ -34,14 +34,32 @@ describe("Challenge Strategies (SOLID SRP & OCP)", () => {
     expect(result.distance).toBeNull();
   });
 
-  it("ChallengeRegistry resolves custom and default challenge sequences", () => {
+  it("ChallengeRegistry resolves custom and default challenge sequences with randomization", () => {
     const registry = new ChallengeRegistry();
-    const sequence = registry.resolveSequence(["BLINK", "TURN_LEFT"]);
-    expect(sequence.map((s) => s.type)).toEqual(["BLINK", "TURN_LEFT"]);
 
+    // Custom sequence without WAITING should contain all elements in any order
+    const sequence = registry.resolveSequence(["BLINK", "TURN_LEFT"]);
+    expect(sequence.length).toBe(2);
+    const customTypes = sequence.map((s) => s.type);
+    expect(customTypes).toEqual(expect.arrayContaining(["BLINK", "TURN_LEFT"]));
+
+    // Default sequence should start with WAITING and contain all registered active challenges
     const defaultSequence = registry.resolveSequence(null);
     expect(defaultSequence.length).toBe(4);
     expect(defaultSequence[0].type).toBe("WAITING");
-    expect(defaultSequence[1].type).toBe("BLINK");
+    const activeTypes = defaultSequence.slice(1).map((s) => s.type);
+    expect(activeTypes).toEqual(expect.arrayContaining(["BLINK", "TURN_LEFT", "TURN_RIGHT"]));
+
+    // Verify randomization across multiple calls
+    let foundDifferentOrder = false;
+    const firstActiveOrder = registry.resolveSequence(null).slice(1).map((s) => s.type).join(",");
+    for (let i = 0; i < 20; i++) {
+      const nextActiveOrder = registry.resolveSequence(null).slice(1).map((s) => s.type).join(",");
+      if (nextActiveOrder !== firstActiveOrder) {
+        foundDifferentOrder = true;
+        break;
+      }
+    }
+    expect(foundDifferentOrder).toBe(true);
   });
 });

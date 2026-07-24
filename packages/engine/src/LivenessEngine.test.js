@@ -45,8 +45,8 @@ describe("LivenessEngine Custom Challenges", () => {
 
     engine.start(mockVideo, mockCanvasCtx);
 
-    // Initial challenge should be the first one from our custom list
-    expect(callbacks.onChallengeChanged).toHaveBeenCalledWith("BLINK");
+    // Initial challenge should be one from our custom list
+    expect(["BLINK", "TURN_LEFT"]).toContain(callbacks.onChallengeChanged.mock.calls[0][0]);
 
     engine.stop();
   });
@@ -94,7 +94,7 @@ describe("LivenessEngine Custom Challenges", () => {
 
     engine.start(mockVideo, mockCanvasCtx);
 
-    expect(callbacks.onChallengeChanged).toHaveBeenCalledWith("TURN_RIGHT");
+    expect(["TURN_RIGHT", "BLINK"]).toContain(callbacks.onChallengeChanged.mock.calls[0][0]);
     engine.stop();
   });
 });

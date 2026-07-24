@@ -99,11 +99,15 @@ export async function calculateLaplacianVariance(imageTensor) {
         : imageTensor;
 
     const kernel = tf.tensor4d([0, 1, 0, 1, -4, 1, 0, 1, 0], [3, 3, 1, 1]);
-
     const laplacian = tf.conv2d(grayscale, kernel, 1, "valid");
 
-    const mean = laplacian.mean();
-    const variance = laplacian.sub(mean).square().mean();
+    // Contrast normalization: normalize by local standard deviation
+    // ensuring texture detail measurement is invariant under low light, proper light, and natural light.
+    const std = grayscale.sub(grayscale.mean()).square().mean().sqrt().add(tf.scalar(1e-5));
+    const normalizedLaplacian = laplacian.div(std);
+
+    const mean = normalizedLaplacian.mean();
+    const variance = normalizedLaplacian.sub(mean).square().mean();
 
     return variance.dataSync()[0];
   });
@@ -117,19 +121,23 @@ export async function calculateFFTSpectrum(imageTensor) {
     const fft = tf.spectral.rfft(normalized);
     const magnitude = fft.abs();
 
-    // Squeeze out low frequency bins (first 15%) corresponding to natural facial contours and lighting,
-    // isolating high spatial frequency grid spikes characteristic of screen Moiré interference.
+    // Squeeze out low frequency bins (first 15%) corresponding to natural facial contours and lighting gradients
     const numBins = magnitude.shape[1];
     const startBin = Math.floor(numBins * 0.15);
     const highFreqMagnitude = magnitude.slice([0, startBin], [-1, numBins - startBin]);
 
     const mean = highFreqMagnitude.mean();
-    const max = highFreqMagnitude.max();
+
+    // Use top 5% percentile mean ratio instead of a single outlier max pixel peak,
+    // making Moiré screen detection robust against specular highlights from natural lighting.
+    const k = Math.max(1, Math.floor(highFreqMagnitude.size * 0.05));
+    const topKValues = tf.topk(highFreqMagnitude.flatten(), k).values;
+    const topKMean = topKValues.mean();
 
     const meanVal = mean.dataSync()[0];
     if (meanVal === 0) return 0;
 
-    return max.div(mean).dataSync()[0];
+    return topKMean.div(mean).dataSync()[0];
   });
 }
 
