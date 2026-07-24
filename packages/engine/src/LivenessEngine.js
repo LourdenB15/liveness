@@ -1,21 +1,11 @@
 // src/engine/LivenessEngine.js
-import * as mpFaceMesh from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
-import {
-  calculateBrightness,
-  calculateDepthVariance,
-  calculateEAR,
-  calculateFaceSize,
-  calculateFFTSpectrum,
-  calculateHeadTurnV2,
-  calculateLaplacianVariance,
-  checkOcclusion,
-  generateIntegrityHash,
-} from "./utils";
-
-const FaceMesh = mpFaceMesh.FaceMesh || mpFaceMesh.default.FaceMesh;
-const FACEMESH_TESSELATION =
-  mpFaceMesh.FACEMESH_TESSELATION || mpFaceMesh.default.FACEMESH_TESSELATION;
+import { generateIntegrityHash } from "./utils";
+import { ChallengeRegistry } from "./challenges/ChallengeRegistry";
+import { LivenessPipeline } from "./validators/LivenessPipeline";
+import { DebugOverlayRenderer } from "./rendering/DebugOverlayRenderer";
+import { MediaPipeFaceDetector } from "./providers/MediaPipeFaceDetector";
+import { MobileNetFeatureExtractor } from "./providers/MobileNetFeatureExtractor";
 
 const DEFAULT_CONFIG = {
   blinkEARThreshold: 0.25,
@@ -34,9 +24,20 @@ const DEFAULT_CONFIG = {
   challenges: null,
 };
 
+/**
+ * LivenessEngine orchestrates face detection, challenge validation, anti-spoofing, and feature extraction.
+ * Refactored using SOLID principles:
+ * - SRP: Delegates rendering, model execution, validation, and challenge strategies to dedicated modules.
+ * - OCP: Open to custom challenges (via ChallengeRegistry) and custom validators (via LivenessPipeline).
+ * - DIP: Depends on abstractions (faceDetector, featureExtractor, pipeline) which can be injected.
+ */
 export class LivenessEngine {
-  #faceMesh;
-  #recognitionModel;
+  #faceDetector;
+  #featureExtractor;
+  #challengeRegistry;
+  #pipeline;
+  #overlayRenderer;
+
   #callbacks;
   #config;
   #videoElement;
@@ -44,11 +45,10 @@ export class LivenessEngine {
   #isReady = false;
   #detectionLoopId = null;
   #isStopped = true;
-  #challenges = [];
+  #activeChallenges = [];
   #currentChallengeIndex = 0;
   #lastChallengeTime = 0;
   #isChallengeProcessing = false;
-  #hasDetectedOpenEyes = false;
   #lastFrameTime = 0;
   #lastLandmarks = null;
 
@@ -66,29 +66,26 @@ export class LivenessEngine {
     }
     this.#callbacks = callbacks;
     this.#config = { ...DEFAULT_CONFIG, ...config };
+
+    // Dependency Injection with sensible defaults (DIP & OCP)
+    this.#faceDetector =
+      config.faceDetector || new MediaPipeFaceDetector();
+    this.#featureExtractor =
+      config.featureExtractor || new MobileNetFeatureExtractor();
+    this.#challengeRegistry =
+      config.challengeRegistry || new ChallengeRegistry();
+    this.#pipeline = config.pipeline || new LivenessPipeline();
+    this.#overlayRenderer =
+      config.overlayRenderer || new DebugOverlayRenderer();
   }
 
   async load() {
     try {
       const { basePath } = this.#config;
-      const cleanBasePath = basePath.endsWith("/")
-        ? basePath.slice(0, -1)
-        : basePath;
 
-      this.#faceMesh = new FaceMesh({
-        locateFile: (file) => `${cleanBasePath}/face_mesh/${file}`,
-      });
-      this.#faceMesh.setOptions({
-        maxNumFaces: 1,
-        refineLandmarks: true,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
-      this.#faceMesh.onResults(this.#onFaceMeshResults.bind(this));
-
-      const modelUrl = `${cleanBasePath}/mobilenet-v2/model.json`;
-
-      this.#recognitionModel = await tf.loadGraphModel(modelUrl);
+      this.#faceDetector.onResults(this.#onFaceMeshResults.bind(this));
+      await this.#faceDetector.load(basePath);
+      await this.#featureExtractor.load(basePath);
 
       this.#isReady = true;
       this.#callbacks.onReady();
@@ -114,14 +111,18 @@ export class LivenessEngine {
     this.#isChallengeProcessing = false;
     this.#currentChallengeIndex = 0;
     this.#lastChallengeTime = Date.now();
-    this.#hasDetectedOpenEyes = false;
     this.#lastFrameTime = 0;
 
-    this.#challenges = this.#generateChallenges();
-
-    this.#callbacks.onChallengeChanged(
-      this.#challenges[this.#currentChallengeIndex],
+    this.#activeChallenges = this.#challengeRegistry.resolveSequence(
+      this.#config.challenges,
     );
+
+    if (this.#activeChallenges.length > 0) {
+      this.#callbacks.onChallengeChanged(
+        this.#activeChallenges[this.#currentChallengeIndex].type,
+      );
+    }
+
     if (this.#detectionLoopId) cancelAnimationFrame(this.#detectionLoopId);
     this.#detectionLoop();
   }
@@ -132,30 +133,7 @@ export class LivenessEngine {
       cancelAnimationFrame(this.#detectionLoopId);
       this.#detectionLoopId = null;
     }
-    if (this.#canvasCtx)
-      this.#canvasCtx.clearRect(
-        0,
-        0,
-        this.#canvasCtx.canvas.width,
-        this.#canvasCtx.canvas.height,
-      );
-  }
-
-  #generateChallenges() {
-    if (this.#config.challenges && Array.isArray(this.#config.challenges)) {
-      const validChallenges = ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"];
-      const filtered = this.#config.challenges.filter((c) =>
-        validChallenges.includes(c),
-      );
-      if (filtered.length > 0) {
-        return filtered;
-      }
-    }
-    const challenges = ["WAITING", "BLINK"];
-    const pool = ["TURN_LEFT", "TURN_RIGHT"];
-    const shuffled = pool.sort(() => Math.random() - 0.5);
-    challenges.push(...shuffled);
-    return challenges;
+    this.#overlayRenderer.clear(this.#canvasCtx);
   }
 
   #detectionLoop = async () => {
@@ -175,7 +153,7 @@ export class LivenessEngine {
 
     if (elapsed > fpsInterval) {
       this.#lastFrameTime = now - (elapsed % fpsInterval);
-      await this.#faceMesh.send({ image: this.#videoElement });
+      await this.#faceDetector.send(this.#videoElement);
     }
 
     this.#detectionLoopId = requestAnimationFrame(this.#detectionLoop);
@@ -183,11 +161,9 @@ export class LivenessEngine {
 
   #onFaceMeshResults = (results) => {
     if (this.#isStopped) return;
-    this.#drawDebugOverlay(results.multiFaceLandmarks);
+    this.#overlayRenderer.draw(this.#canvasCtx, results.multiFaceLandmarks);
     const faces = results.multiFaceLandmarks;
     if (!faces || faces.length === 0) {
-      this.#hasDetectedOpenEyes = false;
-
       if (
         Date.now() - this.#lastChallengeTime >
         this.#config.challengeTimeout
@@ -207,72 +183,25 @@ export class LivenessEngine {
   #processChallenge(landmarks) {
     if (this.#isChallengeProcessing) return;
 
-    const currentChallenge = this.#challenges[this.#currentChallengeIndex];
-    let challengePassed = false;
-    let progress = 0;
-    let rawValue;
-    let distance;
+    const currentStrategy = this.#activeChallenges[this.#currentChallengeIndex];
+    if (!currentStrategy) return;
 
-    switch (currentChallenge) {
-      case "WAITING": {
-        const faceSize = calculateFaceSize(landmarks);
-        if (faceSize < this.#config.minFaceSize) {
-          distance = "CLOSER";
-        } else if (faceSize > this.#config.maxFaceSize) {
-          distance = "FURTHER";
-        } else {
-          challengePassed = true;
-        }
-        this.#callbacks.onChallengeChanged(currentChallenge, distance);
-        break;
-      }
-      case "BLINK": {
-        const leftEAR = calculateEAR(landmarks, "left");
-        const rightEAR = calculateEAR(landmarks, "right");
-        rawValue = Math.min(leftEAR, rightEAR);
+    const evaluation = currentStrategy.evaluate(landmarks, this.#config);
 
-        const OPEN_THRESHOLD = 0.3;
-
-        if (rawValue > OPEN_THRESHOLD) {
-          this.#hasDetectedOpenEyes = true;
-        }
-
-        if (
-          this.#hasDetectedOpenEyes &&
-          rawValue < this.#config.blinkEARThreshold
-        ) {
-          challengePassed = true;
-        }
-        break;
-      }
-      case "TURN_LEFT": {
-        const turnRatio = calculateHeadTurnV2(landmarks);
-        rawValue = turnRatio;
-        if (turnRatio > this.#config.headTurnThreshold) {
-          challengePassed = true;
-          progress = 1;
-        } else {
-          progress = Math.max(0, turnRatio / this.#config.headTurnThreshold);
-        }
-        break;
-      }
-      case "TURN_RIGHT": {
-        const turnRatio = calculateHeadTurnV2(landmarks);
-        rawValue = turnRatio;
-        if (turnRatio < -this.#config.headTurnThreshold) {
-          challengePassed = true;
-          progress = 1;
-        } else {
-          progress = Math.max(0, turnRatio / -this.#config.headTurnThreshold);
-        }
-        break;
-      }
+    if (currentStrategy.type === "WAITING") {
+      this.#callbacks.onChallengeChanged(
+        currentStrategy.type,
+        evaluation.distance,
+      );
     }
 
-    const clampedProgress = Math.max(0, Math.min(progress, 1));
-    this.#callbacks.onProgress?.(clampedProgress, rawValue);
+    const clampedProgress = Math.max(
+      0,
+      Math.min(evaluation.progress ?? 0, 1),
+    );
+    this.#callbacks.onProgress?.(clampedProgress, evaluation.rawValue);
 
-    if (challengePassed) {
+    if (evaluation.passed) {
       this.#isChallengeProcessing = true;
       setTimeout(() => this.#moveToNextChallenge(), 300);
     } else if (
@@ -281,7 +210,7 @@ export class LivenessEngine {
     ) {
       this.#failChallenge({
         code: "CHALLENGE_TIMEOUT",
-        message: `Challenge timed out: ${currentChallenge}`,
+        message: `Challenge timed out: ${currentStrategy.type}`,
       });
     }
   }
@@ -293,15 +222,13 @@ export class LivenessEngine {
 
   #moveToNextChallenge() {
     this.#currentChallengeIndex++;
-    this.#hasDetectedOpenEyes = false;
-    if (this.#currentChallengeIndex >= this.#challenges.length) {
+    if (this.#currentChallengeIndex >= this.#activeChallenges.length) {
       this.#completeLiveness();
     } else {
       this.#lastChallengeTime = Date.now();
-      this.#callbacks.onChallengeChanged(
-        this.#challenges[this.#currentChallengeIndex],
-        null,
-      );
+      const nextStrategy = this.#activeChallenges[this.#currentChallengeIndex];
+      nextStrategy.reset();
+      this.#callbacks.onChallengeChanged(nextStrategy.type, null);
       this.#isChallengeProcessing = false;
     }
   }
@@ -310,75 +237,23 @@ export class LivenessEngine {
     this.stop();
     this.#callbacks.onChallengeChanged("PROCESSING");
     try {
-      const inputSize = this.#recognitionModel.inputs[0].shape.slice(1, 3);
+      const inputSize = this.#featureExtractor.getInputSize();
       const faceTensor = this.#getFaceTensor(inputSize, this.#lastLandmarks);
 
-      const brightness = calculateBrightness(faceTensor);
-      const occlusionDetected = checkOcclusion(this.#lastLandmarks);
-      const depthVariance = calculateDepthVariance(this.#lastLandmarks);
-      const laplacianVariance = await calculateLaplacianVariance(faceTensor);
-      const fftPeak = await calculateFFTSpectrum(faceTensor);
+      const validationResult = await this.#pipeline.execute(
+        faceTensor,
+        this.#lastLandmarks,
+        this.#config,
+      );
 
-      if (brightness < this.#config.minBrightness) {
+      if (!validationResult.passed) {
         tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "POOR_LIGHTING",
-          message: "Environment is too dark. Please move to a brighter area.",
-        });
+        return this.#failChallenge(validationResult.error);
       }
 
-      if (brightness > this.#config.maxBrightness) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "POOR_LIGHTING",
-          message:
-            "Environment is too bright (Glare detected). Please adjust lighting.",
-        });
-      }
-
-      if (occlusionDetected) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "OCCLUSION_DETECTED",
-          message:
-            "Face is partially covered. Please remove any masks or obstructions.",
-        });
-      }
-
-      if (fftPeak > this.#config.maxFFTPeak) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Digital screen pattern detected (Moiré interference).",
-        });
-      }
-
-      if (depthVariance < this.#config.minDepthVariance) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Flat surface detected (Possible photo/screen spoof).",
-        });
-      }
-
-      if (laplacianVariance < this.#config.minLaplacianVariance) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Low texture detail detected (Possible re-broadcast/print).",
-        });
-      }
-
-      const predictionTensor = this.#recognitionModel.predict(faceTensor);
-      const normalizedTensor = tf.tidy(() => {
-        const norm = predictionTensor.norm();
-        if (norm.dataSync()[0] > 1e-6) {
-          return predictionTensor.div(norm);
-        }
-        return predictionTensor;
-      });
-      const descriptorArray = Array.from(await normalizedTensor.data());
-      tf.dispose([faceTensor, predictionTensor, normalizedTensor]);
+      const descriptorArray =
+        await this.#featureExtractor.extractDescriptor(faceTensor);
+      tf.dispose(faceTensor);
 
       const timestamp = Date.now();
       const sessionToken = this.#config.sessionToken || "local-session";
@@ -392,15 +267,9 @@ export class LivenessEngine {
         descriptor: descriptorArray,
         sessionToken,
         timestamp,
-        challenges: this.#challenges,
+        challenges: this.#activeChallenges.map((c) => c.type),
         integrity,
-        antiSpoofing: {
-          depthVariance,
-          laplacianVariance,
-          brightness,
-          occlusionDetected,
-          fftPeak,
-        },
+        antiSpoofing: validationResult.antiSpoofing,
       });
     } catch (error) {
       console.error("Face recognition failed:", error);
@@ -455,27 +324,5 @@ export class LivenessEngine {
 
       return cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
     });
-  }
-
-  #drawDebugOverlay(landmarksArray) {
-    if (!this.#canvasCtx || !landmarksArray || landmarksArray.length === 0)
-      return;
-    const canvas = this.#canvasCtx.canvas;
-    this.#canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const landmarks = landmarksArray[0];
-    for (const [start, end] of FACEMESH_TESSELATION) {
-      const startPoint = landmarks[start];
-      const endPoint = landmarks[end];
-      this.#canvasCtx.beginPath();
-      const startX = (1 - startPoint.x) * canvas.width;
-      const startY = startPoint.y * canvas.height;
-      const endX = (1 - endPoint.x) * canvas.width;
-      const endY = endPoint.y * canvas.height;
-      this.#canvasCtx.moveTo(startX, startY);
-      this.#canvasCtx.lineTo(endX, endY);
-      this.#canvasCtx.strokeStyle = "rgba(0, 255, 0, 0.3)";
-      this.#canvasCtx.lineWidth = 1;
-      this.#canvasCtx.stroke();
-    }
   }
 }
