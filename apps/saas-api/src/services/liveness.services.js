@@ -64,3 +64,49 @@ export async function verifyUser(
   triggerWebhooks(adminId, "liveness.verified", responsePayload);
   return responsePayload;
 }
+
+export async function verifyUserById(
+  descriptor,
+  targetId,
+  threshold,
+  antiSpoofing,
+  _identityContinuity,
+  adminId,
+) {
+  const similarityThreshold = threshold !== undefined ? threshold : 0.65;
+
+  const user = await livenessRepository.findMatchById(
+    descriptor,
+    targetId,
+    adminId,
+  );
+
+  let status = "FAILURE";
+  let match = null;
+
+  if (user.length > 0) {
+    match = user[0];
+    if (match.similarity > similarityThreshold) {
+      status = "SUCCESS";
+    }
+  }
+
+  await livenessRepository.addVerificationLog(
+    adminId,
+    match?.id || null,
+    match?.name || "Unknown",
+    match?.similarity || 0,
+    status,
+    antiSpoofing ? JSON.stringify(antiSpoofing) : null,
+  );
+
+  const responsePayload = {
+    verified: status === "SUCCESS",
+    match: match
+      ? { id: match.id, name: match.name, similarity: match.similarity }
+      : null,
+    status,
+  };
+  triggerWebhooks(adminId, "liveness.verified", responsePayload);
+  return responsePayload;
+}
