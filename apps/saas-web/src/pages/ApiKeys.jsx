@@ -15,6 +15,8 @@ export default function ApiKeys() {
   const [keys, setKeys] = useState([]);
   const [newKeyName, setNewKeyName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeletingKey, setIsDeletingKey] = useState(false);
   const [error, setError] = useState("");
   const [copiedId, setCopiedId] = useState(null);
   const [showKeyModal, setShowKeyModal] = useState(null);
@@ -39,17 +41,21 @@ export default function ApiKeys() {
 
   const closeCreateModal = () => {
     setIsCreating(false);
+    setIsSubmitting(false);
     setNewKeyName("");
     setError("");
   };
 
   const closeDeleteModal = () => {
     setDeleteTarget(null);
+    setIsDeletingKey(false);
     setConfirmInput("");
   };
 
   const handleCreateKey = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setError("");
 
     const validation = apiKeySchema.safeParse({ name: newKeyName });
@@ -57,6 +63,7 @@ export default function ApiKeys() {
       return setError(validation.error.issues[0].message);
     }
 
+    setIsSubmitting(true);
     try {
       const createdKey = await api.apiKeys.create(newKeyName);
       closeCreateModal();
@@ -64,18 +71,23 @@ export default function ApiKeys() {
       fetchKeys();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const confirmDeleteKey = async (e) => {
     e.preventDefault();
-    if (!deleteTarget || confirmInput !== deleteTarget.name) return;
+    if (!deleteTarget || confirmInput !== deleteTarget.name || isDeletingKey) return;
+    setIsDeletingKey(true);
     try {
       await api.apiKeys.delete(deleteTarget.id);
       closeDeleteModal();
       fetchKeys();
     } catch (err) {
       console.error("Failed to delete key", err);
+    } finally {
+      setIsDeletingKey(false);
     }
   };
 
@@ -181,9 +193,14 @@ export default function ApiKeys() {
                   </button>
                   <button
                     type="submit"
-                    className="rounded-xl bg-blue-600 px-5 py-2 text-xs font-black text-white shadow-md shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95 cursor-pointer"
+                    disabled={isSubmitting}
+                    className={`rounded-xl px-5 py-2 text-xs font-black text-white transition-all ${
+                      isSubmitting
+                        ? "bg-blue-400 cursor-not-allowed opacity-75"
+                        : "bg-blue-600 shadow-md shadow-blue-500/20 hover:bg-blue-700 active:scale-95 cursor-pointer"
+                    }`}
                   >
-                    Generate Secret Key
+                    {isSubmitting ? "Generating Key..." : "Generate Secret Key"}
                   </button>
                 </div>
               </form>
@@ -444,14 +461,14 @@ export default function ApiKeys() {
                   </button>
                   <button
                     type="submit"
-                    disabled={confirmInput !== deleteTarget.name}
+                    disabled={confirmInput !== deleteTarget.name || isDeletingKey}
                     className={`rounded-xl px-5 py-2 text-xs font-black text-white transition-all ${
-                      confirmInput === deleteTarget.name
+                      confirmInput === deleteTarget.name && !isDeletingKey
                         ? "bg-rose-600 shadow-md shadow-rose-500/20 hover:bg-rose-700 active:scale-95 cursor-pointer"
                         : "bg-slate-300 opacity-60 cursor-not-allowed"
                     }`}
                   >
-                    Revoke Key
+                    {isDeletingKey ? "Revoking..." : "Revoke Key"}
                   </button>
                 </div>
               </form>
