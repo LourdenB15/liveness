@@ -7,7 +7,7 @@ function generateIntegrityHash(descriptor, sessionToken, timestamp) {
     hash |= 0;
   }
   return hash.toString(16);
-};
+}
 
 export function validateIntegrity(req, res, next) {
   const { descriptor, sessionToken, timestamp, integrity } = req.body;
@@ -28,8 +28,6 @@ export function validateIntegrity(req, res, next) {
   if (integrity !== expectedHash) {
     return res.status(400).json({ error: "Payload integrity check failed" });
   }
-  
+
   next();
 }
-
-

@@ -21,12 +21,7 @@ export async function enrollUser(adminId, name, descriptor, antiSpoofing) {
   return enrolledUser;
 }
 
-export async function verifyUser(
-  descriptor,
-  threshold,
-  antiSpoofing,
-  adminId,
-) {
+export async function verifyUser(descriptor, threshold, antiSpoofing, adminId) {
   const similarityThreshold = threshold !== undefined ? threshold : 0.65;
 
   const closestMatch = await livenessRepository.findClosestMatch(
@@ -55,9 +50,7 @@ export async function verifyUser(
 
   const responsePayload = {
     verified: status === "SUCCESS",
-    match: match
-      ? { name: match.name, similarity: match.similarity }
-      : null,
+    match: match ? { name: match.name, similarity: match.similarity } : null,
     status,
   };
   triggerWebhooks(adminId, "liveness.verified", responsePayload);

@@ -62,11 +62,26 @@ export async function triggerWebhooks(adminId, event, data) {
           } catch (err) {
             void err;
           }
-          await webhooksRepository.addWebhookLog(webhook.id, adminId, event, webhook.url, res.status, bodyText, latency);
+          await webhooksRepository.addWebhookLog(
+            webhook.id,
+            adminId,
+            event,
+            webhook.url,
+            res.status,
+            bodyText,
+            latency,
+          );
         })
         .catch(async (err) => {
           const latency = Date.now() - startTime;
-          await webhooksRepository.addWebhookErrorLog(webhook.id, adminId, event, webhook.url, err.message, latency);
+          await webhooksRepository.addWebhookErrorLog(
+            webhook.id,
+            adminId,
+            event,
+            webhook.url,
+            err.message,
+            latency,
+          );
           console.error(
             `Webhook delivery failed to ${webhook.url}:`,
             err.message,

@@ -10,17 +10,19 @@ vi.mock("@mediapipe/face_mesh", () => {
     FaceMesh: class {
       setOptions() {}
       onResults() {}
-      send() { return Promise.resolve(); }
+      send() {
+        return Promise.resolve();
+      }
     },
-    FACEMESH_TESSELATION: []
+    FACEMESH_TESSELATION: [],
   };
 });
 
 vi.mock("@tensorflow/tfjs", () => {
   return {
     loadGraphModel: vi.fn().mockResolvedValue({
-      inputs: [{ shape: [1, 224, 224, 3] }]
-    })
+      inputs: [{ shape: [1, 224, 224, 3] }],
+    }),
   };
 });
 
@@ -34,14 +36,17 @@ describe("LivenessEngine Custom Challenges", () => {
     };
 
     const engine = new LivenessEngine(callbacks, {
-      challenges: ["BLINK", "TURN_LEFT"]
+      challenges: ["BLINK", "TURN_LEFT"],
     });
 
     await engine.load();
     expect(callbacks.onReady).toHaveBeenCalled();
 
     const mockVideo = { readyState: 4, play: vi.fn().mockResolvedValue() };
-    const mockCanvasCtx = { clearRect: vi.fn(), canvas: { width: 640, height: 480 } };
+    const mockCanvasCtx = {
+      clearRect: vi.fn(),
+      canvas: { width: 640, height: 480 },
+    };
 
     engine.start(mockVideo, mockCanvasCtx);
 
@@ -60,13 +65,16 @@ describe("LivenessEngine Custom Challenges", () => {
     };
 
     const engine = new LivenessEngine(callbacks, {
-      challenges: ["INVALID_ACTION"]
+      challenges: ["INVALID_ACTION"],
     });
 
     await engine.load();
 
     const mockVideo = { readyState: 4, play: vi.fn().mockResolvedValue() };
-    const mockCanvasCtx = { clearRect: vi.fn(), canvas: { width: 640, height: 480 } };
+    const mockCanvasCtx = {
+      clearRect: vi.fn(),
+      canvas: { width: 640, height: 480 },
+    };
 
     engine.start(mockVideo, mockCanvasCtx);
 
@@ -90,7 +98,10 @@ describe("LivenessEngine Custom Challenges", () => {
     engine.updateConfig({ challenges: ["TURN_RIGHT", "BLINK"] });
 
     const mockVideo = { readyState: 4, play: vi.fn().mockResolvedValue() };
-    const mockCanvasCtx = { clearRect: vi.fn(), canvas: { width: 640, height: 480 } };
+    const mockCanvasCtx = {
+      clearRect: vi.fn(),
+      canvas: { width: 640, height: 480 },
+    };
 
     engine.start(mockVideo, mockCanvasCtx);
 

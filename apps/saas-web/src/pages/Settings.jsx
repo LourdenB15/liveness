@@ -14,14 +14,35 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { api } from "../services/api";
 
-const BANNED_WORDS = ["fuck", "shit", "ass", "bitch", "bastard", "damn", "cunt", "dick", "cock", "piss", "slut", "whore", "nigger", "faggot"];
-const containsBannedWord = (val) => BANNED_WORDS.some((w) => val.toLowerCase().includes(w));
+const BANNED_WORDS = [
+  "fuck",
+  "shit",
+  "ass",
+  "bitch",
+  "bastard",
+  "damn",
+  "cunt",
+  "dick",
+  "cock",
+  "piss",
+  "slut",
+  "whore",
+  "nigger",
+  "faggot",
+];
+const containsBannedWord = (val) =>
+  BANNED_WORDS.some((w) => val.toLowerCase().includes(w));
 const nameRule = z
   .string()
   .min(2, "Must be at least 2 characters")
   .max(50, "Must be 50 characters or fewer")
-  .regex(/^[a-zA-Z\s\-']+$/, "Only letters, spaces, hyphens, and apostrophes allowed")
-  .refine((val) => !containsBannedWord(val), { message: "Name contains inappropriate language" });
+  .regex(
+    /^[a-zA-Z\s\-']+$/,
+    "Only letters, spaces, hyphens, and apostrophes allowed",
+  )
+  .refine((val) => !containsBannedWord(val), {
+    message: "Name contains inappropriate language",
+  });
 
 const profileSchema = z.object({
   firstName: nameRule,
@@ -31,7 +52,9 @@ const profileSchema = z.object({
 const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(6, "New password must be at least 6 characters"),
+    newPassword: z
+      .string()
+      .min(6, "New password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
   .refine((data) => data.newPassword !== data.currentPassword, {
@@ -120,7 +143,7 @@ export default function Settings() {
       setNewPassword("");
       setConfirmPassword("");
       setSuccess("Password updated successfully! Logging you out...");
-      
+
       setTimeout(async () => {
         await api.auth.logout();
         navigate("/login");
@@ -132,61 +155,69 @@ export default function Settings() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 space-y-6">
+    <div className="animate-in fade-in space-y-6 duration-500">
       {/* Header Banner */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/80 pb-6">
+      <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Account & Security Settings
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
-            Manage your administrator profile, access credentials, and authentication security.
+            Manage your administrator profile, access credentials, and
+            authentication security.
           </p>
         </div>
       </div>
 
       {/* Sub-navigation Tabs — Segmented Control */}
-      <div className="inline-flex items-center rounded-xl bg-slate-100/80 border border-slate-200/60 p-1 gap-0.5">
+      <div className="inline-flex items-center gap-0.5 rounded-xl border border-slate-200/60 bg-slate-100/80 p-1">
         <button
           onClick={() => setActiveTab("general")}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 cursor-pointer ${
+          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 ${
             activeTab === "general"
-              ? "bg-white text-slate-900 shadow-sm border-slate-200/80"
+              ? "border-slate-200/80 bg-white text-slate-900 shadow-sm"
               : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
-          <User className={`h-4 w-4 shrink-0 ${activeTab === "general" ? "text-blue-600" : "text-slate-400"}`} />
+          <User
+            className={`h-4 w-4 shrink-0 ${activeTab === "general" ? "text-blue-600" : "text-slate-400"}`}
+          />
           <span>General Profile</span>
         </button>
 
         <button
           onClick={() => setActiveTab("security")}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 cursor-pointer ${
+          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 ${
             activeTab === "security"
-              ? "bg-white text-slate-900 shadow-sm border-slate-200/80"
+              ? "border-slate-200/80 bg-white text-slate-900 shadow-sm"
               : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
-          <Lock className={`h-4 w-4 shrink-0 ${activeTab === "security" ? "text-blue-600" : "text-slate-400"}`} />
+          <Lock
+            className={`h-4 w-4 shrink-0 ${activeTab === "security" ? "text-blue-600" : "text-slate-400"}`}
+          />
           <span>Security & Credentials</span>
         </button>
       </div>
 
       {/* Tab 1: General Profile */}
       {activeTab === "general" && (
-        <div className="grid gap-6 lg:grid-cols-12 items-start">
+        <div className="grid items-start gap-6 lg:grid-cols-12">
           {/* User Profile Card */}
           <div className="lg:col-span-4">
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-blue-700 font-black text-white text-lg shadow-md shadow-blue-500/20 shrink-0">
-                  {`${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase() || "AD"}
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-blue-700 text-lg font-black text-white shadow-md shadow-blue-500/20">
+                  {`${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase() ||
+                    "AD"}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-extrabold text-slate-900 text-base truncate">
-                    {user ? `${user.firstName} ${user.lastName}` : "Administrator"}
+                  <h3 className="truncate text-base font-extrabold text-slate-900">
+                    {user
+                      ? `${user.firstName} ${user.lastName}`
+                      : "Administrator"}
                   </h3>
-                  <p className="text-xs font-mono font-semibold text-slate-500 truncate">
+                  <p className="truncate font-mono text-xs font-semibold text-slate-500">
                     @{user?.username || "admin"}
                   </p>
                 </div>
@@ -198,14 +229,16 @@ export default function Settings() {
                     <User className="h-4 w-4 text-slate-400" />
                     Email Address
                   </span>
-                  <span className="font-mono font-bold text-slate-900 truncate max-w-37.5">{user?.email || "N/A"}</span>
+                  <span className="max-w-37.5 truncate font-mono font-bold text-slate-900">
+                    {user?.email || "N/A"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
                   <span className="flex items-center gap-2 font-bold text-slate-500">
                     <Shield className="h-4 w-4 text-slate-400" />
                     Access Role
                   </span>
-                  <span className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-700 uppercase tracking-wider">
+                  <span className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wider text-blue-700 uppercase">
                     Super Admin
                   </span>
                 </div>
@@ -217,7 +250,7 @@ export default function Settings() {
           <div className="lg:col-span-8">
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600 shadow-2xs shrink-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-2xs">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
@@ -231,18 +264,21 @@ export default function Settings() {
               </div>
 
               {profileSuccess && (
-                <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 animate-in fade-in duration-200">
+                <div className="animate-in fade-in mb-4 flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 duration-200">
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                   <span>{profileSuccess}</span>
                 </div>
               )}
 
-              <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-lg">
+              <form
+                onSubmit={handleProfileUpdate}
+                className="max-w-lg space-y-4"
+              >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label
                       htmlFor="firstName"
-                      className="block text-xs font-extrabold text-slate-700 mb-1.5 uppercase tracking-wider"
+                      className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                     >
                       First Name
                     </label>
@@ -251,7 +287,7 @@ export default function Settings() {
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                       placeholder="Admin"
                     />
                   </div>
@@ -259,7 +295,7 @@ export default function Settings() {
                   <div>
                     <label
                       htmlFor="lastName"
-                      className="block text-xs font-extrabold text-slate-700 mb-1.5 uppercase tracking-wider"
+                      className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                     >
                       Last Name
                     </label>
@@ -268,17 +304,17 @@ export default function Settings() {
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                       placeholder="User"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="mb-1.5 flex items-center justify-between">
                     <label
                       htmlFor="email"
-                      className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider"
+                      className="block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                     >
                       Email Address (Primary Identity)
                     </label>
@@ -291,23 +327,28 @@ export default function Settings() {
                     type="email"
                     disabled
                     value={email}
-                    className="w-full rounded-xl border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-xs font-bold text-slate-500 shadow-2xs cursor-not-allowed select-none"
+                    className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-xs font-bold text-slate-500 shadow-2xs select-none"
                   />
                   <p className="mt-1.5 text-[11px] font-medium text-slate-400">
-                    Your email address serves as your primary identity and SSO authentication account identifier.
+                    Your email address serves as your primary identity and SSO
+                    authentication account identifier.
                   </p>
                 </div>
 
                 {profileError && (
-                  <p className="text-xs font-semibold text-rose-600">{profileError}</p>
+                  <p className="text-xs font-semibold text-rose-600">
+                    {profileError}
+                  </p>
                 )}
                 <div className="pt-2">
                   <button
                     type="submit"
                     disabled={profileLoading || !isProfileDirty}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {profileLoading ? "Saving Profile..." : "Save Profile Details"}
+                    {profileLoading
+                      ? "Saving Profile..."
+                      : "Save Profile Details"}
                   </button>
                 </div>
               </form>
@@ -318,11 +359,11 @@ export default function Settings() {
 
       {/* Tab 2: Security & Credentials */}
       {activeTab === "security" && (
-        <div className="grid gap-6 lg:grid-cols-12 items-start">
+        <div className="grid items-start gap-6 lg:grid-cols-12">
           {/* Security Status Card */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="space-y-6 lg:col-span-4">
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+              <h3 className="mb-4 flex items-center gap-2 text-xs font-extrabold tracking-wider text-slate-400 uppercase">
                 <ShieldCheck className="h-4 w-4 text-blue-600" />
                 Security Overview
               </h3>
@@ -330,8 +371,10 @@ export default function Settings() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-bold text-slate-800">Active Session</span>
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                    <span className="font-bold text-slate-800">
+                      Active Session
+                    </span>
                   </div>
                   <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
                     HTTPS Verified
@@ -355,7 +398,7 @@ export default function Settings() {
           <div className="lg:col-span-8">
             <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-blue-600 shadow-2xs shrink-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-2xs">
                   <Lock className="h-5 w-5" />
                 </div>
                 <div>
@@ -363,21 +406,25 @@ export default function Settings() {
                     Authentication Credentials
                   </h2>
                   <p className="text-xs font-medium text-slate-500">
-                    Update your administrative password to maintain platform security.
+                    Update your administrative password to maintain platform
+                    security.
                   </p>
                 </div>
               </div>
 
-              <form onSubmit={handlePasswordChange} className="space-y-4 max-w-lg">
+              <form
+                onSubmit={handlePasswordChange}
+                className="max-w-lg space-y-4"
+              >
                 {error && (
-                  <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-bold text-rose-700 animate-in fade-in duration-200">
+                  <div className="animate-in fade-in flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-bold text-rose-700 duration-200">
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
 
                 {success && (
-                  <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 animate-in fade-in duration-200">
+                  <div className="animate-in fade-in flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 duration-200">
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>{success}</span>
                   </div>
@@ -387,7 +434,7 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="currentPassword"
-                    className="block text-xs font-extrabold text-slate-700 mb-1.5 uppercase tracking-wider"
+                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                   >
                     Current Password <span className="text-rose-500">*</span>
                   </label>
@@ -398,16 +445,20 @@ export default function Settings() {
                       required
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrent(!showCurrent)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 text-slate-400 hover:text-slate-600"
                       aria-label="Toggle password visibility"
                     >
-                      {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showCurrent ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -416,7 +467,7 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="newPassword"
-                    className="block text-xs font-extrabold text-slate-700 mb-1.5 uppercase tracking-wider"
+                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                   >
                     New Password <span className="text-rose-500">*</span>
                   </label>
@@ -427,23 +478,29 @@ export default function Settings() {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNew(!showNew)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 text-slate-400 hover:text-slate-600"
                       aria-label="Toggle password visibility"
                     >
-                      {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showNew ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
 
                   {newPassword && (
                     <div className="mt-2 text-[11px] font-bold">
                       {newPassword.length < 6 ? (
-                        <span className="text-red-800">Too short (min 6 chars)</span>
+                        <span className="text-red-800">
+                          Too short (min 6 chars)
+                        </span>
                       ) : (
                         <span className="text-emerald-600">Good length</span>
                       )}
@@ -455,9 +512,10 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-xs font-extrabold text-slate-700 mb-1.5 uppercase tracking-wider"
+                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
                   >
-                    Confirm New Password <span className="text-rose-500">*</span>
+                    Confirm New Password{" "}
+                    <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -466,16 +524,20 @@ export default function Settings() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                      className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer p-1 text-slate-400 hover:text-slate-600"
                       aria-label="Toggle password visibility"
                     >
-                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirm ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -483,8 +545,13 @@ export default function Settings() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    disabled={loading || !currentPassword || !newPassword || !confirmPassword}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={
+                      loading ||
+                      !currentPassword ||
+                      !newPassword ||
+                      !confirmPassword
+                    }
+                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? "Updating Credentials..." : "Update Password"}
                   </button>

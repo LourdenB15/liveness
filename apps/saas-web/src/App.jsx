@@ -35,7 +35,9 @@ function NotFound() {
       <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100">
         <span className="text-5xl font-black text-slate-300">404</span>
       </div>
-      <h1 className="text-3xl font-black tracking-tight text-slate-900">Page not found</h1>
+      <h1 className="text-3xl font-black tracking-tight text-slate-900">
+        Page not found
+      </h1>
       <p className="mt-3 text-sm font-medium text-slate-500">
         The page you're looking for doesn't exist or has been moved.
       </p>
@@ -62,9 +64,11 @@ function App() {
         <Route
           path="/"
           element={
-            api.auth.getCurrentUser()
-              ? <Navigate to="/dashboard" replace />
-              : <Landing />
+            api.auth.getCurrentUser() ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Landing />
+            )
           }
         />
 

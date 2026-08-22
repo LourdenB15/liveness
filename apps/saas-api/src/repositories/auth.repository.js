@@ -75,9 +75,8 @@ export async function changePassword(adminId, newPasswordHashed) {
 }
 
 export async function findAdminById(adminId) {
-  const result = await pool.query(
-    "SELECT * FROM admins WHERE id = $1",
-    [adminId],
-  );
+  const result = await pool.query("SELECT * FROM admins WHERE id = $1", [
+    adminId,
+  ]);
   return result.rows[0];
 }

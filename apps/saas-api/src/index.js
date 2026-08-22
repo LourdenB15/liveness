@@ -22,7 +22,10 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or server-to-server calls)
       // or any localhost origin during development
-      if (!origin || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      if (
+        !origin ||
+        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+      ) {
         return callback(null, true);
       }
       if (allowedOrigins.includes(origin)) {

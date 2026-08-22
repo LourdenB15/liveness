@@ -1,4 +1,12 @@
-import { AlertCircle, Eye, EyeOff, Lock as LockIcon, ShieldCheck, User, X } from "lucide-react";
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Lock as LockIcon,
+  ShieldCheck,
+  User,
+  X,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -65,7 +73,9 @@ export default function Login({ modal = false }) {
     }
   };
 
-  const hasFieldErrors = Object.keys(fieldErrors).some((key) => fieldErrors[key]);
+  const hasFieldErrors = Object.keys(fieldErrors).some(
+    (key) => fieldErrors[key],
+  );
 
   const formContent = (
     <div className="w-full">
@@ -88,7 +98,7 @@ export default function Login({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95 cursor-pointer"
+            className="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -100,10 +110,12 @@ export default function Login({ modal = false }) {
         {/* Top Error Banner */}
         {!hasFieldErrors && error && (
           <div className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3.5 text-xs text-red-700 shadow-2xs">
-            <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div>
-              <p className="font-bold text-red-800 mb-0.5">Authentication Error</p>
-              <p className="font-medium text-red-600 leading-normal">{error}</p>
+              <p className="mb-0.5 font-bold text-red-800">
+                Authentication Error
+              </p>
+              <p className="leading-normal font-medium text-red-600">{error}</p>
             </div>
           </div>
         )}
@@ -111,7 +123,7 @@ export default function Login({ modal = false }) {
         <div>
           <label
             htmlFor="username"
-            className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-slate-500"
+            className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
           >
             Username
           </label>
@@ -158,7 +170,7 @@ export default function Login({ modal = false }) {
         <div>
           <label
             htmlFor="password"
-            className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-slate-500"
+            className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
           >
             Password
           </label>
@@ -191,10 +203,14 @@ export default function Login({ modal = false }) {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+              className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3 text-slate-400 hover:text-slate-600"
               tabIndex={-1}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
           {fieldErrors.password && (
@@ -216,7 +232,7 @@ export default function Login({ modal = false }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:scale-98 disabled:opacity-50 cursor-pointer"
+          className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:scale-98 disabled:opacity-50"
         >
           {loading ? "Signing in..." : "Sign in to Dashboard"}
         </button>
@@ -245,15 +261,15 @@ export default function Login({ modal = false }) {
 
   if (modal) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 duration-200">
         {/* Backdrop */}
         <div
           className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs"
           onClick={handleClose}
         />
         {/* Modal Card */}
-        <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 sm:p-7 shadow-2xl">
+        <div className="animate-in zoom-in-95 relative w-full max-w-md duration-200">
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl sm:p-7">
             {formContent}
           </div>
         </div>
@@ -264,7 +280,7 @@ export default function Login({ modal = false }) {
   // Standalone full-page fallback (direct URL access)
   return (
     <AuthLayout>
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 sm:p-7 shadow-2xl shadow-slate-200">
+      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl shadow-slate-200 sm:p-7">
         {formContent}
       </div>
     </AuthLayout>

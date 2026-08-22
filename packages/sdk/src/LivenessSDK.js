@@ -56,7 +56,8 @@ export class LivenessSDK {
     if (typeof WebAssembly !== "object") {
       this._emit("error", {
         code: "WASM_NOT_SUPPORTED",
-        message: "WebAssembly is not supported in this browser. Liveness detection requires WASM."
+        message:
+          "WebAssembly is not supported in this browser. Liveness detection requires WASM.",
       });
       return;
     }
@@ -64,7 +65,7 @@ export class LivenessSDK {
     if (!window.WebGLRenderingContext) {
       this._emit("error", {
         code: "WEBGL_NOT_SUPPORTED",
-        message: "WebGL is not supported. Please enable hardware acceleration."
+        message: "WebGL is not supported. Please enable hardware acceleration.",
       });
       return;
     }
@@ -99,7 +100,7 @@ export class LivenessSDK {
         this.engine.load().catch((err) => {
           const errorPayload = {
             code: "MODEL_LOAD_FAILED",
-            message: `Failed to load AI models: ${err.message}`
+            message: `Failed to load AI models: ${err.message}`,
           };
           this._emit("error", errorPayload);
           reject(errorPayload);
@@ -107,7 +108,7 @@ export class LivenessSDK {
       } catch (error) {
         const errorPayload = {
           code: "INITIALIZATION_FAILED",
-          message: error.message
+          message: error.message,
         };
         this._emit("error", errorPayload);
         reject(errorPayload);
@@ -131,7 +132,11 @@ export class LivenessSDK {
       throw new Error("SDK not loaded. Call load() first.");
     }
 
-    if (options && typeof options === "object" && Object.keys(options).length > 0) {
+    if (
+      options &&
+      typeof options === "object" &&
+      Object.keys(options).length > 0
+    ) {
       this.updateConfig(options);
     } else if (this.engine) {
       this.engine.updateConfig(this.config);
@@ -140,7 +145,8 @@ export class LivenessSDK {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       this._emit("failure", {
         code: "BROWSER_NOT_SUPPORTED",
-        message: "Your browser does not support camera access or the secure context (HTTPS) requirements.",
+        message:
+          "Your browser does not support camera access or the secure context (HTTPS) requirements.",
       });
       return;
     }
@@ -148,10 +154,10 @@ export class LivenessSDK {
     try {
       if (!videoElement.srcObject) {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { 
-            width: { ideal: 1280 }, 
-            height: { ideal: 720 }, 
-            facingMode: "user" 
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: "user",
           },
           audio: false,
         });
@@ -177,15 +183,22 @@ export class LivenessSDK {
     } catch (error) {
       let errorPayload = {
         code: "CAMERA_ERROR",
-        message: error.message
+        message: error.message,
       };
 
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+      if (
+        error.name === "NotAllowedError" ||
+        error.name === "PermissionDeniedError"
+      ) {
         errorPayload = {
           code: "CAMERA_ACCESS_DENIED",
-          message: "Camera access was denied by the user. Please update browser permissions.",
+          message:
+            "Camera access was denied by the user. Please update browser permissions.",
         };
-      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+      } else if (
+        error.name === "NotFoundError" ||
+        error.name === "DevicesNotFoundError"
+      ) {
         errorPayload = {
           code: "CAMERA_NOT_FOUND",
           message: "No camera device was found on this system.",

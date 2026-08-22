@@ -5,8 +5,23 @@ import * as livenessController from "../controllers/liveness.controller.js";
 
 const router = Router();
 
-router.post("/enroll", authenticateApiKey, validateIntegrity, livenessController.enrollUser);
-router.post("/verify", authenticateApiKey, validateIntegrity, livenessController.verifyUser);
-router.post("/verify-one", authenticateApiKey, validateIntegrity, livenessController.verifyUserById);
+router.post(
+  "/enroll",
+  authenticateApiKey,
+  validateIntegrity,
+  livenessController.enrollUser,
+);
+router.post(
+  "/verify",
+  authenticateApiKey,
+  validateIntegrity,
+  livenessController.verifyUser,
+);
+router.post(
+  "/verify-one",
+  authenticateApiKey,
+  validateIntegrity,
+  livenessController.verifyUserById,
+);
 
 export default router;

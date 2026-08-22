@@ -15,6 +15,8 @@
     "build:saas": "npm run build -w apps/saas-web",
     "build:sdk": "npm run build -w packages/sdk",
     "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run test -w packages/engine",
     "postinstall": "node scripts/patch-mediapipe.js && node scripts/install-win-rollup.js",
     "install:win-rollup": "node scripts/install-win-rollup.js"

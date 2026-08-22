@@ -66,7 +66,10 @@ export class LivenessSDK {
     callback: (payload: { progress: number; rawValue: any }) => void,
   ): this;
   on(event: "success", callback: (result: LivenessResult) => void): this;
-  on(event: "failure" | "error", callback: (error: LivenessError) => void): this;
+  on(
+    event: "failure" | "error",
+    callback: (error: LivenessError) => void,
+  ): this;
   on(event: string, callback: Function): this;
   off(event: string, callback: Function): this;
   load(): Promise<void>;

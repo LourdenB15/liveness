@@ -1,18 +1,25 @@
 import { CheckCircle2, Clock, Lock, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
 import { api } from "../services/api";
 
-const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Reset token is required"),
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password confirmation is required"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Reset token is required"),
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Password confirmation is required"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export default function ResetPassword({ modal = false }) {
   const [searchParams] = useSearchParams();
@@ -94,7 +101,7 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95 cursor-pointer"
+            className="cursor-pointer rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -106,7 +113,8 @@ export default function ResetPassword({ modal = false }) {
       <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
         <Clock className="h-4 w-4 shrink-0 text-amber-500" />
         <p className="text-xs font-semibold text-amber-700">
-          This link expires in <span className="font-black">30 minutes</span>. Please complete the reset promptly.
+          This link expires in <span className="font-black">30 minutes</span>.
+          Please complete the reset promptly.
         </p>
       </div>
 
@@ -116,15 +124,18 @@ export default function ResetPassword({ modal = false }) {
             <CheckCircle2 className="h-8 w-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-base font-bold text-slate-900">Password Reset Complete</h3>
-            <p className="text-xs font-medium text-slate-500 leading-relaxed">
-              Your password has been successfully updated. You can now log in with your new password.
+            <h3 className="text-base font-bold text-slate-900">
+              Password Reset Complete
+            </h3>
+            <p className="text-xs leading-relaxed font-medium text-slate-500">
+              Your password has been successfully updated. You can now log in
+              with your new password.
             </p>
           </div>
           <Link
             to="/login"
             state={modal ? location.state : undefined}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 cursor-pointer"
+            className="inline-flex w-full cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700"
           >
             Sign in with New Password
           </Link>
@@ -137,11 +148,10 @@ export default function ResetPassword({ modal = false }) {
             </div>
           )}
 
-
           <div>
             <label
               htmlFor="newPassword"
-              className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-slate-500"
+              className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
             >
               New Password
             </label>
@@ -166,7 +176,7 @@ export default function ResetPassword({ modal = false }) {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="mb-1.5 ml-1 block text-xs font-bold uppercase tracking-wider text-slate-500"
+              className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
             >
               Confirm New Password
             </label>
@@ -190,7 +200,7 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:translate-y-0 disabled:opacity-50 cursor-pointer"
+            className="flex w-full cursor-pointer justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:translate-y-0 disabled:opacity-50"
           >
             {loading ? "Updating password..." : "Reset Password"}
           </button>
@@ -201,12 +211,12 @@ export default function ResetPassword({ modal = false }) {
 
   if (modal) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+      <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 duration-200">
         <div
           className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           onClick={handleClose}
         />
-        <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
+        <div className="animate-in zoom-in-95 relative w-full max-w-md duration-200">
           <div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-2xl">
             {formContent}
           </div>

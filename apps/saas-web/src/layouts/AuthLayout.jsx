@@ -11,9 +11,9 @@ export default function AuthLayout({ children }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50/50 font-sans text-slate-900">
-      <header className="sticky top-0 z-30 flex h-16 md:h-20 items-center justify-between border-b border-slate-100 bg-white/80 px-4 sm:px-6 md:px-12 backdrop-blur-md">
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-100 bg-white/80 px-4 backdrop-blur-md sm:px-6 md:h-20 md:px-12">
         <Link to="/" className="flex items-center gap-2">
-          <ShieldCheck className="h-8 w-8 text-blue-600 shrink-0" />
+          <ShieldCheck className="h-8 w-8 shrink-0 text-blue-600" />
           <span className="text-xl font-bold tracking-tight text-slate-900">
             Liveness Cloud
           </span>
@@ -22,13 +22,13 @@ export default function AuthLayout({ children }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openModal("/login")}
-            className="text-sm font-semibold text-slate-600 hover:text-blue-600 px-3 py-2 cursor-pointer transition-colors"
+            className="cursor-pointer px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600"
           >
             Log in
           </button>
           <button
             onClick={() => openModal("/signup")}
-            className="rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 cursor-pointer"
+            className="cursor-pointer rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700"
           >
             Sign up
           </button>

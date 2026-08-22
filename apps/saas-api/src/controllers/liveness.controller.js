@@ -35,13 +35,20 @@ export async function enrollUser(req, res) {
   }
   const { name, descriptor } = validation.data;
   const adminId = req.adminId;
-  const antiSpoofing = req.body.antiSpoofing ? JSON.stringify(req.body.antiSpoofing) : null;
+  const antiSpoofing = req.body.antiSpoofing
+    ? JSON.stringify(req.body.antiSpoofing)
+    : null;
   try {
-    const enrolledUser = await livenessServices.enrollUser(adminId, name, descriptor, antiSpoofing);
+    const enrolledUser = await livenessServices.enrollUser(
+      adminId,
+      name,
+      descriptor,
+      antiSpoofing,
+    );
     res.status(201).json(enrolledUser);
   } catch (error) {
     console.error("Enrollment error:", error);
-    res.status(500).json({error: "Failed to enroll user."});
+    res.status(500).json({ error: "Failed to enroll user." });
   }
 }
 

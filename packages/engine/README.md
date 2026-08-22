@@ -19,11 +19,11 @@ npm install @liveness/engine
 This package is intended for use within the `@liveness/sdk` or for custom liveness detection implementations.
 
 ```javascript
-import { LivenessEngine } from '@liveness/engine';
+import { LivenessEngine } from "@liveness/engine";
 
 const engine = new LivenessEngine({
-  onSuccess: (data) => console.log('Liveness verified', data),
-  onFailure: (error) => console.error('Verification failed', error)
+  onSuccess: (data) => console.log("Liveness verified", data),
+  onFailure: (error) => console.error("Verification failed", error),
 });
 ```
 

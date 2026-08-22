@@ -111,11 +111,13 @@ const expected = crypto
 To capture `req.rawBody` in an Express application:
 
 ```javascript
-app.use(express.json({
-  verify: (req, res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
+  }),
+);
 ```
 
 ## Error Codes

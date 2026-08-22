@@ -43,6 +43,9 @@ export class LivenessEngine {
   constructor(callbacks: LivenessCallbacks, config?: LivenessConfig);
   load(): Promise<void>;
   updateConfig(config?: Partial<LivenessConfig>): void;
-  start(videoElement: HTMLVideoElement, canvasCtx: CanvasRenderingContext2D): void;
+  start(
+    videoElement: HTMLVideoElement,
+    canvasCtx: CanvasRenderingContext2D,
+  ): void;
   stop(): void;
 }

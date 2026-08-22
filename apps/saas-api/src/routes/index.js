@@ -6,6 +6,6 @@ import livenessRoutes from "./liveness.routes.js";
 const router = Router();
 
 router.use("/dashboard", dashboardRoutes);
-router.use("/liveness", livenessRoutes)
+router.use("/liveness", livenessRoutes);
 
 export default router;

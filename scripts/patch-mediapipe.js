@@ -22,7 +22,9 @@ if (fs.existsSync(targetPkg)) {
     if (pkg.module) {
       delete pkg.module;
       fs.writeFileSync(targetPkg, JSON.stringify(pkg, null, 2), "utf8");
-      console.log("Successfully removed 'module' field from @mediapipe/face_mesh/package.json");
+      console.log(
+        "Successfully removed 'module' field from @mediapipe/face_mesh/package.json",
+      );
     }
   } catch (err) {
     console.error("Failed to patch @mediapipe/face_mesh/package.json:", err);
@@ -106,9 +108,7 @@ if (typeof exports === 'object' && typeof module !== 'undefined') {
       "Successfully patched @mediapipe/face_mesh with fallback logic!",
     );
   } else {
-    console.error(
-      "Could not find standard IIFE end sequence in face_mesh.js",
-    );
+    console.error("Could not find standard IIFE end sequence in face_mesh.js");
   }
 } else {
   console.warn(`Target file not found at ${targetFile}. Skipping patch.`);

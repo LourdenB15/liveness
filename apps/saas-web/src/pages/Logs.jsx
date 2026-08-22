@@ -33,7 +33,8 @@ export default function Logs() {
     { id: "FAILURE", label: "Spoof Attacks / Failed", color: "bg-rose-500" },
   ];
 
-  const selectedOption = filterOptions.find((o) => o.id === statusFilter) || filterOptions[0];
+  const selectedOption =
+    filterOptions.find((o) => o.id === statusFilter) || filterOptions[0];
 
   useEffect(() => {
     fetchLogs();
@@ -55,39 +56,48 @@ export default function Logs() {
     const matchesSearch = (log.userName || "")
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "ALL" || log.status === statusFilter;
+    const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const totalCount = logs.length;
-  const successCount = logs.filter((l) => l.status === "SUCCESS" || l.status === "ENROLLED").length;
-  const passRate = totalCount ? ((successCount / totalCount) * 100).toFixed(1) : 0;
-  const avgScore = totalCount ? ((logs.reduce((acc, l) => acc + (l.score || 0), 0) / totalCount) * 100).toFixed(1) : 0;
+  const successCount = logs.filter(
+    (l) => l.status === "SUCCESS" || l.status === "ENROLLED",
+  ).length;
+  const passRate = totalCount
+    ? ((successCount / totalCount) * 100).toFixed(1)
+    : 0;
+  const avgScore = totalCount
+    ? (
+        (logs.reduce((acc, l) => acc + (l.score || 0), 0) / totalCount) *
+        100
+      ).toFixed(1)
+    : 0;
 
   return (
-    <div className="animate-in fade-in duration-500 space-y-6">
+    <div className="animate-in fade-in space-y-6 duration-500">
       {/* Header Banner */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/80 pb-6">
+      <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Audit & Telemetry Logs
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
-            Real-time inspection of biometric score confidence, facial mesh depth, and presentation attack telemetry.
+            Real-time inspection of biometric score confidence, facial mesh
+            depth, and presentation attack telemetry.
           </p>
         </div>
 
         {/* Filter Controls */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <div className="flex w-full flex-col items-center gap-3 sm:flex-row md:w-auto">
           <div className="relative w-full sm:w-64">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Search subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white py-2 pr-4 pl-10 text-xs font-bold text-slate-900 placeholder:text-slate-400 shadow-2xs transition-all focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2 pr-4 pl-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
             />
           </div>
 
@@ -96,13 +106,15 @@ export default function Logs() {
             <button
               type="button"
               onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-              className="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300 focus:outline-none cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-extrabold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none"
             >
               <div className="flex items-center gap-2 truncate">
-                <span className={`h-2 w-2 rounded-full ${selectedOption.color} shrink-0`} />
+                <span
+                  className={`h-2 w-2 rounded-full ${selectedOption.color} shrink-0`}
+                />
                 <span className="truncate">{selectedOption.label}</span>
               </div>
-              <Filter className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <Filter className="h-3.5 w-3.5 shrink-0 text-slate-400" />
             </button>
 
             {statusDropdownOpen && (
@@ -111,7 +123,7 @@ export default function Logs() {
                   className="fixed inset-0 z-20"
                   onClick={() => setStatusDropdownOpen(false)}
                 />
-                <div className="absolute right-0 z-30 mt-1.5 w-full rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl animate-in zoom-in-95 duration-150">
+                <div className="animate-in zoom-in-95 absolute right-0 z-30 mt-1.5 w-full rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl duration-150">
                   {filterOptions.map((opt) => (
                     <button
                       key={opt.id}
@@ -119,9 +131,9 @@ export default function Logs() {
                         setStatusFilter(opt.id);
                         setStatusDropdownOpen(false);
                       }}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
+                      className={`flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-xs font-bold transition-all ${
                         statusFilter === opt.id
-                          ? "bg-blue-50 text-blue-700 font-extrabold"
+                          ? "bg-blue-50 font-extrabold text-blue-700"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                       }`}
                     >
@@ -143,7 +155,10 @@ export default function Logs() {
         <SkeletonTheme baseColor="#e2e8f0" highlightColor="#f8fafc">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs flex items-center gap-4">
+              <div
+                key={i}
+                className="flex items-center gap-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs"
+              >
                 <Skeleton circle height={44} width={44} />
                 <div className="w-full space-y-1">
                   <Skeleton height={10} width="60%" />
@@ -155,8 +170,8 @@ export default function Logs() {
         </SkeletonTheme>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs flex items-center gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-100">
+          <div className="flex items-center gap-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600">
               <Activity className="h-5 w-5" />
             </div>
             <div>
@@ -167,8 +182,8 @@ export default function Logs() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs flex items-center gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
+          <div className="flex items-center gap-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-600">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
@@ -179,8 +194,8 @@ export default function Logs() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs flex items-center gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
+          <div className="flex items-center gap-4 rounded-xl border border-slate-200/80 bg-white p-4 shadow-2xs">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-100 bg-purple-50 text-purple-600">
               <Cpu className="h-5 w-5" />
             </div>
             <div>
@@ -199,9 +214,12 @@ export default function Logs() {
           <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                <div
+                  key={i}
+                  className="flex items-center justify-between border-b border-slate-100 py-2 last:border-0"
+                >
                   <Skeleton height={20} width={80} borderRadius={6} />
-                  <div className="flex items-center gap-2.5 w-1/4">
+                  <div className="flex w-1/4 items-center gap-2.5">
                     <Skeleton circle height={28} width={28} />
                     <Skeleton height={14} width="70%" />
                   </div>
@@ -216,7 +234,7 @@ export default function Logs() {
       ) : (
         <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm min-w-[650px]">
+            <table className="w-full min-w-[650px] text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                   <th className="px-6 py-3.5">Result</th>
@@ -231,7 +249,7 @@ export default function Logs() {
                   <tr
                     key={log.id}
                     onClick={() => setSelectedLog(log)}
-                    className="group transition-colors hover:bg-slate-50/80 cursor-pointer"
+                    className="group cursor-pointer transition-colors hover:bg-slate-50/80"
                   >
                     <td className="px-6 py-4">
                       <span
@@ -253,20 +271,23 @@ export default function Logs() {
                         {log.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <td className="px-6 py-4 font-bold text-slate-900 transition-colors group-hover:text-blue-600">
                       <div className="flex items-center gap-2.5">
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-200/60 bg-slate-50 text-slate-500">
                           <User className="h-3.5 w-3.5" />
                         </div>
-                        <span className="truncate text-xs sm:text-sm">{log.userName}</span>
+                        <span className="truncate text-xs sm:text-sm">
+                          {log.userName}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-1.5 w-20 sm:w-28 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100 sm:w-28">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${
-                              log.status === "SUCCESS" || log.status === "ENROLLED"
+                              log.status === "SUCCESS" ||
+                              log.status === "ENROLLED"
                                 ? "bg-emerald-500"
                                 : "bg-rose-500"
                             }`}
@@ -286,7 +307,7 @@ export default function Logs() {
                               Depth
                             </span>
                             <span
-                              className={`text-xs font-mono font-bold ${
+                              className={`font-mono text-xs font-bold ${
                                 log.antiSpoofing.depthVariance < 0.0015
                                   ? "text-rose-600"
                                   : "text-emerald-600"
@@ -300,7 +321,7 @@ export default function Logs() {
                               Texture
                             </span>
                             <span
-                              className={`text-xs font-mono font-bold ${
+                              className={`font-mono text-xs font-bold ${
                                 log.antiSpoofing.laplacianVariance < 100
                                   ? "text-rose-600"
                                   : "text-emerald-600"
@@ -311,7 +332,9 @@ export default function Logs() {
                           </div>
                         </div>
                       ) : (
-                        <span className="text-slate-400 text-xs font-mono">N/A</span>
+                        <span className="font-mono text-xs text-slate-400">
+                          N/A
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -343,14 +366,14 @@ export default function Logs() {
       {/* Telemetry Detail Inspector Modal (React Portal) */}
       {selectedLog &&
         createPortal(
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm duration-200">
             <div
               className="fixed inset-0 cursor-pointer"
               onClick={() => setSelectedLog(null)}
             />
-            <div className="relative animate-in zoom-in-95 w-full max-w-xl rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xl z-10 duration-200 overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="animate-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xl duration-200">
               {/* Header */}
-              <div className="flex items-start justify-between mb-4 pb-4 border-b border-slate-100 shrink-0">
+              <div className="mb-4 flex shrink-0 items-start justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white shadow-2xs">
                     <Activity className="h-5 w-5" />
@@ -359,14 +382,14 @@ export default function Logs() {
                     <h3 className="text-base font-extrabold text-slate-900">
                       Telemetry Session Detail
                     </h3>
-                    <p className="text-xs font-mono font-medium text-slate-400">
+                    <p className="font-mono text-xs font-medium text-slate-400">
                       ID: {selectedLog.id}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors cursor-pointer"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
                   aria-label="Close modal"
                 >
                   <X className="h-4 w-4" />
@@ -374,11 +397,11 @@ export default function Logs() {
               </div>
 
               {/* Scrollable Content */}
-              <div className="overflow-y-auto space-y-4 pr-1 text-xs">
+              <div className="space-y-4 overflow-y-auto pr-1 text-xs">
                 {/* Status & Subject Header Card */}
                 <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">
+                    <span className="mb-1 block text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
                       Subject Name
                     </span>
                     <span className="text-sm font-bold text-slate-900">
@@ -386,7 +409,7 @@ export default function Logs() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">
+                    <span className="mb-1 block text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
                       Session Status
                     </span>
                     <span
@@ -404,9 +427,11 @@ export default function Logs() {
                 </div>
 
                 {/* Score & Telemetry Breakdown */}
-                <div className="rounded-xl border border-slate-200/80 bg-white p-4 space-y-3">
+                <div className="space-y-3 rounded-xl border border-slate-200/80 bg-white p-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-700">Liveness Match Score</span>
+                    <span className="font-bold text-slate-700">
+                      Liveness Match Score
+                    </span>
                     <span className="font-mono font-extrabold text-slate-900">
                       {((selectedLog.score || 0) * 100).toFixed(4)}%
                     </span>
@@ -415,7 +440,8 @@ export default function Logs() {
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        selectedLog.status === "SUCCESS" || selectedLog.status === "ENROLLED"
+                        selectedLog.status === "SUCCESS" ||
+                        selectedLog.status === "ENROLLED"
                           ? "bg-emerald-500"
                           : "bg-rose-500"
                       }`}
@@ -424,9 +450,9 @@ export default function Logs() {
                   </div>
 
                   {selectedLog.antiSpoofing && (
-                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                    <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-2">
                       <div className="rounded-lg bg-slate-50 p-2.5">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <span className="block text-[9px] font-bold tracking-wider text-slate-400 uppercase">
                           Depth Mesh Variance
                         </span>
                         <span className="font-mono text-xs font-bold text-slate-800">
@@ -434,7 +460,7 @@ export default function Logs() {
                         </span>
                       </div>
                       <div className="rounded-lg bg-slate-50 p-2.5">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <span className="block text-[9px] font-bold tracking-wider text-slate-400 uppercase">
                           Laplacian Texture Variance
                         </span>
                         <span className="font-mono text-xs font-bold text-slate-800">
@@ -447,23 +473,23 @@ export default function Logs() {
 
                 {/* Raw JSON Payload */}
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5 text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
                       <Code2 className="h-3.5 w-3.5" />
                       Raw Telemetry Payload JSON
                     </span>
                   </div>
-                  <pre className="rounded-xl border border-slate-200/80 bg-slate-900 p-4 font-mono text-[11px] text-slate-300 overflow-x-auto">
+                  <pre className="overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-900 p-4 font-mono text-[11px] text-slate-300">
                     {JSON.stringify(selectedLog, null, 2)}
                   </pre>
                 </div>
               </div>
 
               {/* Modal Footer */}
-              <div className="flex items-center justify-end pt-4 border-t border-slate-100 mt-4 shrink-0">
+              <div className="mt-4 flex shrink-0 items-center justify-end border-t border-slate-100 pt-4">
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="rounded-xl border border-slate-200 bg-white px-5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer"
+                  className="cursor-pointer rounded-xl border border-slate-200 bg-white px-5 py-2 text-xs font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
                 >
                   Close Inspector
                 </button>
@@ -475,6 +501,3 @@ export default function Logs() {
     </div>
   );
 }
-
-
-

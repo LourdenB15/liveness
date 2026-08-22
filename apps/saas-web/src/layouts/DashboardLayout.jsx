@@ -123,9 +123,9 @@ export default function DashboardLayout({ children }) {
         : "Dashboard");
 
   return (
-    <div className="relative flex min-h-screen h-screen w-full overflow-hidden bg-white font-sans text-slate-900">
+    <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-white font-sans text-slate-900">
       {/* Background Subtle Gradient Glow matching Landing Page */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-50/40 via-white to-white z-0" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-50/40 via-white to-white" />
 
       {/* Standalone Sidebar Component */}
       <Sidebar
@@ -142,40 +142,39 @@ export default function DashboardLayout({ children }) {
         handleLogout={handleLogout}
       />
 
-
       {/* Main Content Area */}
-      <main className="relative z-10 flex-1 min-w-0 overflow-y-auto">
+      <main className="relative z-10 min-w-0 flex-1 overflow-y-auto">
         {/* Header */}
-        <header className="sticky top-0 z-10 flex h-16 md:h-20 items-center justify-between border-b border-slate-100 bg-white/80 px-4 sm:px-6 md:px-8 backdrop-blur-md">
-          
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-white/80 px-4 backdrop-blur-md sm:px-6 md:h-20 md:px-8">
           {/* Left: Mobile Brand Logo & Desktop Breadcrumbs */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             {/* Mobile Brand Logo */}
             <div className="flex items-center gap-2 md:hidden">
               <Link to="/dashboard" className="flex items-center gap-1.5">
-                <ShieldCheck className="h-6 w-6 text-blue-600 shrink-0" />
+                <ShieldCheck className="h-6 w-6 shrink-0 text-blue-600" />
                 <span className="text-base font-extrabold tracking-tight text-slate-900">
-                  Liveness<span className="text-blue-600 font-light ml-0.5">Cloud</span>
+                  Liveness
+                  <span className="ml-0.5 font-light text-blue-600">Cloud</span>
                 </span>
               </Link>
             </div>
 
             {/* Desktop Breadcrumb Hierarchy */}
-            <div className="hidden md:flex items-center gap-2 text-sm font-semibold text-slate-500 min-w-0">
+            <div className="hidden min-w-0 items-center gap-2 text-sm font-semibold text-slate-500 md:flex">
               <span className="text-slate-400">Dashboard</span>
-              <ChevronRight className="h-3.5 w-3.5 text-slate-300 shrink-0" />
-              <h2 className="font-extrabold text-slate-900 truncate text-lg">
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-300" />
+              <h2 className="truncate text-lg font-extrabold text-slate-900">
                 {currentPageLabel}
               </h2>
             </div>
           </div>
 
           {/* Right Controls: Profile Dropdown (Desktop Only), Mobile Search & Mobile Hamburger Button */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             {/* Mobile Search Button (Beside Hamburger Button) */}
             <button
               onClick={() => setSearchModalOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-blue-50 hover:text-blue-600 md:hidden cursor-pointer transition-all active:scale-95 shadow-2xs"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-2xs transition-all hover:bg-blue-50 hover:text-blue-600 active:scale-95 md:hidden"
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
@@ -185,14 +184,14 @@ export default function DashboardLayout({ children }) {
             <div className="relative hidden md:block" ref={dropdownRef}>
               <button
                 onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                className="flex items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white p-1.5 pr-3 shadow-xs hover:border-slate-300 transition-all cursor-pointer group"
+                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white p-1.5 pr-3 shadow-xs transition-all hover:border-slate-300"
                 aria-label="Profile menu"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-sm shrink-0">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-sm">
                   {initials}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs font-bold text-slate-900 leading-tight">
+                  <span className="text-xs leading-tight font-bold text-slate-900">
                     {fullName}
                   </span>
                   <span className="text-[10px] font-semibold text-slate-400">
@@ -200,18 +199,22 @@ export default function DashboardLayout({ children }) {
                   </span>
                 </div>
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ml-0.5 ${
-                    profileDropdownOpen ? "rotate-180 text-blue-600" : "group-hover:text-slate-600"
+                  className={`ml-0.5 h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${
+                    profileDropdownOpen
+                      ? "rotate-180 text-blue-600"
+                      : "group-hover:text-slate-600"
                   }`}
                 />
               </button>
 
               {/* Profile Dropdown Menu */}
               {profileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 animate-in fade-in zoom-in-95 duration-150 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl z-50">
-                  <div className="px-3 py-2.5 border-b border-slate-100 mb-1">
-                    <p className="text-xs font-bold text-slate-900">{fullName}</p>
-                    <p className="text-[11px] font-medium text-slate-400 truncate">
+                <div className="animate-in fade-in zoom-in-95 absolute right-0 z-50 mt-2 w-64 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl duration-150">
+                  <div className="mb-1 border-b border-slate-100 px-3 py-2.5">
+                    <p className="text-xs font-bold text-slate-900">
+                      {fullName}
+                    </p>
+                    <p className="truncate text-[11px] font-medium text-slate-400">
                       {user?.email || "admin@liveness.cloud"}
                     </p>
                   </div>
@@ -219,7 +222,7 @@ export default function DashboardLayout({ children }) {
                   <Link
                     to="/settings"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                   >
                     <SettingsIcon className="h-4 w-4 text-slate-400" />
                     Account Settings
@@ -228,7 +231,7 @@ export default function DashboardLayout({ children }) {
                   <Link
                     to="/billing"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                   >
                     <div className="flex items-center gap-2.5">
                       <CreditCard className="h-4 w-4 text-slate-400" />
@@ -243,7 +246,7 @@ export default function DashboardLayout({ children }) {
 
                   <button
                     onClick={handleLogout}
-                    className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
                   >
                     <LogOut className="h-4 w-4 text-rose-500" />
                     Sign Out
@@ -255,28 +258,34 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Hamburger Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-50 md:hidden cursor-pointer transition-all active:scale-95 shadow-2xs"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-2xs transition-all hover:bg-slate-50 active:scale-95 md:hidden"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl p-4 sm:p-6 md:p-8 pb-20 md:pb-8">{children}</div>
+        <div className="mx-auto max-w-7xl p-4 pb-20 sm:p-6 md:p-8 md:pb-8">
+          {children}
+        </div>
 
         {/* Mobile Fixed Bottom Navigation Bar */}
-        <nav className="fixed bottom-0 left-0 right-0 z-30 flex h-16 items-center justify-around border-t border-slate-200/80 bg-white/95 px-2 backdrop-blur-lg md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        <nav className="fixed right-0 bottom-0 left-0 z-30 flex h-16 items-center justify-around border-t border-slate-200/80 bg-white/95 px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] backdrop-blur-lg md:hidden">
           {mobileBottomNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
+                className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-all ${
                   isActive
-                    ? "text-blue-600 font-extrabold"
-                    : "text-slate-500 hover:text-slate-800 font-medium"
+                    ? "font-extrabold text-blue-600"
+                    : "font-medium text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <item.icon
@@ -284,7 +293,9 @@ export default function DashboardLayout({ children }) {
                     isActive ? "scale-110 text-blue-600" : "text-slate-400"
                   }`}
                 />
-                <span className="mt-1 text-[10px] tracking-tight">{item.label}</span>
+                <span className="mt-1 text-[10px] tracking-tight">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
@@ -294,7 +305,7 @@ export default function DashboardLayout({ children }) {
       {/* Global Real-Time Search Pop-Up Modal (React Portal) */}
       {searchModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="animate-in fade-in fixed inset-0 z-50 flex items-start justify-center bg-slate-900/50 px-4 pt-16 backdrop-blur-xs duration-150 sm:pt-24">
             <div
               className="fixed inset-0"
               onClick={() => {
@@ -302,10 +313,10 @@ export default function DashboardLayout({ children }) {
                 setSearchQuery("");
               }}
             />
-            <div className="relative w-full max-w-xl rounded-2xl border border-slate-100 bg-white shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-150">
+            <div className="animate-in zoom-in-95 relative z-10 w-full max-w-xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl duration-150">
               {/* Modal Search Header Input */}
               <div className="flex items-center border-b border-slate-100 px-4 py-3.5">
-                <Search className="h-5 w-5 text-blue-600 shrink-0 mr-3" />
+                <Search className="mr-3 h-5 w-5 shrink-0 text-blue-600" />
                 <input
                   type="text"
                   autoFocus
@@ -323,7 +334,7 @@ export default function DashboardLayout({ children }) {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="p-1 text-slate-400 hover:text-slate-600 mr-2"
+                    className="mr-2 p-1 text-slate-400 hover:text-slate-600"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -346,29 +357,56 @@ export default function DashboardLayout({ children }) {
 
                   // 1. Pages Navigation
                   const pages = navItems.filter(
-                    (i) => i.label.toLowerCase().includes(q) || i.path.includes(q)
+                    (i) =>
+                      i.label.toLowerCase().includes(q) || i.path.includes(q),
                   );
 
                   // 2. Documentation Sections
                   const docSections = [
-                    { id: "introduction", label: "Documentation: Introduction", path: "/docs#introduction", desc: "Overview & Features" },
-                    { id: "sdk-usage", label: "Documentation: SDK Integration", path: "/docs#sdk-usage", desc: "JavaScript SDK Quickstart & Event Listeners" },
-                    { id: "cloud-usage", label: "Documentation: Cloud API & Webhooks", path: "/docs#cloud-usage", desc: "API Keys, Webhooks, Signature Verification" },
-                    { id: "methodology", label: "Documentation: Anti-Spoofing Methodology", path: "/docs#methodology", desc: "Blink EAR, Head Pose 3D, Moiré FFT" },
-                    { id: "api-ref", label: "Documentation: API & Event Reference", path: "/docs#api-ref", desc: "SDK Config Options, Events & Error Codes" },
+                    {
+                      id: "introduction",
+                      label: "Documentation: Introduction",
+                      path: "/docs#introduction",
+                      desc: "Overview & Features",
+                    },
+                    {
+                      id: "sdk-usage",
+                      label: "Documentation: SDK Integration",
+                      path: "/docs#sdk-usage",
+                      desc: "JavaScript SDK Quickstart & Event Listeners",
+                    },
+                    {
+                      id: "cloud-usage",
+                      label: "Documentation: Cloud API & Webhooks",
+                      path: "/docs#cloud-usage",
+                      desc: "API Keys, Webhooks, Signature Verification",
+                    },
+                    {
+                      id: "methodology",
+                      label: "Documentation: Anti-Spoofing Methodology",
+                      path: "/docs#methodology",
+                      desc: "Blink EAR, Head Pose 3D, Moiré FFT",
+                    },
+                    {
+                      id: "api-ref",
+                      label: "Documentation: API & Event Reference",
+                      path: "/docs#api-ref",
+                      desc: "SDK Config Options, Events & Error Codes",
+                    },
                   ].filter(
-                    (d) => d.label.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q)
+                    (d) =>
+                      d.label.toLowerCase().includes(q) ||
+                      d.desc.toLowerCase().includes(q),
                   );
 
                   const hasResults = pages.length > 0 || docSections.length > 0;
 
                   return (
                     <div className="space-y-3 p-1">
-
                       {/* Documentation Sections */}
                       {docSections.length > 0 && (
                         <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          <div className="px-3 py-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
                             Documentation & Guides
                           </div>
                           {docSections.map((doc) => (
@@ -379,10 +417,10 @@ export default function DashboardLayout({ children }) {
                                 setSearchModalOpen(false);
                                 setSearchQuery("");
                               }}
-                              className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
+                              className="group flex cursor-pointer items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
                                   <Book className="h-4 w-4" />
                                 </div>
                                 <div>
@@ -405,7 +443,7 @@ export default function DashboardLayout({ children }) {
                       {/* Platform Navigation */}
                       {pages.length > 0 && (
                         <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          <div className="px-3 py-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
                             Platform Navigation
                           </div>
                           {pages.map((item) => {
@@ -418,10 +456,10 @@ export default function DashboardLayout({ children }) {
                                   setSearchModalOpen(false);
                                   setSearchQuery("");
                                 }}
-                                className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
+                                className="group flex cursor-pointer items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
                                     <Icon className="h-4 w-4" />
                                   </div>
                                   <div>
@@ -458,5 +496,3 @@ export default function DashboardLayout({ children }) {
     </div>
   );
 }
-
-

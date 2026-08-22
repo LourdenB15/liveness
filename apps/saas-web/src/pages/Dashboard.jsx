@@ -44,13 +44,16 @@ export default function Dashboard() {
             passRate: 0,
             spoofAttempts: 0,
           })),
-          api.system.getHealth().catch(() => ({ status: "error", database: "disconnected" })),
+          api.system
+            .getHealth()
+            .catch(() => ({ status: "error", database: "disconnected" })),
         ]);
 
         setStats(statsData);
         setSystemStatus({
           api: healthData.status === "ok" ? "Operational" : "Offline",
-          database: healthData.database === "connected" ? "Connected" : "Disconnected",
+          database:
+            healthData.database === "connected" ? "Connected" : "Disconnected",
         });
       } finally {
         setLoading(false);
@@ -127,22 +130,23 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
   };
 
   return (
-    <div className="animate-in fade-in duration-500 space-y-6">
+    <div className="animate-in fade-in space-y-6 duration-500">
       {/* Header Banner */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/80 pb-6">
+      <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
             Console Overview
           </h1>
-          <p className="mt-1 text-sm font-medium text-slate-600 max-w-2xl">
-            Monitor real-time liveness verification metrics, security telemetry, and API status across your platform.
+          <p className="mt-1 max-w-2xl text-sm font-medium text-slate-600">
+            Monitor real-time liveness verification metrics, security telemetry,
+            and API status across your platform.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             to="/docs"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50"
           >
             <span>Docs</span>
             <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" />
@@ -155,7 +159,10 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
         <SkeletonTheme baseColor="#e2e8f0" highlightColor="#f8fafc">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
+              <div
+                key={i}
+                className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs"
+              >
                 <div className="flex items-center justify-between">
                   <Skeleton height={14} width={80} />
                   <Skeleton circle height={36} width={36} />
@@ -191,10 +198,10 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
                 <p className="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase">
                   {card.label}
                 </p>
-                <h3 className="mt-1 text-2xl font-black text-slate-900 tracking-tight">
+                <h3 className="mt-1 text-2xl font-black tracking-tight text-slate-900">
                   {card.value}
                 </h3>
-                <p className="mt-1.5 text-xs font-medium text-slate-500 leading-relaxed">
+                <p className="mt-1.5 text-xs leading-relaxed font-medium text-slate-500">
                   {card.description}
                 </p>
               </div>
@@ -204,29 +211,29 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
       )}
 
       {/* Main Split Section: Quick Test Code Snippet & Infrastructure Health */}
-      <div className="grid gap-6 lg:grid-cols-12 items-stretch">
+      <div className="grid items-stretch gap-6 lg:grid-cols-12">
         {/* Left 7 Cols: Interactive Quick API Tester Snippet */}
-        <div className="lg:col-span-7 flex flex-col min-w-0">
-          <div className="rounded-xl border border-slate-800 bg-slate-950 text-slate-100 shadow-xl overflow-hidden flex flex-col h-full">
+        <div className="flex min-w-0 flex-col lg:col-span-7">
+          <div className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-slate-100 shadow-xl">
             {/* Header Bar */}
-            <div className="flex items-center justify-between border-b border-slate-800/80 bg-slate-900/90 px-4 py-3 flex-wrap gap-2">
-              <div className="flex items-center space-x-2 shrink-0">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 bg-slate-900/90 px-4 py-3">
+              <div className="flex shrink-0 items-center space-x-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                 <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
                 <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                <span className="ml-2 font-mono text-xs text-slate-400 font-bold flex items-center gap-1.5">
+                <span className="ml-2 flex items-center gap-1.5 font-mono text-xs font-bold text-slate-400">
                   <Terminal className="h-3.5 w-3.5 text-blue-400" />
                   Quick API Verification Test
                 </span>
               </div>
 
               {/* Language Switcher Tabs */}
-              <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-md border border-slate-800">
+              <div className="flex items-center space-x-1 rounded-md border border-slate-800 bg-slate-950 p-1">
                 {["curl", "js", "python"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase rounded-sm transition-colors cursor-pointer ${
+                    className={`cursor-pointer rounded-sm px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase transition-colors ${
                       activeTab === tab
                         ? "bg-blue-600 text-white shadow-xs"
                         : "text-slate-400 hover:text-slate-200"
@@ -240,7 +247,7 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
               {/* Copy Button */}
               <button
                 onClick={copySnippet}
-                className="flex cursor-pointer items-center justify-center space-x-1.5 rounded-md border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs font-semibold text-slate-400 shrink-0 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+                className="flex shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-md border border-slate-800 bg-slate-900 px-2.5 py-1 text-xs font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
               >
                 {codeCopied ? (
                   <>
@@ -257,33 +264,37 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
             </div>
 
             {/* Code Viewport */}
-            <div className="p-4 font-mono text-xs text-slate-200 overflow-x-auto leading-relaxed flex-1 bg-slate-950 min-w-0">
+            <div className="min-w-0 flex-1 overflow-x-auto bg-slate-950 p-4 font-mono text-xs leading-relaxed text-slate-200">
               <pre className="whitespace-pre-wrap">
                 <code>{codeExamples[activeTab]}</code>
               </pre>
             </div>
 
             {/* Footer Bar */}
-            <div className="border-t border-slate-800/80 bg-slate-900/60 px-4 py-2 flex items-center justify-between text-xs font-mono text-slate-400">
+            <div className="flex items-center justify-between border-t border-slate-800/80 bg-slate-900/60 px-4 py-2 font-mono text-xs text-slate-400">
               <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-emerald-400 font-bold">API Endpoint Active: 100% Uptime</span>
+                <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+                <span className="font-bold text-emerald-400">
+                  API Endpoint Active: 100% Uptime
+                </span>
               </div>
-              <span className="text-slate-500 hidden sm:inline">Sub-200ms latency</span>
+              <span className="hidden text-slate-500 sm:inline">
+                Sub-200ms latency
+              </span>
             </div>
           </div>
         </div>
 
         {/* Right 5 Cols: System Health & Security Standard */}
-        <div className="lg:col-span-5 flex flex-col justify-between space-y-5">
+        <div className="flex flex-col justify-between space-y-5 lg:col-span-5">
           {/* Infrastructure Box */}
           <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-3.5">
-              <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+            <div className="mb-3.5 flex items-center justify-between border-b border-slate-100 pb-3.5">
+              <h3 className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
                 <Cpu className="h-4 w-4 text-blue-600" />
                 Infrastructure Health
               </h3>
-              <span className="text-xs font-bold text-slate-400 font-mono">
+              <span className="font-mono text-xs font-bold text-slate-400">
                 {import.meta.env.MODE.toUpperCase()}
               </span>
             </div>
@@ -299,7 +310,9 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
                     }`}
                   />
                   <div>
-                    <p className="text-xs font-bold text-slate-900">API Gateway</p>
+                    <p className="text-xs font-bold text-slate-900">
+                      API Gateway
+                    </p>
                     <p className="text-[11px] font-medium text-slate-500">
                       Global Edge Proxy
                     </p>
@@ -349,21 +362,21 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
 
           {/* Security & Compliance Highlights */}
           <div className="rounded-xl border border-blue-100 bg-linear-to-br from-blue-50/60 to-indigo-50/40 p-5">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-blue-900 mb-3 flex items-center gap-2">
+            <h4 className="mb-3 flex items-center gap-2 text-xs font-extrabold tracking-wider text-blue-900 uppercase">
               <Shield className="h-4 w-4 text-blue-600" />
               Security Architecture
             </h4>
             <ul className="space-y-2 text-xs font-medium text-slate-700">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 <span>Zero raw biometric image retention on server</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 <span>In-memory active challenge encryption</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 <span>SOC2 Type II & GDPR compliant pipeline</span>
               </li>
             </ul>
@@ -373,7 +386,3 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
     </div>
   );
 }
-
-
-
-

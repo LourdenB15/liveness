@@ -71,7 +71,8 @@ export function ApiSettings({ config, onSave }) {
               />
               {(apiKey.includes("•") || apiKey.includes("*")) && (
                 <p className="mt-1 text-[11px] font-semibold text-amber-600">
-                  Note: Masked keys cannot authenticate API requests. Please enter your full unmasked key.
+                  Note: Masked keys cannot authenticate API requests. Please
+                  enter your full unmasked key.
                 </p>
               )}
               <p className="mt-1 text-[10px] text-slate-400">
