@@ -13,9 +13,15 @@ import {
   generateIntegrityHash,
 } from "./utils";
 
-const FaceMesh = mpFaceMesh.FaceMesh || mpFaceMesh.default.FaceMesh;
+const FaceMesh =
+  mpFaceMesh.FaceMesh ||
+  mpFaceMesh.default?.FaceMesh ||
+  mpFaceMesh.default ||
+  (typeof window !== "undefined" ? window.FaceMesh : undefined);
 const FACEMESH_TESSELATION =
-  mpFaceMesh.FACEMESH_TESSELATION || mpFaceMesh.default.FACEMESH_TESSELATION;
+  mpFaceMesh.FACEMESH_TESSELATION ||
+  mpFaceMesh.default?.FACEMESH_TESSELATION ||
+  (typeof window !== "undefined" ? window.FACEMESH_TESSELATION : undefined);
 
 const DEFAULT_CONFIG = {
   blinkEARThreshold: 0.25,
