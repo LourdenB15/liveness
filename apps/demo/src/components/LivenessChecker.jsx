@@ -257,15 +257,10 @@ export function LivenessChecker() {
 
     // Generate a new session token for this attempt
     const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
-    if (typeof sdkRef.current.updateConfig === "function") {
-      sdkRef.current.updateConfig({
-        sessionToken,
-        challenges: selectedChallenges,
-      });
-    } else {
-      sdkRef.current.config.sessionToken = sessionToken;
-      sdkRef.current.config.challenges = selectedChallenges;
-    }
+    sdkRef.current.updateConfig({
+      sessionToken,
+      challenges: selectedChallenges,
+    });
 
     try {
       await sdkRef.current.start(videoRef.current, canvasRef.current);

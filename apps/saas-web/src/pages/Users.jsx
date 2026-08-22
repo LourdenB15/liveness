@@ -1,4 +1,4 @@
-import { AlertTriangle, Calendar, CheckCircle2, Fingerprint, Search, ShieldCheck, Trash2, User, Users as UsersIcon, X } from "lucide-react";
+import { AlertTriangle, Calendar, CheckCircle2, Fingerprint, Search, ShieldCheck, Trash2, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";

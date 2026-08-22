@@ -7,7 +7,6 @@ import {
   Lock,
   Shield,
   ShieldCheck,
-  Smartphone,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -50,7 +49,7 @@ export default function Settings() {
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const email = user?.email || "";
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

@@ -9,14 +9,10 @@ import {
   FileCode,
   Key,
   Layers,
-  Menu,
-  Search,
-  ShieldCheck,
   Terminal,
-  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Navbar from "../components/Navbar";
 import { api } from "../services/api";
@@ -567,10 +563,7 @@ const APIRefContent = () => (
 
 const Documentation = () => {
   const [activePage, setActivePage] = useState("introduction");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const user = api.auth.getCurrentUser();
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -583,18 +576,6 @@ const Documentation = () => {
     }
   }, [location]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const scrollToTop = () => {
     const mainEl = document.querySelector("main");
     if (mainEl) mainEl.scrollTo({ top: 0, behavior: "smooth" });
@@ -603,12 +584,7 @@ const Documentation = () => {
 
   const handleTopicChange = (id) => {
     setActivePage(id);
-    setMobileMenuOpen(false);
     scrollToTop();
-  };
-
-  const openModal = (path) => {
-    navigate(path, { state: { backgroundLocation: location } });
   };
 
   const menu = [

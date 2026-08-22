@@ -3,18 +3,13 @@ import {
   ArrowUpRight,
   Check,
   CheckCircle2,
-  Code2,
   Copy,
   Cpu,
-  Database,
-  Globe,
   LineChart,
   Shield,
   ShieldCheck,
   Terminal,
-  TrendingUp,
   Users,
-  Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";

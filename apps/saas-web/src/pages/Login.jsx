@@ -1,5 +1,5 @@
 import { AlertCircle, Eye, EyeOff, Lock as LockIcon, ShieldCheck, User, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
@@ -21,6 +21,12 @@ export default function Login({ modal = false }) {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/dashboard";
 
+  const handleClose = useCallback(() => {
+    navigate(location.state?.backgroundLocation?.pathname || "/", {
+      replace: true,
+    });
+  }, [navigate, location.state]);
+
   // Close modal on Escape key
   useEffect(() => {
     if (!modal) return;
@@ -29,13 +35,7 @@ export default function Login({ modal = false }) {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [modal]);
-
-  const handleClose = () => {
-    navigate(location.state?.backgroundLocation?.pathname || "/", {
-      replace: true,
-    });
-  };
+  }, [modal, handleClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

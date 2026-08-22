@@ -20,14 +20,12 @@ const enrollSchema = z.object({
 const verifySchema = z.object({
   ...commonPayload,
   threshold: z.number().min(0).max(1).optional(),
-  identityContinuity: z.any().optional(),
 });
 
 const verifyByIdSchema = z.object({
   ...commonPayload,
   targetId: z.string().uuid("targetId must be a valid UUID"),
   threshold: z.number().min(0).max(1).optional(),
-  identityContinuity: z.any().optional(),
 });
 
 export async function enrollUser(req, res) {
@@ -53,14 +51,12 @@ export async function verifyUser(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, threshold, antiSpoofing, identityContinuity } =
-    validation.data;
+  const { descriptor, threshold, antiSpoofing } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUser(
       descriptor,
       threshold,
       antiSpoofing,
-      identityContinuity,
       adminId,
     );
     res.json(responsePayload);
@@ -76,10 +72,14 @@ export async function verifyUserById(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, targetId, threshold, antiSpoofing, identityContinuity } = validation.data;
+  const { descriptor, targetId, threshold, antiSpoofing } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUserById(
-      descriptor, targetId, threshold, antiSpoofing, identityContinuity, adminId,
+      descriptor,
+      targetId,
+      threshold,
+      antiSpoofing,
+      adminId,
     );
     res.json(responsePayload);
   } catch (error) {

@@ -11,11 +11,9 @@ import {
   Search,
   Settings as SettingsIcon,
   ShieldCheck,
-  Sparkles,
   Users,
   Webhook,
   X,
-  Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -362,191 +360,10 @@ export default function DashboardLayout({ children }) {
                     (d) => d.label.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q)
                   );
 
-                  // 3. Dynamic User Querying
-                  const matchedUsers = q.length >= 1
-                    ? api.users.list().filter(
-                        (u) => u.name.toLowerCase().includes(q) || u.id.toString().includes(q)
-                      ).slice(0, 3)
-                    : [];
-
-                  // 4. Dynamic API Keys Querying
-                  const matchedKeys = q.length >= 1
-                    ? api.apiKeys.list().filter(
-                        (k) => k.name.toLowerCase().includes(q) || k.key.toLowerCase().includes(q)
-                      ).slice(0, 3)
-                    : [];
-
-                  // 5. Dynamic Webhooks Querying
-                  const matchedWebhooks = q.length >= 1
-                    ? api.webhooks.list().filter(
-                        (w) => w.url.toLowerCase().includes(q)
-                      ).slice(0, 3)
-                    : [];
-
-                  // 6. Dynamic Logs Querying
-                  const matchedLogs = q.length >= 1
-                    ? api.logs.list().filter(
-                        (l) => l.userName.toLowerCase().includes(q) || l.status.toLowerCase().includes(q)
-                      ).slice(0, 3)
-                    : [];
-
-                  const hasResults =
-                    pages.length > 0 ||
-                    docSections.length > 0 ||
-                    matchedUsers.length > 0 ||
-                    matchedKeys.length > 0 ||
-                    matchedWebhooks.length > 0 ||
-                    matchedLogs.length > 0;
+                  const hasResults = pages.length > 0 || docSections.length > 0;
 
                   return (
                     <div className="space-y-3 p-1">
-                      {/* Enrolled Users Results */}
-                      {matchedUsers.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Enrolled Identities
-                          </div>
-                          {matchedUsers.map((u) => (
-                            <Link
-                              key={u.id}
-                              to="/users"
-                              onClick={() => {
-                                setSearchModalOpen(false);
-                                setSearchQuery("");
-                              }}
-                              className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-black text-white text-xs">
-                                  {u.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <span className="block text-xs font-bold text-slate-900 group-hover:text-blue-700">
-                                    {u.name}
-                                  </span>
-                                  <span className="block text-[10px] font-mono text-slate-400">
-                                    ID: {u.id}
-                                  </span>
-                                </div>
-                              </div>
-                              <span className="text-xs font-bold text-blue-600">
-                                View User &rarr;
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* API Keys Results */}
-                      {matchedKeys.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            API Credentials
-                          </div>
-                          {matchedKeys.map((k) => (
-                            <Link
-                              key={k.id}
-                              to="/api-keys"
-                              onClick={() => {
-                                setSearchModalOpen(false);
-                                setSearchQuery("");
-                              }}
-                              className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                  <Key className="h-4 w-4" />
-                                </div>
-                                <div>
-                                  <span className="block text-xs font-bold text-slate-900 group-hover:text-blue-700">
-                                    {k.name}
-                                  </span>
-                                  <span className="block text-[10px] font-mono text-slate-400">
-                                    Key: {k.key}
-                                  </span>
-                                </div>
-                              </div>
-                              <span className="text-xs font-bold text-blue-600">
-                                Manage Key &rarr;
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Webhook Endpoints Results */}
-                      {matchedWebhooks.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Webhook Endpoints
-                          </div>
-                          {matchedWebhooks.map((w) => (
-                            <Link
-                              key={w.id}
-                              to="/webhooks"
-                              onClick={() => {
-                                setSearchModalOpen(false);
-                                setSearchQuery("");
-                              }}
-                              className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                  <Webhook className="h-4 w-4" />
-                                </div>
-                                <div>
-                                  <span className="block text-xs font-bold text-slate-900 font-mono group-hover:text-blue-700 truncate max-w-xs">
-                                    {w.url}
-                                  </span>
-                                  <span className="block text-[10px] font-medium text-slate-400">
-                                    Status: {w.isActive ? "Active" : "Disabled"}
-                                  </span>
-                                </div>
-                              </div>
-                              <span className="text-xs font-bold text-blue-600">
-                                View Endpoint &rarr;
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Audit Logs Results */}
-                      {matchedLogs.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Audit Telemetry Logs
-                          </div>
-                          {matchedLogs.map((l) => (
-                            <Link
-                              key={l.id}
-                              to="/logs"
-                              onClick={() => {
-                                setSearchModalOpen(false);
-                                setSearchQuery("");
-                              }}
-                              className="flex items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80 group cursor-pointer"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                  <BarChart3 className="h-4 w-4" />
-                                </div>
-                                <div>
-                                  <span className="block text-xs font-bold text-slate-900 group-hover:text-blue-700">
-                                    Subject: {l.userName} ({l.status})
-                                  </span>
-                                  <span className="block text-[10px] font-mono text-slate-400">
-                                    Score: {(l.score * 100).toFixed(1)}%
-                                  </span>
-                                </div>
-                              </div>
-                              <span className="text-xs font-bold text-blue-600">
-                                Inspect Log &rarr;
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
 
                       {/* Documentation Sections */}
                       {docSections.length > 0 && (

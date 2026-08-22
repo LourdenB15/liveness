@@ -16,7 +16,7 @@ export async function createWebhook(adminId, url) {
     error.status = 403;
     throw error;
   }
-  const secret = `whsec_${Math.random().toString(36).substr(2, 24)}`;
+  const secret = `whsec_${crypto.randomBytes(16).toString("hex")}`;
   const webhook = await webhooksRepository.addWebhook(adminId, url, secret);
   return webhook;
 }

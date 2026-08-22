@@ -1,4 +1,4 @@
-import { CheckCircle2, Crown, ShieldCheck, Star, Zap } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -43,24 +43,6 @@ const Billing = () => {
       setUpgrading(false);
     }
   };
-
-  const handleDowngrade = async () => {
-    setUpgrading(true);
-    setMessage("");
-    try {
-      const { subscriptionTier } = await api.billing.downgrade();
-      const updatedUser = { ...user, subscriptionTier };
-      localStorage.setItem("liveness_admin", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      setMessage("Successfully downgraded to FREE tier.");
-    } catch {
-      setMessage("Failed to downgrade. Please try again.");
-    } finally {
-      setUpgrading(false);
-    }
-  };
-
-  const isPro = user?.subscriptionTier === "PRO";
 
   if (loading) {
     return (

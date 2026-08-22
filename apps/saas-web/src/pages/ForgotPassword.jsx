@@ -1,5 +1,5 @@
 import { AlertCircle, ArrowLeft, CheckCircle2, KeyRound, Mail, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
@@ -18,6 +18,12 @@ export default function ForgotPassword({ modal = false }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleClose = useCallback(() => {
+    navigate(location.state?.backgroundLocation?.pathname || "/", {
+      replace: true,
+    });
+  }, [navigate, location.state]);
+
   useEffect(() => {
     if (!modal) return;
     const onKeyDown = (e) => {
@@ -25,13 +31,7 @@ export default function ForgotPassword({ modal = false }) {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [modal]);
-
-  const handleClose = () => {
-    navigate(location.state?.backgroundLocation?.pathname || "/", {
-      replace: true,
-    });
-  };
+  }, [modal, handleClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

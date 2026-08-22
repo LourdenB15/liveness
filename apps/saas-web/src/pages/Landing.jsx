@@ -1,20 +1,14 @@
 import {
   Activity,
   ArrowRight,
-  BarChart3,
   Check,
   CheckCircle2,
-  CheckCheck,
   ChevronDown,
   ChevronRight,
-  Code2,
   Copy,
   LineChart,
-  Lock,
   Mail,
   ShieldCheck,
-  Terminal,
-  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -22,7 +16,6 @@ import Navbar from "../components/Navbar";
 
 export default function Landing() {
   const [copied, setCopied] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -198,7 +191,7 @@ export default function Landing() {
           </div>
 
           {/* Interactive Steps + Code Viewer Grid */}
-          <HowItWorksInteractive openModal={openModal} />
+          <HowItWorksInteractive />
         </div>
       </section>
 
@@ -548,7 +541,7 @@ app.post('/api/liveness/verify', async (req, res) => {
   },
 ];
 
-const HowItWorksInteractive = ({ openModal }) => {
+const HowItWorksInteractive = () => {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [stepCopied, setStepCopied] = useState(false);
 

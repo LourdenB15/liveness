@@ -25,7 +25,6 @@ export async function verifyUser(
   descriptor,
   threshold,
   antiSpoofing,
-  _identityContinuity,
   adminId,
 ) {
   const similarityThreshold = threshold !== undefined ? threshold : 0.65;
@@ -70,7 +69,6 @@ export async function verifyUserById(
   targetId,
   threshold,
   antiSpoofing,
-  _identityContinuity,
   adminId,
 ) {
   const similarityThreshold = threshold !== undefined ? threshold : 0.65;
