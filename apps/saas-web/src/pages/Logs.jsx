@@ -240,7 +240,6 @@ export default function Logs() {
                   <th className="px-6 py-3.5">Result</th>
                   <th className="px-6 py-3.5">Subject</th>
                   <th className="px-6 py-3.5">Score / Confidence</th>
-                  <th className="px-6 py-3.5">Anti-Spoofing Telemetry</th>
                   <th className="px-6 py-3.5 text-right">Timestamp</th>
                 </tr>
               </thead>
@@ -299,44 +298,6 @@ export default function Logs() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      {log.antiSpoofing ? (
-                        <div className="flex items-center gap-3 sm:gap-4">
-                          <div className="flex flex-col">
-                            <span className="text-[9px] font-bold tracking-wider text-slate-400 uppercase">
-                              Depth
-                            </span>
-                            <span
-                              className={`font-mono text-xs font-bold ${
-                                log.antiSpoofing.depthVariance < 0.0015
-                                  ? "text-rose-600"
-                                  : "text-emerald-600"
-                              }`}
-                            >
-                              {log.antiSpoofing.depthVariance.toFixed(4)}
-                            </span>
-                          </div>
-                          <div className="flex flex-col border-l border-slate-100 pl-3 sm:pl-4">
-                            <span className="text-[9px] font-bold tracking-wider text-slate-400 uppercase">
-                              Texture
-                            </span>
-                            <span
-                              className={`font-mono text-xs font-bold ${
-                                log.antiSpoofing.laplacianVariance < 100
-                                  ? "text-rose-600"
-                                  : "text-emerald-600"
-                              }`}
-                            >
-                              {log.antiSpoofing.laplacianVariance.toFixed(1)}
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="font-mono text-xs text-slate-400">
-                          N/A
-                        </span>
-                      )}
-                    </td>
                     <td className="px-6 py-4 text-right">
                       <span className="inline-flex items-center gap-1 font-mono text-xs font-medium text-slate-500">
                         <Clock className="h-3 w-3 text-slate-400" />
@@ -347,7 +308,7 @@ export default function Logs() {
                 ))}
                 {filteredLogs.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="px-6 py-14 text-center">
+                    <td colSpan="4" className="px-6 py-14 text-center">
                       <div className="flex flex-col items-center">
                         <AlertCircle className="mb-3 h-8 w-8 text-slate-300" />
                         <p className="text-xs font-extrabold tracking-widest text-slate-400 uppercase">
@@ -448,27 +409,6 @@ export default function Logs() {
                       style={{ width: `${(selectedLog.score || 0) * 100}%` }}
                     />
                   </div>
-
-                  {selectedLog.antiSpoofing && (
-                    <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-2">
-                      <div className="rounded-lg bg-slate-50 p-2.5">
-                        <span className="block text-[9px] font-bold tracking-wider text-slate-400 uppercase">
-                          Depth Mesh Variance
-                        </span>
-                        <span className="font-mono text-xs font-bold text-slate-800">
-                          {selectedLog.antiSpoofing.depthVariance}
-                        </span>
-                      </div>
-                      <div className="rounded-lg bg-slate-50 p-2.5">
-                        <span className="block text-[9px] font-bold tracking-wider text-slate-400 uppercase">
-                          Laplacian Texture Variance
-                        </span>
-                        <span className="font-mono text-xs font-bold text-slate-800">
-                          {selectedLog.antiSpoofing.laplacianVariance}
-                        </span>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Raw JSON Payload */}

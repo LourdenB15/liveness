@@ -5,7 +5,6 @@ import {
   calculateBrightness,
   calculateCosineSimilarity,
   calculateEAR,
-  calculateFFTSpectrum,
   calculateFaceSize,
   calculateHeadTurnV2,
   checkOcclusion,
@@ -133,15 +132,6 @@ describe("Liveness Algorithms", () => {
       landmarks[133] = p(6, 0);
 
       expect(checkOcclusion(landmarks)).toBe(true);
-    });
-  });
-
-  describe("calculateFFTSpectrum", () => {
-    it("should return a number representing high-frequency energy", async () => {
-      const img = tf.tidy(() => tf.randomNormal([1, 4, 4, 3]));
-      const spectrum = await calculateFFTSpectrum(img);
-      expect(typeof spectrum).toBe("number");
-      img.dispose();
     });
   });
 

@@ -3,12 +3,9 @@ import * as mpFaceMesh from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
 import {
   calculateBrightness,
-  calculateDepthVariance,
   calculateEAR,
   calculateFaceSize,
-  calculateFFTSpectrum,
   calculateHeadTurnV2,
-  calculateLaplacianVariance,
   checkOcclusion,
   generateIntegrityHash,
 } from "./utils";
@@ -32,11 +29,8 @@ const DEFAULT_CONFIG = {
   maxFaceSize: 0.6,
   basePath: "",
   sessionToken: null,
-  minDepthVariance: 0.0015,
-  minLaplacianVariance: 0.003,
   minBrightness: -0.8,
   maxBrightness: 0.9,
-  maxFFTPeak: 50.0,
   challenges: null,
 };
 
@@ -321,9 +315,6 @@ export class LivenessEngine {
 
       const brightness = calculateBrightness(faceTensor);
       const occlusionDetected = checkOcclusion(this.#lastLandmarks);
-      const depthVariance = calculateDepthVariance(this.#lastLandmarks);
-      const laplacianVariance = await calculateLaplacianVariance(faceTensor);
-      const fftPeak = await calculateFFTSpectrum(faceTensor);
 
       if (brightness < this.#config.minBrightness) {
         tf.dispose(faceTensor);
@@ -348,30 +339,6 @@ export class LivenessEngine {
           code: "OCCLUSION_DETECTED",
           message:
             "Face is partially covered. Please remove any masks or obstructions.",
-        });
-      }
-
-      if (fftPeak > this.#config.maxFFTPeak) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Digital screen pattern detected (Moiré interference).",
-        });
-      }
-
-      if (depthVariance < this.#config.minDepthVariance) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Flat surface detected (Possible photo/screen spoof).",
-        });
-      }
-
-      if (laplacianVariance < this.#config.minLaplacianVariance) {
-        tf.dispose(faceTensor);
-        return this.#failChallenge({
-          code: "SPOOF_DETECTED",
-          message: "Low texture detail detected (Possible re-broadcast/print).",
         });
       }
 
@@ -400,13 +367,6 @@ export class LivenessEngine {
         timestamp,
         challenges: this.#challenges,
         integrity,
-        antiSpoofing: {
-          depthVariance,
-          laplacianVariance,
-          brightness,
-          occlusionDetected,
-          fftPeak,
-        },
       });
     } catch (error) {
       console.error("Face recognition failed:", error);

@@ -9,7 +9,6 @@ const commonPayload = {
   timestamp: z.number(),
   challenges: z.array(z.string()).min(1, "Challenges are required"),
   integrity: z.string().min(1, "Integrity hash is required"),
-  antiSpoofing: z.any().optional(),
 };
 
 const enrollSchema = z.object({
@@ -35,15 +34,11 @@ export async function enrollUser(req, res) {
   }
   const { name, descriptor } = validation.data;
   const adminId = req.adminId;
-  const antiSpoofing = req.body.antiSpoofing
-    ? JSON.stringify(req.body.antiSpoofing)
-    : null;
   try {
     const enrolledUser = await livenessServices.enrollUser(
       adminId,
       name,
       descriptor,
-      antiSpoofing,
     );
     res.status(201).json(enrolledUser);
   } catch (error) {
@@ -58,12 +53,11 @@ export async function verifyUser(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, threshold, antiSpoofing } = validation.data;
+  const { descriptor, threshold } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUser(
       descriptor,
       threshold,
-      antiSpoofing,
       adminId,
     );
     res.json(responsePayload);
@@ -79,13 +73,12 @@ export async function verifyUserById(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, targetId, threshold, antiSpoofing } = validation.data;
+  const { descriptor, targetId, threshold } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUserById(
       descriptor,
       targetId,
       threshold,
-      antiSpoofing,
       adminId,
     );
     res.json(responsePayload);

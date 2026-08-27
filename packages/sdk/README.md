@@ -30,7 +30,6 @@ await sdk.start(videoElement, canvasElement);
 ## Features
 
 - **Randomized Active Challenges**: Blink, Turn Left, Turn Right.
-- **Advanced Anti-Spoofing**: FFT Moire Detection, Laplacian Texture Analysis, Depth Variance.
 - **Identity Verification**: Face identity feature extraction and matching.
 
 ## License

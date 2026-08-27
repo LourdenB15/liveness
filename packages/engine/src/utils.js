@@ -76,54 +76,6 @@ export function calculateFaceSize(landmarks) {
   return height;
 }
 
-export function calculateDepthVariance(landmarks) {
-  if (!landmarks || landmarks.length === 0) return 0;
-
-  const xs = landmarks.map((l) => l.x);
-  const faceWidth = Math.max(...xs) - Math.min(...xs);
-  if (faceWidth < 0.01) return 0;
-
-  const zs = landmarks.map((l) => l.z / faceWidth);
-  const meanZ = zs.reduce((sum, z) => sum + z, 0) / zs.length;
-  const variance =
-    zs.reduce((sum, z) => sum + Math.pow(z - meanZ, 2), 0) / zs.length;
-
-  return variance;
-}
-
-export async function calculateLaplacianVariance(imageTensor) {
-  return tf.tidy(() => {
-    const grayscale =
-      imageTensor.shape[3] === 3
-        ? tf.image.rgbToGrayscale(imageTensor)
-        : imageTensor;
-
-    const kernel = tf.tensor4d([0, 1, 0, 1, -4, 1, 0, 1, 0], [3, 3, 1, 1]);
-
-    const laplacian = tf.conv2d(grayscale, kernel, 1, "valid");
-
-    const mean = laplacian.mean();
-    const variance = laplacian.sub(mean).square().mean();
-
-    return variance.dataSync()[0];
-  });
-}
-
-export async function calculateFFTSpectrum(imageTensor) {
-  return tf.tidy(() => {
-    const grayscale = tf.image.rgbToGrayscale(imageTensor).squeeze([0, 3]);
-    const normalized = grayscale.sub(grayscale.mean());
-
-    const fft = tf.spectral.rfft(normalized);
-    const magnitude = fft.abs();
-
-    const mean = magnitude.mean();
-    const max = magnitude.max();
-
-    return max.div(mean).dataSync()[0];
-  });
-}
-
 export function calculateBrightness(imageTensor) {
   return tf.tidy(() => {
     const mean = imageTensor.mean();

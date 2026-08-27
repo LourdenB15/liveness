@@ -198,7 +198,6 @@ await sdk.start(video, canvas);`}
           language="javascript"
           code={`sdk.on("success", (result) => {
   // result.descriptor is the 1792-d feature vector
-  // result.antiSpoofing contains security metrics
   console.log("Success!", result);
 
   // Send to your backend for verification
@@ -490,42 +489,6 @@ const MethodologyContent = () => (
               Yaw and Pitch are estimated by measuring the pixel-distance ratio
               between the nose bridge and the cheek boundaries in 3D space.
             </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-slate-100 p-5 sm:p-8">
-        <h3 className="mb-3 text-lg font-bold text-slate-900 sm:mb-4 sm:text-xl">
-          Anti-Spoofing Analytics
-        </h3>
-        <div className="space-y-6">
-          <div className="flex gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-bold text-blue-600">
-              FFT
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-slate-900">
-                Moiré Detection
-              </h5>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                Detects high-frequency sub-pixel patterns from digital screens
-                using Fast Fourier Transform.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xs font-bold text-blue-600">
-              LV
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-slate-900">
-                Texture Variance
-              </h5>
-              <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                Uses Laplacian kernels to measure the edge-sharpness of the
-                face, identifying flat printouts or low-res displays.
-              </p>
-            </div>
           </div>
         </div>
       </div>

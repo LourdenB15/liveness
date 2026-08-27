@@ -383,9 +383,9 @@ export default function DashboardLayout({ children }) {
                     },
                     {
                       id: "methodology",
-                      label: "Documentation: Anti-Spoofing Methodology",
+                      label: "Documentation: Liveness Methodology",
                       path: "/docs#methodology",
-                      desc: "Blink EAR, Head Pose 3D, Moiré FFT",
+                      desc: "Blink EAR, Head Pose 3D Yaw/Pitch",
                     },
                     {
                       id: "api-ref",

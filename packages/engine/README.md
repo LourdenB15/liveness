@@ -11,7 +11,7 @@ npm install @liveness/engine
 ## Features
 
 - **Face Mesh Integration**: Uses MediaPipe for accurate 3D facial landmark detection.
-- **Mathematical Utilities**: EAR (Eye Aspect Ratio), Laplacian Variance (Texture Analysis), Depth Variance, and FFT (Moire Detection).
+- **Mathematical Utilities**: EAR (Eye Aspect Ratio), Head Pose Yaw/Pitch estimation, Cosine Similarity matching.
 - **Configuration Driven**: Highly customizable detection parameters.
 
 ## Usage

@@ -8,10 +8,6 @@ An event-driven JavaScript SDK for browser-based **Active Liveness Detection** a
 
 - **Randomized Active Challenges**: Prevents replay attacks by requiring users to perform random actions (Blink, Turn Left, Turn Right) generated at runtime.
 - **Identity Enrollment & Verification**: Full biometric flow including face feature extraction and Cosine Similarity matching (>80% threshold).
-- **Advanced Anti-Spoofing**:
-  - **FFT Moire Detection**: Detects digital screen sub-pixel patterns.
-  - **Laplacian Texture Analysis**: Identifies low-quality print or digital screen textures.
-  - **Depth Variance**: Uses 3D landmarks to differentiate between flat photos and real human faces.
 - **Secure SaaS Cloud**: Complete management dashboard with JWT Authentication, API key management, and real-time webhook notifications.
 
 ## Project Structure
@@ -43,7 +39,6 @@ const sdk = new LivenessSDK({
 sdk.on("challenge", ({ instruction }) => updateUI(instruction));
 sdk.on("success", (result) => {
   console.log("Verified!", result.descriptor);
-  console.log("Security Metadata:", result.antiSpoofing);
 });
 
 await sdk.load();
@@ -87,7 +82,6 @@ Use the following commands from the root directory to start the services:
 ### `new LivenessSDK(config)`
 
 - `minBrightness` (number, default: 50): Minimum required brightness.
-- `maxFFTPeak` (number, default: 20.0): Threshold for screen pattern detection.
 - `challengeTimeout` (number, default: 5000): Max duration per challenge.
 
 ### Events Reference
@@ -95,7 +89,7 @@ Use the following commands from the root directory to start the services:
 - `ready`: Models are fully loaded.
 - `challenge`: A new challenge starts.
 - `success`: All checks passed; biometric vector generated.
-- `failure`: Challenge failed or spoof detected.
+- `failure`: Challenge failed or recognition error.
 
 ## Webhook Security
 
@@ -123,5 +117,4 @@ app.use(
 ## Error Codes
 
 - `POOR_LIGHTING`: Environment is too dark or has excessive glare.
-- `SPOOF_DETECTED`: Screen patterns or flat surfaces detected.
 - `OCCLUSION_DETECTED`: Face is partially covered.

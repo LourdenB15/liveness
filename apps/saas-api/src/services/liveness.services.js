@@ -1,7 +1,7 @@
 import * as livenessRepository from "../repositories/liveness.repository.js";
 import { triggerWebhooks } from "../services/webhook.service.js";
 
-export async function enrollUser(adminId, name, descriptor, antiSpoofing) {
+export async function enrollUser(adminId, name, descriptor) {
   const enrolledUser = await livenessRepository.addUser(
     adminId,
     name,
@@ -14,14 +14,13 @@ export async function enrollUser(adminId, name, descriptor, antiSpoofing) {
     enrolledUser.name,
     1.0,
     "ENROLLED",
-    antiSpoofing,
   );
 
   triggerWebhooks(adminId, "user.enrolled", enrolledUser);
   return enrolledUser;
 }
 
-export async function verifyUser(descriptor, threshold, antiSpoofing, adminId) {
+export async function verifyUser(descriptor, threshold, adminId) {
   const similarityThreshold = threshold !== undefined ? threshold : 0.65;
 
   const closestMatch = await livenessRepository.findClosestMatch(
@@ -45,7 +44,6 @@ export async function verifyUser(descriptor, threshold, antiSpoofing, adminId) {
     match?.name || "Unknown",
     match?.similarity || 0,
     status,
-    antiSpoofing ? JSON.stringify(antiSpoofing) : null,
   );
 
   const responsePayload = {
@@ -61,7 +59,6 @@ export async function verifyUserById(
   descriptor,
   targetId,
   threshold,
-  antiSpoofing,
   adminId,
 ) {
   const similarityThreshold = threshold !== undefined ? threshold : 0.65;
@@ -88,7 +85,6 @@ export async function verifyUserById(
     match?.name || "Unknown",
     match?.similarity || 0,
     status,
-    antiSpoofing ? JSON.stringify(antiSpoofing) : null,
   );
 
   const responsePayload = {

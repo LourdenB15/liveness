@@ -8,10 +8,7 @@ export interface LivenessConfig {
   basePath?: string;
   minBrightness?: number;
   maxBrightness?: number;
-  maxFFTPeak?: number;
   sessionToken?: string;
-  minDepthVariance?: number;
-  minLaplacianVariance?: number;
   challenges?: string[];
   instructions?: {
     WAITING?: string;
@@ -28,13 +25,6 @@ export interface LivenessResult {
   timestamp: number;
   challenges: string[];
   integrity: string;
-  antiSpoofing: {
-    depthVariance: number;
-    laplacianVariance: number;
-    brightness: number;
-    occlusionDetected: boolean;
-    fftPeak: number;
-  };
 }
 
 export interface LivenessError {
