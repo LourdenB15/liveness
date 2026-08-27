@@ -382,6 +382,50 @@ app.post("/webhooks/liveness", (req, res) => {
 }`}
             />
           </div>
+
+          {/* 1:1 Verify-One Endpoint */}
+          <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm sm:rounded-2xl sm:p-8">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <span className="w-fit rounded bg-indigo-100 px-2.5 py-1 text-xs font-black text-indigo-700">
+                POST
+              </span>
+              <code className="text-sm font-bold break-all text-slate-900 sm:text-lg">
+                /api/liveness/verify-one
+              </code>
+            </div>
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
+              Performs 1:1 verification comparing a fresh liveness result
+              directly against a specific target identity UUID (<code>targetId</code>).
+            </p>
+            <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
+              Request Body
+            </h5>
+            <CodeBlock
+              language="json"
+              code={`{
+  "targetId": "550e8400-e29b-41d4-a716-446655440000",
+  "descriptor": [...], // 1792-d vector
+  "sessionToken": "unique-session-id",
+  "timestamp": 1716336000000,
+  "integrity": "hash_value"
+}`}
+            />
+            <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
+              Response Schema
+            </h5>
+            <CodeBlock
+              language="json"
+              code={`{
+  "verified": true,
+  "status": "SUCCESS",
+  "match": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "John Doe",
+    "similarity": 0.94
+  }
+}`}
+            />
+          </div>
         </div>
       </div>
 

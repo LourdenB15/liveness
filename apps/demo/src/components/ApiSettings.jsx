@@ -79,6 +79,20 @@ export function ApiSettings({ config, onSave }) {
                 Key is stored locally in your browser.
               </p>
             </div>
+            <div className="space-y-1 rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-[10px] text-slate-500">
+              <span className="block text-[9px] font-bold tracking-wider text-slate-700 uppercase">
+                Available Endpoints:
+              </span>
+              <p>
+                <code className="font-mono font-bold text-emerald-600">POST /enroll</code>: Register Biometrics
+              </p>
+              <p>
+                <code className="font-mono font-bold text-blue-600">POST /verify</code>: 1:N Search
+              </p>
+              <p>
+                <code className="font-mono font-bold text-indigo-600">POST /verify-one</code>: 1:1 Target Verify
+              </p>
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
