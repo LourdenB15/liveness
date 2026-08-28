@@ -1,0 +1,8 @@
+{
+  "name": "liveness-sdk-plugin",
+  "description": "Skills and rules for implementing browser-based Active Liveness Detection and Biometric Face Verification using Liveness SDK",
+  "version": "1.0.0",
+  "author": {
+    "name": "John Paul Patigas"
+  }
+}

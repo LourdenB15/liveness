@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liveness SDK - Vanilla JS Integration</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+      .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 520px;
+        width: 100%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      }
+      .viewport {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        background: #000;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      video,
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1);
+      }
+      .instruction-box {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        text-align: center;
+        font-weight: 600;
+        min-height: 24px;
+      }
+      .progress-bar-bg {
+        height: 8px;
+        background: #334155;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: #3b82f6;
+        transition: width 0.15s ease;
+      }
+      button {
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      button:disabled {
+        background: #475569;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Liveness Verification</h2>
+
+      <div class="viewport">
+        <video id="liveness-video" playsinline autoplay muted></video>
+        <canvas id="liveness-canvas"></canvas>
+      </div>
+
+      <div class="instruction-box" id="instruction">Loading AI models...</div>
+
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+
+      <button id="start-btn" disabled>Start Verification</button>
+    </div>
+
+    <!-- Bundle script (e.g. built via Vite or linked via script tag) -->
+    <script type="module">
+      import { LivenessSDK } from "/dist/liveness-sdk.js"; // Or from @liveness/sdk package
+
+      const video = document.getElementById("liveness-video");
+      const canvas = document.getElementById("liveness-canvas");
+      const instructionEl = document.getElementById("instruction");
+      const progressFill = document.getElementById("progress-fill");
+      const startBtn = document.getElementById("start-btn");
+
+      const sdk = new LivenessSDK({
+        basePath: "", // Set path to /face_mesh/ and /mobilenet-v2/ assets
+        challengeTimeout: 8000,
+        minBrightness: -0.8,
+        maxBrightness: 0.9,
+      });
+
+      sdk.on("ready", () => {
+        instructionEl.textContent = "Ready! Click below to start camera.";
+        startBtn.disabled = false;
+      });
+
+      sdk.on("challenge", ({ instruction }) => {
+        instructionEl.textContent = instruction;
+      });
+
+      sdk.on("progress", ({ progress }) => {
+        progressFill.style.width = `${progress}%`;
+      });
+
+      sdk.on("success", (result) => {
+        instructionEl.textContent = "Verification Successful!";
+        progressFill.style.width = "100%";
+        console.log("Extracted Biometric Descriptor:", result.descriptor);
+        sdk.stop(video);
+      });
+
+      sdk.on("failure", (error) => {
+        instructionEl.textContent = `Failed: ${error.message}`;
+        startBtn.disabled = false;
+        startBtn.textContent = "Retry";
+      });
+
+      startBtn.addEventListener("click", async () => {
+        startBtn.disabled = true;
+        instructionEl.textContent = "Position your face in frame...";
+        try {
+          await sdk.start(video, canvas);
+        } catch (err) {
+          instructionEl.textContent = "Camera error: " + err.message;
+          startBtn.disabled = false;
+        }
+      });
+
+      // Preload model assets
+      await sdk.load();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+---
+description: Rules and guidelines for implementing and using @liveness/sdk in browser-based applications.
+globs: **/*.{js,jsx,ts,tsx,html,vue,svelte}
+alwaysApply: false
+---
+
+# Liveness SDK Rules for Cursor
+
+When implementing or modifying features involving `@liveness/sdk` and biometric face verification:
+
+- Video Configuration: `<video>` elements must include `playsInline`, `autoPlay`, and `muted`.
+- Hardware Cleanup: Always call `sdk.stop(videoElement)` and stop stream tracks (`track.stop()`) on unmount.
+- Asset Paths: Provide `basePath` pointing to `/face_mesh/` and `/mobilenet-v2/` binary assets or host them in `public/`.
+- Active Challenges: Supported active challenges are `BLINK`, `TURN_LEFT`, and `TURN_RIGHT` (with initial framing in `WAITING`).
+- Client-Side Privacy: Only send the 1792-dimensional numerical descriptor vector to the server. Never stream raw camera video to backend.
+- Biometric Matching: Use Cosine Similarity with default threshold `>= 0.80`.
+- Webhooks: Always verify `x-liveness-signature` HMAC-SHA256 signatures against the raw body buffer (`req.rawBody`).

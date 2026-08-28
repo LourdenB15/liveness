@@ -163,7 +163,7 @@ const SDKUsageContent = () => (
 const sdk = new LivenessSDK({
   basePath: "/assets/models", // Local or CDN path
   challengeTimeout: 8000,     // 8 seconds per challenge
-  minBrightness: 60,
+  minBrightness: -0.8,
 });`}
         />
       </div>
@@ -528,7 +528,11 @@ const APIRefContent = () => (
                   def: "5000",
                   desc: "Max ms per challenge.",
                 },
-                { name: "minBrightness", def: "50", desc: "Scale 0-255." },
+                {
+                  name: "minBrightness",
+                  def: "-0.8",
+                  desc: "Scale [-1.0, 1.0].",
+                },
                 {
                   name: "targetFPS",
                   def: "30",

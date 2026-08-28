@@ -18,6 +18,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run test -w packages/engine",
+    "setup:agents": "node scripts/setup-agent-skills.js",
     "postinstall": "node scripts/patch-mediapipe.js && node scripts/install-win-rollup.js",
     "install:win-rollup": "node scripts/install-win-rollup.js"
   },
