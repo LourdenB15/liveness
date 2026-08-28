@@ -17,20 +17,20 @@ const sdk = new LivenessSDK(config?: LivenessConfig);
 
 ### Constructor Configuration (`LivenessConfig`)
 
-| Option              | Type       | Default in Engine | Description                                                                                    |
-| :------------------ | :--------- | :---------------- | :--------------------------------------------------------------------------------------------- |
-| `basePath`          | `string`   | `""`              | Base path or URL where `face_mesh/` and `face_recognition/` directories are served.            |
-| `challengeTimeout`  | `number`   | `5000`            | Maximum time allowed (in milliseconds) for the user to complete each challenge.                |
-| `blinkEARThreshold` | `number`   | `0.25`            | Eye Aspect Ratio threshold for detecting blinks.                                               |
-| `headTurnThreshold` | `number`   | `0.4`             | Normalized yaw ratio threshold required to validate `TURN_LEFT` and `TURN_RIGHT`.              |
-| `minFaceSize`       | `number`   | `0.3`             | Minimum face bounding box height ratio relative to frame.                                      |
-| `maxFaceSize`       | `number`   | `0.6`             | Maximum face bounding box height ratio relative to frame.                                      |
-| `minBrightness`     | `number`   | `-0.8`            | Minimum normalized tensor mean brightness. Below this triggers `POOR_LIGHTING`.                |
-| `maxBrightness`     | `number`   | `0.9`             | Maximum normalized tensor mean brightness. Above this triggers `POOR_LIGHTING` (glare).        |
-| `targetFPS`         | `number`   | `30`              | Target frame evaluation rate for the video processing loop.                                    |
-| `sessionToken`      | `string`   | `null`            | Unique session identifier for replay protection. Defaults to `"local-session"`.                |
+| Option              | Type       | Default in Engine | Description                                                                                                              |
+| :------------------ | :--------- | :---------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| `basePath`          | `string`   | `""`              | Base path or URL where `face_mesh/` and `face_recognition/` directories are served.                                      |
+| `challengeTimeout`  | `number`   | `5000`            | Maximum time allowed (in milliseconds) for the user to complete each challenge.                                          |
+| `blinkEARThreshold` | `number`   | `0.25`            | Eye Aspect Ratio threshold for detecting blinks.                                                                         |
+| `headTurnThreshold` | `number`   | `0.4`             | Normalized yaw ratio threshold required to validate `TURN_LEFT` and `TURN_RIGHT`.                                        |
+| `minFaceSize`       | `number`   | `0.3`             | Minimum face bounding box height ratio relative to frame.                                                                |
+| `maxFaceSize`       | `number`   | `0.6`             | Maximum face bounding box height ratio relative to frame.                                                                |
+| `minBrightness`     | `number`   | `-0.8`            | Minimum normalized tensor mean brightness. Below this triggers `POOR_LIGHTING`.                                          |
+| `maxBrightness`     | `number`   | `0.9`             | Maximum normalized tensor mean brightness. Above this triggers `POOR_LIGHTING` (glare).                                  |
+| `targetFPS`         | `number`   | `30`              | Target frame evaluation rate for the video processing loop.                                                              |
+| `sessionToken`      | `string`   | `null`            | Unique session identifier for replay protection. Defaults to `"local-session"`.                                          |
 | `challenges`        | `string[]` | `null`            | Array of challenge names. Default sequence: `["WAITING", ...randomized("BLINK", "TURN_LEFT", "TURN_RIGHT"), "WAITING"]`. |
-| `instructions`      | `object`   | `{...}`           | Custom text overrides for UI challenge prompts.                                                |
+| `instructions`      | `object`   | `{...}`           | Custom text overrides for UI challenge prompts.                                                                          |
 
 #### Default `instructions` in SDK
 

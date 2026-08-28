@@ -116,7 +116,9 @@ export class FaceRecognitionNet {
     const manifestUrl = `${cleanBaseUrl}/face_recognition_model-weights_manifest.json`;
     const response = await fetch(manifestUrl);
     if (!response.ok) {
-      throw new Error(`Failed to load FaceRecognitionNet manifest from ${manifestUrl}`);
+      throw new Error(
+        `Failed to load FaceRecognitionNet manifest from ${manifestUrl}`,
+      );
     }
     const manifest = await response.json();
     const weightMap = await tf.io.loadWeights(manifest, cleanBaseUrl);

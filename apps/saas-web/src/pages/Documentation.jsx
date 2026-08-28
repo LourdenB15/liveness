@@ -364,7 +364,8 @@ app.post("/webhooks/liveness", (req, res) => {
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Compares a fresh liveness result against your enrolled user
               database. Returns a match if similarity exceeds{" "}
-              <strong>0.98</strong> (Cosine) and distance is within <strong>0.20</strong> (Euclidean).
+              <strong>0.98</strong> (Cosine) and distance is within{" "}
+              <strong>0.20</strong> (Euclidean).
             </p>
             <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
               Response Schema
@@ -396,7 +397,8 @@ app.post("/webhooks/liveness", (req, res) => {
             </div>
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Performs 1:1 verification comparing a fresh liveness result
-              directly against a specific target identity UUID (<code>targetId</code>).
+              directly against a specific target identity UUID (
+              <code>targetId</code>).
             </p>
             <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
               Request Body

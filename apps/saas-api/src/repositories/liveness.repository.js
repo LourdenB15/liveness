@@ -19,13 +19,7 @@ export async function addVerificationLog(
 ) {
   await pool.query(
     "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status) VALUES ($1, $2, $3, $4, $5)",
-    [
-      adminId,
-      enrolledUserId,
-      enrolledUserName,
-      similarity,
-      status,
-    ],
+    [adminId, enrolledUserId, enrolledUserName, similarity, status],
   );
 }
 

@@ -820,7 +820,9 @@ export function LivenessChecker() {
 
             {mode === MODE.VERIFY && matchMetrics !== null && (
               <div className="mt-3 flex items-center gap-2.5 rounded-full bg-black/30 px-4 py-1.5 font-mono text-xs text-white/95 shadow-sm">
-                <span>Cosine: {(matchMetrics.similarity * 100).toFixed(1)}%</span>
+                <span>
+                  Cosine: {(matchMetrics.similarity * 100).toFixed(1)}%
+                </span>
                 <span className="text-white/40">•</span>
                 <span>
                   Distance:{" "}

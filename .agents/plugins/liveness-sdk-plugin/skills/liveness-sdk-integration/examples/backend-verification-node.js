@@ -62,9 +62,7 @@ app.post("/api/liveness/verify", (req, res) => {
   const { descriptor, targetId, threshold = 0.98 } = req.body;
 
   if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
-    return res
-      .status(400)
-      .json({ error: "128-d descriptor vector required." });
+    return res.status(400).json({ error: "128-d descriptor vector required." });
   }
 
   // 1:1 Verification against specific target
