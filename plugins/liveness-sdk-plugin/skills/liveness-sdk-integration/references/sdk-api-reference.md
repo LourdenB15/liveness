@@ -29,7 +29,7 @@ const sdk = new LivenessSDK(config?: LivenessConfig);
 | `maxBrightness`     | `number`   | `0.9`             | Maximum normalized tensor mean brightness. Above this triggers `POOR_LIGHTING` (glare).        |
 | `targetFPS`         | `number`   | `30`              | Target frame evaluation rate for the video processing loop.                                    |
 | `sessionToken`      | `string`   | `null`            | Unique session identifier for replay protection. Defaults to `"local-session"`.                |
-| `challenges`        | `string[]` | `null`            | Array of challenge names. Default sequence: `["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"]`. |
+| `challenges`        | `string[]` | `null`            | Array of challenge names. Default sequence: `["WAITING", ...randomized("BLINK", "TURN_LEFT", "TURN_RIGHT"), "WAITING"]`. |
 | `instructions`      | `object`   | `{...}`           | Custom text overrides for UI challenge prompts.                                                |
 
 #### Default `instructions` in SDK
@@ -92,6 +92,7 @@ Emitted when a new challenge begins.
 sdk.on("challenge", (payload: {
   type: string;
   instruction: string;
+  distance?: "CLOSER" | "FURTHER" | null;
 }) => void);
 ```
 

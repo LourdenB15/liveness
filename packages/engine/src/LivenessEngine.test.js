@@ -117,4 +117,28 @@ describe("LivenessEngine Custom Challenges", () => {
     expect(callbacks.onChallengeChanged).toHaveBeenCalledWith("TURN_RIGHT");
     engine.stop();
   });
+
+  it("should start with WAITING by default and fallback when invalid challenges provided", async () => {
+    const callbacks = {
+      onReady: vi.fn(),
+      onSuccess: vi.fn(),
+      onFailure: vi.fn(),
+      onChallengeChanged: vi.fn(),
+    };
+
+    const engine = new LivenessEngine(callbacks);
+    await engine.load();
+
+    const mockVideo = { readyState: 4, play: vi.fn().mockResolvedValue() };
+    const mockCanvasCtx = {
+      clearRect: vi.fn(),
+      canvas: { width: 640, height: 480 },
+    };
+
+    engine.start(mockVideo, mockCanvasCtx);
+
+    // Initial challenge should always be WAITING (center challenge)
+    expect(callbacks.onChallengeChanged).toHaveBeenCalledWith("WAITING");
+    engine.stop();
+  });
 });

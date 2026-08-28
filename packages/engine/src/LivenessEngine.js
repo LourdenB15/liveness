@@ -154,11 +154,13 @@ export class LivenessEngine {
         return filtered;
       }
     }
-    const challenges = ["WAITING", "BLINK"];
-    const pool = ["TURN_LEFT", "TURN_RIGHT"];
-    const shuffled = pool.sort(() => Math.random() - 0.5);
-    challenges.push(...shuffled);
-    return challenges;
+    const pool = ["BLINK", "TURN_LEFT", "TURN_RIGHT"];
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return ["WAITING", ...shuffled, "WAITING"];
   }
 
   #detectionLoop = async () => {

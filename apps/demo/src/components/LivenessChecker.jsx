@@ -405,9 +405,27 @@ export function LivenessChecker() {
     setUiState(UI_STATE.CHECKING);
 
     const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
+    let challengeList = selectedChallenges;
+    if (selectedChallenges.includes("WAITING")) {
+      const active = selectedChallenges.filter((c) => c !== "WAITING");
+      const shuffled = [...active];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      challengeList = ["WAITING", ...shuffled, "WAITING"];
+    } else {
+      const shuffled = [...selectedChallenges];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      challengeList = shuffled;
+    }
+
     sdkRef.current.updateConfig({
       sessionToken,
-      challenges: selectedChallenges,
+      challenges: challengeList,
     });
 
     try {
