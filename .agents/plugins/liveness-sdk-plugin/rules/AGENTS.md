@@ -17,8 +17,8 @@ When implementing or modifying features involving @liveness/sdk and biometric fa
 
 ## 2. Asset Hosting and basePath
 
-- WASM and Model Binaries: The SDK requires MediaPipe Face Mesh (face_mesh/) and TensorFlow.js MobileNet V2 (mobilenet-v2/) binary assets.
-- Configuration: Always configure basePath in new LivenessSDK({ basePath: "/assets/models" }) or copy assets to your framework public directory (e.g. public/face_mesh and public/mobilenet-v2 with basePath: "").
+- WASM and Model Binaries: The SDK requires MediaPipe Face Mesh (face_mesh/) and TensorFlow.js ResNet-34 FaceRecognitionNet (face_recognition/) binary assets.
+- Configuration: Always configure basePath in new LivenessSDK({ basePath: "/assets/models" }) or copy assets to your framework public directory (e.g. public/face_mesh and public/face_recognition with basePath: "").
 - Required Headers: Static servers and CDNs hosting .wasm and .binarypb files must serve them with appropriate MIME types (application/wasm, application/octet-stream).
 
 ---
@@ -33,8 +33,8 @@ When implementing or modifying features involving @liveness/sdk and biometric fa
 ## 4. Privacy and Biometric Architecture
 
 - Client-Side Processing: Liveness detection and feature extraction execute 100% on the client inside WebAssembly/WebGL.
-- Biometric Descriptor: Never send raw webcam video or frames to the backend. Send only the 1792-dimensional numerical descriptor vector, sessionToken, timestamp, challenges, and integrity hash.
-- Similarity Threshold: Use Cosine Similarity with a default threshold of >= 0.80 for 1:1 and 1:N face verification.
+- Biometric Descriptor: Never send raw webcam video or frames to the backend. Send only the 128-dimensional numerical descriptor vector, sessionToken, timestamp, challenges, and integrity hash.
+- Similarity Threshold: Use Cosine Similarity (threshold >= 0.98) and Euclidean Distance (threshold <= 0.20) for 1:1 and 1:N face verification.
 
 ---
 

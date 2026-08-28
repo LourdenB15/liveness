@@ -2,21 +2,27 @@ import { useState } from "react";
 
 export function ApiSettings({ config, onSave }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [enabled, setEnabled] = useState(config.enabled ?? !!config.apiKey);
   const [apiKey, setApiKey] = useState(config.apiKey || "");
   const [apiUrl, setApiUrl] = useState(
     config.apiUrl || "http://localhost:3000/api/liveness",
   );
 
   const handleSave = () => {
-    onSave({ apiKey: apiKey.trim(), apiUrl: apiUrl.trim() });
+    onSave({
+      enabled,
+      apiKey: apiKey.trim(),
+      apiUrl: apiUrl.trim(),
+    });
     setIsOpen(false);
   };
 
   return (
-    <div className="relative mb-6 flex w-full justify-end">
+    <div className="relative flex items-center">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-blue-600"
+        className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-blue-600"
+        type="button"
       >
         <svg
           className="h-4 w-4"
@@ -37,72 +43,83 @@ export function ApiSettings({ config, onSave }) {
             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
           ></path>
         </svg>
-        Cloud API Settings
+        <span>API Settings</span>
       </button>
 
       {isOpen && (
         <div className="animate-in fade-in slide-in-from-top-2 absolute top-8 right-0 z-50 w-72 rounded-xl border border-slate-200 bg-white p-4 shadow-xl ring-1 ring-black/5 duration-200">
           <h4 className="mb-3 text-sm font-bold text-slate-800">
-            Cloud Integration
+            Backend Connection
           </h4>
+
           <div className="space-y-4">
-            <div>
-              <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                API Base URL
-              </label>
-              <input
-                type="text"
-                value={apiUrl}
-                onChange={(e) => setApiUrl(e.target.value)}
-                placeholder="http://localhost:3000/api/liveness"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                API Key
-              </label>
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your API Key"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              {(apiKey.includes("•") || apiKey.includes("*")) && (
-                <p className="mt-1 text-[11px] font-semibold text-amber-600">
-                  Note: Masked keys cannot authenticate API requests. Please
-                  enter your full unmasked key.
+            <label className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+              <div>
+                <p className="text-xs font-semibold text-slate-800">
+                  Cloud SaaS API
                 </p>
-              )}
-              <p className="mt-1 text-[10px] text-slate-400">
-                Key is stored locally in your browser.
+                <p className="text-[10px] text-slate-500">
+                  {enabled
+                    ? "Syncs with PostgreSQL"
+                    : "Disabled (Offline Mode)"}
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(e) => setEnabled(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              />
+            </label>
+
+            {enabled && (
+              <>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                    API Base URL
+                  </label>
+                  <input
+                    type="text"
+                    value={apiUrl}
+                    onChange={(e) => setApiUrl(e.target.value)}
+                    placeholder="http://localhost:3000/api/liveness"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                    API Key
+                  </label>
+                  <input
+                    type="password"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="Enter your API Key"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </>
+            )}
+
+            {!enabled && (
+              <p className="rounded-lg bg-slate-50 p-2.5 text-[11px] leading-relaxed text-slate-500">
+                All face descriptors and identities will be stored locally in
+                your browser. No network calls are made.
               </p>
-            </div>
-            <div className="space-y-1 rounded-lg border border-slate-100 bg-slate-50 p-2.5 text-[10px] text-slate-500">
-              <span className="block text-[9px] font-bold tracking-wider text-slate-700 uppercase">
-                Available Endpoints:
-              </span>
-              <p>
-                <code className="font-mono font-bold text-emerald-600">POST /enroll</code>: Register Biometrics
-              </p>
-              <p>
-                <code className="font-mono font-bold text-blue-600">POST /verify</code>: 1:N Search
-              </p>
-              <p>
-                <code className="font-mono font-bold text-indigo-600">POST /verify-one</code>: 1:1 Target Verify
-              </p>
-            </div>
+            )}
+
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={handleSave}
-                className="flex-1 rounded-lg bg-blue-600 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+                className="flex-1 cursor-pointer rounded-lg bg-blue-600 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-blue-700"
               >
                 Save
               </button>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
-                className="flex-1 rounded-lg bg-slate-100 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-200"
+                className="flex-1 cursor-pointer rounded-lg bg-slate-100 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-200"
               >
                 Cancel
               </button>

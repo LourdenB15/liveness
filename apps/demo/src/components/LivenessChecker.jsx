@@ -1,5 +1,8 @@
 // src/components/LivenessChecker.jsx
-import { calculateCosineSimilarity } from "@liveness/engine/utils";
+import {
+  calculateCosineSimilarity,
+  calculateEuclideanDistance,
+} from "@liveness/engine/utils";
 import { LivenessSDK } from "@liveness/sdk";
 import { useEffect, useRef, useState } from "react";
 import { ApiSettings } from "./ApiSettings";
@@ -25,6 +28,9 @@ const VERIFY_TYPE = {
   ONE_TO_ONE: "1:1",
 };
 
+const MATCH_THRESHOLD = 0.98;
+const EUCLIDEAN_THRESHOLD = 0.2;
+
 export function LivenessChecker() {
   const [uiState, setUiState] = useState(UI_STATE.IDLE);
   const [mode, setMode] = useState(MODE.ENROLL);
@@ -34,6 +40,7 @@ export function LivenessChecker() {
   const [userName, setUserName] = useState("");
   const [targetId, setTargetId] = useState("");
   const [selectedLocalIndex, setSelectedLocalIndex] = useState(0);
+
   const [recentCloudUsers, setRecentCloudUsers] = useState(() => {
     const saved = localStorage.getItem("recent_cloud_identities");
     try {
@@ -42,8 +49,8 @@ export function LivenessChecker() {
       return [];
     }
   });
-  const [matchScore, setMatchScore] = useState(null);
-  const [matchedUser, setMatchedUser] = useState(null);
+
+  const [matchMetrics, setMatchMetrics] = useState(null);
   const [currentChallenge, setCurrentChallenge] = useState(null);
   const [distanceHint, setDistanceHint] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -70,12 +77,24 @@ export function LivenessChecker() {
 
   const [apiConfig, setApiConfig] = useState(() => {
     const saved = localStorage.getItem("cloud_api_config");
-    return saved
-      ? JSON.parse(saved)
-      : { apiKey: "", apiUrl: "http://localhost:3000/api/liveness" };
+    try {
+      return saved
+        ? JSON.parse(saved)
+        : {
+            enabled: false,
+            apiKey: "",
+            apiUrl: "http://localhost:3000/api/liveness",
+          };
+    } catch {
+      return {
+        enabled: false,
+        apiKey: "",
+        apiUrl: "http://localhost:3000/api/liveness",
+      };
+    }
   });
 
-  const isCloudEnabled = !!apiConfig.apiKey;
+  const isCloudMode = !!(apiConfig.enabled && apiConfig.apiKey);
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -120,24 +139,35 @@ export function LivenessChecker() {
   }, [recentCloudUsers]);
 
   useEffect(() => {
-    if (!isCloudEnabled) {
+    if (!isCloudMode) {
       const saved = localStorage.getItem("face_identity");
       if (saved) {
         try {
-          const users = JSON.parse(saved);
-          if (Array.isArray(users) && users.length > 0) {
+          const rawUsers = JSON.parse(saved);
+          if (Array.isArray(rawUsers) && rawUsers.length > 0) {
+            const users = rawUsers.map((u, idx) => ({
+              id: u.id || `local-${idx + 1}`,
+              name: u.name || `User ${idx + 1}`,
+              descriptor: u.descriptor,
+            }));
             setEnrolledUsers(users);
             setMode(MODE.VERIFY);
+          } else {
+            setEnrolledUsers([]);
+            setMode(MODE.ENROLL);
           }
         } catch (e) {
           console.error("Failed to parse enrolled identities", e);
+          setEnrolledUsers([]);
         }
+      } else {
+        setEnrolledUsers([]);
+        setMode(MODE.ENROLL);
       }
     } else {
-      setEnrolledUsers([]);
       setMode(MODE.VERIFY);
     }
-  }, [isCloudEnabled]);
+  }, [isCloudMode]);
 
   useEffect(() => {
     setUiState(UI_STATE.LOADING_MODELS);
@@ -168,20 +198,10 @@ export function LivenessChecker() {
       const { descriptor } = livenessResult;
       setCurrentChallenge(null);
 
-      if (apiConfigRef.current.apiKey) {
+      // Cloud Mode
+      if (apiConfigRef.current.enabled && apiConfigRef.current.apiKey) {
         try {
           const apiKey = apiConfigRef.current.apiKey.trim();
-          if (/[\u0080-\uFFFF]/.test(apiKey) || apiKey.includes("•")) {
-            throw new Error(
-              "Invalid API Key: Contains masked bullet characters ('•') or non-ASCII characters. Please enter your full, unmasked API key.",
-            );
-          }
-          if (apiKey.includes("*")) {
-            throw new Error(
-              "Invalid API Key: Masked keys cannot be used to authenticate. Please copy and use your full API key.",
-            );
-          }
-
           setInstruction("Syncing with Cloud API...");
 
           const rawUrl =
@@ -199,7 +219,9 @@ export function LivenessChecker() {
             endpoint = `${baseUrl}/verify-one`;
             const currentTargetId = targetIdRef.current.trim();
             if (!currentTargetId) {
-              throw new Error("Target ID (UUID) is required for 1:1 verification.");
+              throw new Error(
+                "Target ID (UUID) is required for 1:1 verification.",
+              );
             }
             body = { targetId: currentTargetId, ...livenessResult };
           } else {
@@ -218,7 +240,9 @@ export function LivenessChecker() {
 
           if (!response.ok) {
             const error = await response.json().catch(() => ({}));
-            throw new Error(error.error || `Request failed with status ${response.status}`);
+            throw new Error(
+              error.error || `Request failed with status ${response.status}`,
+            );
           }
 
           const cloudResult = await response.json();
@@ -234,92 +258,120 @@ export function LivenessChecker() {
               return [newCloudUser, ...filtered].slice(0, 10);
             });
             setTargetId(cloudResult.id);
-            setMatchedUser(newCloudUser);
             setUiState(UI_STATE.SUCCESS);
-            setInstruction(
-              `Cloud Identity Enrolled: ${cloudResult.name}!`,
-            );
+            setInstruction(`Cloud Identity Enrolled: ${cloudResult.name}`);
             setUserName("");
           } else if (verifyTypeRef.current === VERIFY_TYPE.ONE_TO_ONE) {
-            setMatchScore(cloudResult.match?.similarity ?? 0);
-            setMatchedUser(cloudResult.match);
+            setMatchMetrics({
+              similarity: cloudResult.match?.similarity ?? 0,
+              distance: cloudResult.match?.distance ?? Infinity,
+            });
             setUiState(UI_STATE.SUCCESS);
-            if (cloudResult.verified) {
-              setInstruction(
-                `1:1 Verified: Match confirmed for ${cloudResult.match?.name || "Target User"}`,
-              );
-            } else {
-              setInstruction("1:1 Verification Failed: Face does not match target ID.");
-            }
+            setInstruction(
+              cloudResult.verified
+                ? `1:1 Match confirmed for ${cloudResult.match?.name || "Target User"}`
+                : "1:1 Verification Failed: Face does not match target ID.",
+            );
           } else {
-            setMatchScore(cloudResult.match?.similarity ?? 0);
-            setMatchedUser(cloudResult.match);
+            setMatchMetrics({
+              similarity: cloudResult.match?.similarity ?? 0,
+              distance: cloudResult.match?.distance ?? Infinity,
+            });
             setUiState(UI_STATE.SUCCESS);
-            if (cloudResult.verified) {
-              setInstruction(
-                `1:N Verified: Identified as ${cloudResult.match?.name}`,
-              );
-            } else {
-              setInstruction("1:N Identification Failed: No matching identity found.");
-            }
+            setInstruction(
+              cloudResult.verified
+                ? `Identified as ${cloudResult.match?.name}`
+                : "1:N Verification Failed: No matching identity found.",
+            );
           }
         } catch (err) {
           setUiState(UI_STATE.FAILURE);
           setInstruction(`Cloud API Error: ${err.message}`);
         }
-      } else {
+      }
+      // Offline / LocalStorage Mode
+      else {
         if (mode === MODE.ENROLL) {
           const newIdentity = {
-            name: userNameRef.current || "User",
+            id: `local_${Date.now().toString(36)}`,
+            name: userNameRef.current.trim() || "User",
             descriptor,
           };
+
           setEnrolledUsers((prev) => {
             const updated = [...prev, newIdentity];
             localStorage.setItem("face_identity", JSON.stringify(updated));
             return updated;
           });
+
           setUiState(UI_STATE.SUCCESS);
-          setMatchedUser(newIdentity);
-          setInstruction(
-            `Identity Enrolled Successfully for ${newIdentity.name}!`,
-          );
+          setInstruction(`Enrolled ${newIdentity.name} locally!`);
           setUserName("");
         } else if (verifyTypeRef.current === VERIFY_TYPE.ONE_TO_ONE) {
-          const targetUser = enrolledUsersRef.current[selectedLocalIndexRef.current];
+          const targetUser =
+            enrolledUsersRef.current[selectedLocalIndexRef.current];
           if (!targetUser) {
             setUiState(UI_STATE.FAILURE);
             setInstruction("No local identity selected for 1:1 verification.");
             return;
           }
-          const score = calculateCosineSimilarity(descriptor, targetUser.descriptor);
-          setMatchScore(score);
-          setMatchedUser({ name: targetUser.name, similarity: score });
+
+          const similarity = calculateCosineSimilarity(
+            descriptor,
+            targetUser.descriptor,
+          );
+          const distance = calculateEuclideanDistance(
+            descriptor,
+            targetUser.descriptor,
+          );
+
+          setMatchMetrics({ similarity, distance });
+          const isMatch =
+            similarity >= MATCH_THRESHOLD && distance <= EUCLIDEAN_THRESHOLD;
+
           setUiState(UI_STATE.SUCCESS);
-          if (score > 0.8) {
-            setInstruction(`1:1 Verified! Matches ${targetUser.name}.`);
-          } else {
-            setInstruction(`1:1 Mismatch! Does not match ${targetUser.name}.`);
-          }
+          setInstruction(
+            isMatch
+              ? `1:1 Verified: Matches ${targetUser.name}`
+              : `1:1 Mismatch: Does not match ${targetUser.name}`,
+          );
         } else {
           if (enrolledUsersRef.current.length > 0) {
-            let bestMatch = { score: -1, name: "Unknown" };
+            let bestMatch = {
+              similarity: -1,
+              distance: Infinity,
+              name: "Unknown",
+            };
 
             enrolledUsersRef.current.forEach((user) => {
-              const score = calculateCosineSimilarity(
+              const similarity = calculateCosineSimilarity(
                 descriptor,
                 user.descriptor,
               );
-              if (score > bestMatch.score) {
-                bestMatch = { score, name: user.name };
+              const distance = calculateEuclideanDistance(
+                descriptor,
+                user.descriptor,
+              );
+              if (similarity > bestMatch.similarity) {
+                bestMatch = { similarity, distance, name: user.name };
               }
             });
 
-            setMatchScore(bestMatch.score >= 0 ? bestMatch.score : 0);
-            setMatchedUser({ name: bestMatch.name, similarity: bestMatch.score });
+            const finalSim =
+              bestMatch.similarity >= 0 ? bestMatch.similarity : 0;
+            setMatchMetrics({
+              similarity: finalSim,
+              distance: bestMatch.distance,
+            });
+
+            const isMatch =
+              finalSim >= MATCH_THRESHOLD &&
+              bestMatch.distance <= EUCLIDEAN_THRESHOLD;
+
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
-              bestMatch.score > 0.8
-                ? `1:N Verified! Identified as ${bestMatch.name}.`
+              isMatch
+                ? `1:N Verified: Identified as ${bestMatch.name}`
                 : "1:N Identification Failed: No match found.",
             );
           }
@@ -348,12 +400,10 @@ export function LivenessChecker() {
   const handleStartClick = async () => {
     if (!videoRef.current || !canvasRef.current || !sdkRef.current) return;
     setProgress(0);
-    setMatchScore(null);
-    setMatchedUser(null);
+    setMatchMetrics(null);
     setCurrentChallenge(null);
     setUiState(UI_STATE.CHECKING);
 
-    // Generate a new session token for this attempt
     const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
     sdkRef.current.updateConfig({
       sessionToken,
@@ -400,23 +450,24 @@ export function LivenessChecker() {
     (mode === MODE.ENROLL && !userName.trim()) ||
     (mode === MODE.VERIFY &&
       verifyType === VERIFY_TYPE.ONE_TO_ONE &&
-      isCloudEnabled &&
+      isCloudMode &&
       !targetId.trim()) ||
-    (mode === MODE.VERIFY && !isCloudEnabled && enrolledUsers.length === 0);
+    (mode === MODE.VERIFY && !isCloudMode && enrolledUsers.length === 0);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
+      {/* Header bar: Status + Settings */}
       <div className="mb-4 flex w-full items-center justify-between">
         <div className="flex items-center gap-2">
           <div
             className={`h-2 w-2 rounded-full ${
-              isCloudEnabled
+              isCloudMode
                 ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
                 : "bg-slate-400"
             }`}
-          ></div>
+          />
           <span className="text-xs font-bold tracking-wide text-slate-500 uppercase">
-            {isCloudEnabled ? "Cloud Mode Enabled" : "Local Mode Only"}
+            {isCloudMode ? "Cloud Mode" : "Offline (Local Storage)"}
           </span>
         </div>
         <ApiSettings config={apiConfig} onSave={setApiConfig} />
@@ -442,26 +493,26 @@ export function LivenessChecker() {
             setMode(MODE.VERIFY);
             setUiState(UI_STATE.READY_TO_START);
           }}
-          disabled={!isCloudEnabled && enrolledUsers.length === 0}
+          disabled={!isCloudMode && enrolledUsers.length === 0}
           className={`flex-1 cursor-pointer rounded-lg py-2 text-sm font-semibold transition-all ${
             mode === MODE.VERIFY
               ? "bg-white text-blue-600 shadow"
-              : "text-slate-500 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              : "text-slate-500 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           }`}
         >
           Verify
         </button>
       </div>
 
-      {/* Verification Type & Endpoint Selector (1:N vs 1:1) */}
+      {/* Verification Type (1:N vs 1:1) */}
       {mode === MODE.VERIFY && (
         <div className="mb-5 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
           <div className="mb-3 flex items-center justify-between">
             <span className="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase">
-              Verification Endpoint
+              Verification Mode
             </span>
-            <span className="rounded-full bg-blue-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-blue-600 border border-blue-200">
-              {isCloudEnabled
+            <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-blue-600">
+              {isCloudMode
                 ? verifyType === VERIFY_TYPE.ONE_TO_ONE
                   ? "POST /api/liveness/verify-one"
                   : "POST /api/liveness/verify"
@@ -478,17 +529,15 @@ export function LivenessChecker() {
                 setVerifyType(VERIFY_TYPE.ONE_TO_MANY);
                 setUiState(UI_STATE.READY_TO_START);
               }}
-              className={`flex flex-col items-start rounded-xl border p-3 text-left transition-all cursor-pointer ${
+              className={`flex cursor-pointer flex-col items-start rounded-xl border p-3 text-left transition-all ${
                 verifyType === VERIFY_TYPE.ONE_TO_MANY
                   ? "border-blue-500 bg-blue-50/70 text-blue-900 shadow-xs ring-1 ring-blue-500/30"
                   : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100/80"
               }`}
             >
-              <div className="flex items-center gap-1.5 font-bold text-xs">
-                <span>1:N Identification</span>
-              </div>
-              <span className="mt-1 text-[11px] leading-snug text-slate-500">
-                {isCloudEnabled ? "Search entire database (/verify)" : "Search all local identities"}
+              <span className="text-xs font-bold">1:N Identification</span>
+              <span className="mt-1 text-[11px] text-slate-500">
+                {isCloudMode ? "Search database" : "Search local identities"}
               </span>
             </button>
 
@@ -498,32 +547,31 @@ export function LivenessChecker() {
                 setVerifyType(VERIFY_TYPE.ONE_TO_ONE);
                 setUiState(UI_STATE.READY_TO_START);
               }}
-              className={`flex flex-col items-start rounded-xl border p-3 text-left transition-all cursor-pointer ${
+              className={`flex cursor-pointer flex-col items-start rounded-xl border p-3 text-left transition-all ${
                 verifyType === VERIFY_TYPE.ONE_TO_ONE
                   ? "border-indigo-500 bg-indigo-50/70 text-indigo-900 shadow-xs ring-1 ring-indigo-500/30"
                   : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100/80"
               }`}
             >
-              <div className="flex items-center gap-1.5 font-bold text-xs">
+              <div className="flex items-center gap-1 text-xs font-bold">
                 <span>1:1 Verification</span>
-                <span className="rounded bg-indigo-200 px-1 py-0.2 text-[9px] font-extrabold text-indigo-800 uppercase">
-                  Target
-                </span>
               </div>
-              <span className="mt-1 text-[11px] leading-snug text-slate-500">
-                {isCloudEnabled ? "Match target UUID (/verify-one)" : "Match against chosen identity"}
+              <span className="mt-1 text-[11px] text-slate-500">
+                {isCloudMode ? "Target user ID" : "Target local user"}
               </span>
             </button>
           </div>
 
-          {/* 1:1 Cloud Target ID Configuration */}
-          {verifyType === VERIFY_TYPE.ONE_TO_ONE && isCloudEnabled && (
+          {/* 1:1 Cloud Target ID Input */}
+          {verifyType === VERIFY_TYPE.ONE_TO_ONE && isCloudMode && (
             <div className="mt-3.5 space-y-2 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-700">
                   Target User ID (UUID) <span className="text-red-500">*</span>
                 </label>
-                <span className="font-mono text-[10px] text-slate-400">UUID v4</span>
+                <span className="font-mono text-[10px] text-slate-400">
+                  UUID v4
+                </span>
               </div>
 
               <div className="relative">
@@ -537,71 +585,53 @@ export function LivenessChecker() {
                 {targetId && (
                   <button
                     onClick={() => setTargetId("")}
-                    className="absolute top-1/2 right-2.5 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-slate-600"
                     type="button"
-                    title="Clear"
                   >
                     ✕
                   </button>
                 )}
               </div>
 
-              {recentCloudUsers.length > 0 ? (
-                <div className="pt-1">
-                  <div className="mb-1.5 flex items-center justify-between text-[11px] font-semibold text-slate-600">
-                    <span>Quick Select Recent ID:</span>
+              {recentCloudUsers.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {recentCloudUsers.map((user) => (
                     <button
+                      key={user.id}
                       type="button"
-                      onClick={() => {
-                        setRecentCloudUsers([]);
-                        localStorage.removeItem("recent_cloud_identities");
-                      }}
-                      className="text-[10px] text-slate-400 hover:text-red-500 cursor-pointer"
+                      onClick={() => setTargetId(user.id)}
+                      className={`cursor-pointer rounded-md border px-2 py-1 text-[11px] transition-all ${
+                        targetId === user.id
+                          ? "border-indigo-500 bg-indigo-100 font-bold text-indigo-800"
+                          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                      }`}
                     >
-                      Clear
+                      {user.name} ({user.id.slice(0, 8)}...)
                     </button>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {recentCloudUsers.map((user) => (
-                      <button
-                        key={user.id}
-                        type="button"
-                        onClick={() => setTargetId(user.id)}
-                        className={`cursor-pointer rounded-md border px-2 py-1 text-[11px] transition-all ${
-                          targetId === user.id
-                            ? "border-indigo-500 bg-indigo-100 font-bold text-indigo-800 shadow-2xs"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-100"
-                        }`}
-                      >
-                        {user.name} ({user.id.slice(0, 8)}...)
-                      </button>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              ) : (
-                <p className="pt-1 text-[11px] leading-relaxed text-slate-500">
-                  Enroll an identity first to automatically capture its UUID, or paste an existing user ID from your database.
-                </p>
               )}
             </div>
           )}
 
-          {/* 1:1 Local Identity Selector */}
+          {/* 1:1 Local Selector */}
           {verifyType === VERIFY_TYPE.ONE_TO_ONE &&
-            !isCloudEnabled &&
+            !isCloudMode &&
             enrolledUsers.length > 0 && (
               <div className="mt-3.5 space-y-1.5 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
                 <label className="block text-xs font-bold text-slate-700">
-                  Target Local Identity to Match:
+                  Target Identity:
                 </label>
                 <select
                   value={selectedLocalIndex}
-                  onChange={(e) => setSelectedLocalIndex(Number(e.target.value))}
+                  onChange={(e) =>
+                    setSelectedLocalIndex(Number(e.target.value))
+                  }
                   className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                 >
                   {enrolledUsers.map((user, idx) => (
-                    <option key={idx} value={idx}>
-                      {user.name} (Identity #{idx + 1})
+                    <option key={user.id || idx} value={idx}>
+                      {user.name} (#{idx + 1})
                     </option>
                   ))}
                 </select>
@@ -620,19 +650,14 @@ export function LivenessChecker() {
             onChange={(e) => setUserName(e.target.value)}
             className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
-          {isCloudEnabled && (
-            <p className="mt-1.5 text-center text-[11px] text-slate-400">
-              Enrolling in cloud generates a unique UUID target ID for 1:1 verification.
-            </p>
-          )}
         </div>
       )}
 
-      {/* Challenges Configuration */}
+      {/* Challenges Sequence */}
       {uiState === UI_STATE.READY_TO_START && (
         <div className="mb-6 w-full max-w-sm rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <h4 className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-            Active Challenges Sequence
+            Active Challenges
           </h4>
           <div className="grid grid-cols-2 gap-2">
             {[
@@ -662,7 +687,7 @@ export function LivenessChecker() {
         </div>
       )}
 
-      {/* Camera & Detection Viewport */}
+      {/* Camera Viewport */}
       <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
         <video
           ref={videoRef}
@@ -707,19 +732,6 @@ export function LivenessChecker() {
                 ? "Start Session"
                 : "Retry Check"}
             </button>
-            {mode === MODE.ENROLL && !userName.trim() && (
-              <p className="mt-2 text-xs font-semibold text-white/90">
-                Please enter full name above
-              </p>
-            )}
-            {mode === MODE.VERIFY &&
-              verifyType === VERIFY_TYPE.ONE_TO_ONE &&
-              isCloudEnabled &&
-              !targetId.trim() && (
-                <p className="mt-2 text-xs font-semibold text-white/90">
-                  Please enter or select a Target User ID (UUID)
-                </p>
-              )}
           </div>
         )}
 
@@ -737,19 +749,23 @@ export function LivenessChecker() {
         {uiState === UI_STATE.SUCCESS && (
           <div
             className={`absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-white backdrop-blur-md ${
-              (mode === MODE.VERIFY && matchScore !== null && matchScore < 0.65) ||
               instruction.includes("Mismatch") ||
               instruction.includes("Failed") ||
-              instruction.includes("Could Not")
+              (mode === MODE.VERIFY &&
+                matchMetrics !== null &&
+                (matchMetrics.similarity < MATCH_THRESHOLD ||
+                  matchMetrics.distance > EUCLIDEAN_THRESHOLD))
                 ? "bg-red-500/90"
                 : "bg-green-500/90"
             }`}
           >
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl">
-              {(mode === MODE.VERIFY && matchScore !== null && matchScore < 0.65) ||
-              instruction.includes("Mismatch") ||
+              {instruction.includes("Mismatch") ||
               instruction.includes("Failed") ||
-              instruction.includes("Could Not") ? (
+              (mode === MODE.VERIFY &&
+                matchMetrics !== null &&
+                (matchMetrics.similarity < MATCH_THRESHOLD ||
+                  matchMetrics.distance > EUCLIDEAN_THRESHOLD)) ? (
                 <svg
                   className="h-10 w-10 text-red-600"
                   fill="none"
@@ -779,42 +795,22 @@ export function LivenessChecker() {
                 </svg>
               )}
             </div>
-            <h3 className="px-6 text-center text-2xl leading-tight font-bold">
+
+            <h3 className="px-6 text-center text-2xl font-bold">
               {instruction}
             </h3>
 
-            {mode === MODE.VERIFY && (
-              <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
-                <span className="rounded-full bg-black/25 px-3 py-1 font-mono text-xs text-white/95">
-                  {isCloudEnabled
-                    ? verifyType === VERIFY_TYPE.ONE_TO_ONE
-                      ? "Endpoint: POST /verify-one (1:1 Target Match)"
-                      : "Endpoint: POST /verify (1:N Database Search)"
-                    : verifyType === VERIFY_TYPE.ONE_TO_ONE
-                      ? "Mode: Local 1:1 Target Match"
-                      : "Mode: Local 1:N Search"}
+            {mode === MODE.VERIFY && matchMetrics !== null && (
+              <div className="mt-3 flex items-center gap-2.5 rounded-full bg-black/30 px-4 py-1.5 font-mono text-xs text-white/95 shadow-sm">
+                <span>Cosine: {(matchMetrics.similarity * 100).toFixed(1)}%</span>
+                <span className="text-white/40">•</span>
+                <span>
+                  Distance:{" "}
+                  {matchMetrics.distance !== undefined &&
+                  matchMetrics.distance !== Infinity
+                    ? matchMetrics.distance.toFixed(3)
+                    : "N/A"}
                 </span>
-                {matchScore !== null && (
-                  <p className="font-mono text-sm font-semibold text-white/95">
-                    Match Confidence: {(matchScore * 100).toFixed(2)}%
-                  </p>
-                )}
-                {verifyType === VERIFY_TYPE.ONE_TO_ONE && targetId && (
-                  <p className="max-w-xs truncate font-mono text-[11px] text-white/80">
-                    Target ID: {targetId}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {mode === MODE.ENROLL && matchedUser?.id && (
-              <div className="mt-3 flex flex-col items-center gap-1 text-center">
-                <span className="rounded-full bg-black/25 px-3 py-1 font-mono text-xs text-white/95">
-                  Endpoint: POST /enroll
-                </span>
-                <p className="font-mono text-xs text-white/95">
-                  Assigned Target UUID: {matchedUser.id}
-                </p>
               </div>
             )}
 
@@ -828,8 +824,8 @@ export function LivenessChecker() {
         )}
       </div>
 
-      {/* Local Identities Directory */}
-      {!isCloudEnabled && enrolledUsers.length > 0 && (
+      {/* Local Identities Directory (Offline Mode) */}
+      {!isCloudMode && enrolledUsers.length > 0 && (
         <div className="mt-8 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
             <h3 className="font-bold text-slate-800">
@@ -845,24 +841,19 @@ export function LivenessChecker() {
           <ul className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
             {enrolledUsers.map((user, index) => (
               <li
-                key={index}
-                className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-slate-50"
+                key={user.id || index}
+                className="flex items-center justify-between px-6 py-3.5 transition-colors hover:bg-slate-50"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
                     {(user.name || "U").charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900">
-                      {user.name || "Unknown User"}
+                    <p className="text-sm font-semibold text-slate-900">
+                      {user.name}
                     </p>
-                    <p className="font-mono text-xs text-slate-500">
-                      ID:{" "}
-                      {user.descriptor
-                        .slice(0, 3)
-                        .map((n) => n.toFixed(2))
-                        .join(", ")}
-                      ...
+                    <p className="font-mono text-xs text-slate-400">
+                      {user.id}
                     </p>
                   </div>
                 </div>
@@ -881,11 +872,11 @@ export function LivenessChecker() {
                   </button>
                   <button
                     onClick={() => removeIdentity(index)}
-                    className="cursor-pointer rounded-full p-2 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
-                    title="Remove User"
+                    className="cursor-pointer rounded-full p-1.5 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
+                    title="Remove"
                   >
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -905,81 +896,68 @@ export function LivenessChecker() {
         </div>
       )}
 
-      {/* Cloud Identities & Quick 1:1 Action Directory */}
-      {isCloudEnabled && (
+      {/* Cloud Identities Directory */}
+      {isCloudMode && recentCloudUsers.length > 0 && (
         <div className="mt-8 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.6)]"></div>
-              <h3 className="font-bold text-slate-800">
-                Recent Cloud Enrollments ({recentCloudUsers.length})
-              </h3>
-            </div>
-            {recentCloudUsers.length > 0 && (
-              <button
-                onClick={() => {
-                  setRecentCloudUsers([]);
-                  localStorage.removeItem("recent_cloud_identities");
-                }}
-                className="cursor-pointer text-xs font-bold tracking-wider text-red-500 uppercase hover:text-red-700"
-              >
-                Clear
-              </button>
-            )}
+            <h3 className="font-bold text-slate-800">
+              Recent Cloud Enrollments ({recentCloudUsers.length})
+            </h3>
+            <button
+              onClick={() => {
+                setRecentCloudUsers([]);
+                localStorage.removeItem("recent_cloud_identities");
+              }}
+              className="cursor-pointer text-xs font-bold tracking-wider text-red-500 uppercase hover:text-red-700"
+            >
+              Clear
+            </button>
           </div>
-
-          {recentCloudUsers.length > 0 ? (
-            <ul className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
-              {recentCloudUsers.map((user) => (
-                <li
-                  key={user.id}
-                  className="flex items-center justify-between px-6 py-3.5 transition-colors hover:bg-slate-50"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
-                      {(user.name || "U").charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">
-                        {user.name}
-                      </p>
-                      <p className="font-mono text-xs text-slate-500">
-                        ID: {user.id}
-                      </p>
-                    </div>
+          <ul className="max-h-64 divide-y divide-slate-100 overflow-y-auto">
+            {recentCloudUsers.map((user) => (
+              <li
+                key={user.id}
+                className="flex items-center justify-between px-6 py-3.5 transition-colors hover:bg-slate-50"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
+                    {(user.name || "U").charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleCopyId(user.id)}
-                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50"
-                    >
-                      {copiedId === user.id ? "Copied!" : "Copy ID"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMode(MODE.VERIFY);
-                        setVerifyType(VERIFY_TYPE.ONE_TO_ONE);
-                        setTargetId(user.id);
-                        setUiState(UI_STATE.READY_TO_START);
-                      }}
-                      className="cursor-pointer rounded-lg bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow-2xs hover:bg-indigo-700"
-                    >
-                      Verify 1:1
-                    </button>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {user.name}
+                    </p>
+                    <p className="font-mono text-xs text-slate-400">
+                      ID: {user.id}
+                    </p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="p-6 text-center text-xs text-slate-500">
-              No cloud identities enrolled in this session yet. Enroll an identity to test 1:1 verification, or enter a known Target UUID above.
-            </div>
-          )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyId(user.id)}
+                    className="cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                  >
+                    {copiedId === user.id ? "Copied!" : "Copy ID"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode(MODE.VERIFY);
+                      setVerifyType(VERIFY_TYPE.ONE_TO_ONE);
+                      setTargetId(user.id);
+                      setUiState(UI_STATE.READY_TO_START);
+                    }}
+                    className="cursor-pointer rounded-lg bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow-2xs hover:bg-indigo-700"
+                  >
+                    Verify 1:1
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
   );
 }
-

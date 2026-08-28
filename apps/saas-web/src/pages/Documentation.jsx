@@ -197,7 +197,7 @@ await sdk.start(video, canvas);`}
         <CodeBlock
           language="javascript"
           code={`sdk.on("success", (result) => {
-  // result.descriptor is the 1792-d feature vector
+  // result.descriptor is the 128-d ResNet-34 feature vector
   console.log("Success!", result);
 
   // Send to your backend for verification
@@ -343,7 +343,7 @@ app.post("/webhooks/liveness", (req, res) => {
               language="json"
               code={`{
   "name": "John Doe",
-  "descriptor": [...], // 1792-d vector
+  "descriptor": [...], // 128-d ResNet-34 vector
   "sessionToken": "unique-session-id",
   "timestamp": 1716336000000,
   "integrity": "hash_value"
@@ -364,7 +364,7 @@ app.post("/webhooks/liveness", (req, res) => {
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Compares a fresh liveness result against your enrolled user
               database. Returns a match if similarity exceeds{" "}
-              <strong>0.8</strong>.
+              <strong>0.98</strong> (Cosine) and distance is within <strong>0.20</strong> (Euclidean).
             </p>
             <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
               Response Schema
@@ -376,8 +376,10 @@ app.post("/webhooks/liveness", (req, res) => {
   "status": "SUCCESS",
   "match": {
     "name": "John Doe",
-    "similarity": 0.94
-  }
+    "similarity": 0.94,
+    "distance": 0.346
+  },
+  "metric": "cosine"
 }`}
             />
           </div>
@@ -403,7 +405,7 @@ app.post("/webhooks/liveness", (req, res) => {
               language="json"
               code={`{
   "targetId": "550e8400-e29b-41d4-a716-446655440000",
-  "descriptor": [...], // 1792-d vector
+  "descriptor": [...], // 128-d ResNet-34 vector
   "sessionToken": "unique-session-id",
   "timestamp": 1716336000000,
   "integrity": "hash_value"
@@ -420,8 +422,10 @@ app.post("/webhooks/liveness", (req, res) => {
   "match": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "name": "John Doe",
-    "similarity": 0.94
-  }
+    "similarity": 0.94,
+    "distance": 0.346
+  },
+  "metric": "cosine"
 }`}
             />
           </div>

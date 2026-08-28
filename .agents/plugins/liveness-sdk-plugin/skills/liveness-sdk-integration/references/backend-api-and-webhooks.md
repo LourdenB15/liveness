@@ -19,7 +19,7 @@ Content-Type: application/json
 
 ### A. Enroll Biometric Identity (POST /enroll)
 
-Enrolls a user's 1792-dimensional face descriptor as an enrolled identity.
+Enrolls a user's 128-dimensional face descriptor as an enrolled identity.
 
 #### Request Body
 
@@ -59,7 +59,7 @@ Compares a fresh liveness vector against all enrolled identities in the tenant.
   "timestamp": 1716336000000,
   "challenges": ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"],
   "integrity": "9b3c4...sha256",
-  "threshold": 0.80
+  "threshold": 0.98
 }
 ```
 
@@ -72,7 +72,7 @@ Compares a fresh liveness vector against all enrolled identities in the tenant.
   "match": {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "John Doe",
-    "similarity": 0.942
+    "similarity": 0.992
   }
 }
 ```
@@ -93,7 +93,7 @@ Compares a fresh liveness vector directly against a specific `targetId` (User UU
   "timestamp": 1716336000000,
   "challenges": ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"],
   "integrity": "9b3c4...sha256",
-  "threshold": 0.80
+  "threshold": 0.98
 }
 ```
 
@@ -106,26 +106,30 @@ Compares a fresh liveness vector directly against a specific `targetId` (User UU
   "match": {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "John Doe",
-    "similarity": 0.915
+    "similarity": 0.991
   }
 }
 ```
 
 ---
 
-## 2. Self-Hosted Cosine Similarity Matching
+## 2. Self-Hosted Matching
 
-If you are running verification on your own server or client without the Cloud API, calculate the Cosine Similarity between the enrolled and probe descriptor vectors:
+If you are running verification on your own server or client without the Cloud API, calculate Cosine Similarity and Euclidean Distance between the enrolled and probe descriptor vectors:
 
 ```javascript
-import { calculateCosineSimilarity } from "@liveness/engine/utils";
+import {
+  calculateCosineSimilarity,
+  calculateEuclideanDistance,
+} from "@liveness/engine/utils";
 
-// vectorA and vectorB are normalized 1792-element arrays of numbers
+// vectorA and vectorB are 128-element arrays of numbers
 const similarity = calculateCosineSimilarity(enrolledVector, probeVector);
-const isMatch = similarity >= 0.8; // 80% threshold
+const distance = calculateEuclideanDistance(enrolledVector, probeVector);
+const isMatch = similarity >= 0.98 && distance <= 0.2;
 
 console.log(
-  `Match: ${isMatch}, Similarity Score: ${(similarity * 100).toFixed(2)}%`,
+  `Match: ${isMatch}, Similarity: ${(similarity * 100).toFixed(2)}%, Distance: ${distance.toFixed(3)}`,
 );
 ```
 

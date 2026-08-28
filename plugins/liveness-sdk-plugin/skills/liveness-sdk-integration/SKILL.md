@@ -15,7 +15,7 @@ This skill guides you through implementing browser-based Active Liveness Detecti
 Follow this procedure when implementing the Liveness SDK:
 
 ```text
-1. Install Package and Copy Static Assets (face_mesh + mobilenet-v2)
+1. Install Package and Copy Static Assets (face_mesh + face_recognition)
 2. Mount Video and Canvas Elements in DOM
 3. Instantiate and Configure LivenessSDK (basePath, challengeTimeout, minBrightness)
 4. Bind Event Listeners (ready, challenge, progress, success, failure)
@@ -36,7 +36,7 @@ npm install @liveness/sdk
 
 ### 1.2 Copy Model Assets
 
-The SDK requires client-side WebAssembly and MobileNet neural network files located in `@liveness/engine/assets/` (`face_mesh/` and `mobilenet-v2/`).
+The SDK requires client-side WebAssembly and ResNet-34 FaceRecognitionNet neural network files located in `@liveness/engine/assets/` (`face_mesh/` and `face_recognition/`).
 
 Run the helper script to copy them to your project's public directory:
 
@@ -84,7 +84,7 @@ The randomized active challenge pool evaluates user responsiveness via `BLINK`, 
 import { LivenessSDK } from "@liveness/sdk";
 
 const sdk = new LivenessSDK({
-  basePath: "", // Root URL prefix pointing to /face_mesh and /mobilenet-v2
+  basePath: "", // Root URL prefix pointing to /face_mesh and /face_recognition
   challengeTimeout: 8000, // Max duration (ms) per challenge
   minBrightness: -0.8, // Minimum normalized tensor brightness
   maxBrightness: 0.9, // Maximum normalized tensor brightness
@@ -120,7 +120,7 @@ sdk.on("progress", ({ progress }) => {
 
 // 4. Verification Succeeded
 sdk.on("success", async (result) => {
-  // result: { descriptor: number[1792], sessionToken, timestamp, challenges, integrity }
+  // result: { descriptor: number[128], sessionToken, timestamp, challenges, integrity }
   await verifyWithBackend(result);
   sdk.stop(videoElement);
 });
@@ -140,19 +140,23 @@ await sdk.start(videoElement, canvasElement);
 
 ## Step 5: Backend Verification and Matching
 
-Never send raw video feeds or images to the server. Transmit only the 1792-dimensional numerical vector:
+Never send raw video feeds or images to the server. Transmit only the 128-dimensional numerical vector:
 
 ### Option A: Liveness Cloud API
 
 Send `POST` to `/api/liveness/verify` (1:N matching) or `/api/liveness/verify-one` (1:1 with `targetId`) with the `x-api-key` header.
 
-### Option B: Self-Hosted Cosine Similarity
+### Option B: Self-Hosted Matching (Cosine Similarity & Euclidean Distance)
 
 ```javascript
-import { calculateCosineSimilarity } from "@liveness/engine/utils";
+import {
+  calculateCosineSimilarity,
+  calculateEuclideanDistance,
+} from "@liveness/engine/utils";
 
 const similarity = calculateCosineSimilarity(enrolledVector, probeVector);
-const isMatch = similarity >= 0.8;
+const distance = calculateEuclideanDistance(enrolledVector, probeVector);
+const isMatch = similarity >= 0.98 && distance <= 0.2;
 ```
 
 > See [Backend API and Webhooks Reference](./references/backend-api-and-webhooks.md) for endpoint contracts and HMAC-SHA256 signature verification.

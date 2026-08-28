@@ -12,6 +12,16 @@ const HEAD_POSE_INDICES = {
   chin: 152,
 };
 
+export function calculateEuclideanDistance(vecA, vecB) {
+  if (!vecA || !vecB || vecA.length !== vecB.length) return Infinity;
+  let sum = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    const diff = vecA[i] - vecB[i];
+    sum += diff * diff;
+  }
+  return Math.sqrt(sum);
+}
+
 function euclideanDistance(p1, p2) {
   return Math.sqrt(
     Math.pow(p1.x - p2.x, 2) +
@@ -58,10 +68,15 @@ export function calculateHeadTurnV2(landmarks) {
 export function calculateCosineSimilarity(vecA, vecB) {
   if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
   let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
   for (let i = 0; i < vecA.length; i++) {
     dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
   }
-  return dotProduct;
+  if (normA === 0 || normB === 0) return 0;
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
 export function calculateFaceSize(landmarks) {

@@ -19,7 +19,7 @@ const sdk = new LivenessSDK(config?: LivenessConfig);
 
 | Option              | Type       | Default in Engine | Description                                                                                    |
 | :------------------ | :--------- | :---------------- | :--------------------------------------------------------------------------------------------- |
-| `basePath`          | `string`   | `""`              | Base path or URL where `face_mesh/` and `mobilenet-v2/` directories are served.                |
+| `basePath`          | `string`   | `""`              | Base path or URL where `face_mesh/` and `face_recognition/` directories are served.            |
 | `challengeTimeout`  | `number`   | `5000`            | Maximum time allowed (in milliseconds) for the user to complete each challenge.                |
 | `blinkEARThreshold` | `number`   | `0.25`            | Eye Aspect Ratio threshold for detecting blinks.                                               |
 | `headTurnThreshold` | `number`   | `0.4`             | Normalized yaw ratio threshold required to validate `TURN_LEFT` and `TURN_RIGHT`.              |
@@ -50,7 +50,7 @@ const sdk = new LivenessSDK(config?: LivenessConfig);
 
 ### `async load(): Promise<void>`
 
-Checks browser WebAssembly and WebGL support, initializes `LivenessEngine`, and loads MediaPipe Face Mesh and MobileNet V2 graph models.
+Checks browser WebAssembly and WebGL support, initializes `LivenessEngine`, and loads MediaPipe Face Mesh and ResNet-34 FaceRecognitionNet models.
 
 ### `async start(videoElement: HTMLVideoElement, canvasElement: HTMLCanvasElement, options?: Partial<LivenessConfig>): Promise<void>`
 
@@ -108,7 +108,7 @@ sdk.on("progress", (payload: {
 
 ### `success`
 
-Emitted when all challenges pass and the 1792-d biometric descriptor is extracted.
+Emitted when all challenges pass and the 128-d biometric descriptor is extracted.
 
 ```typescript
 sdk.on("success", (result: {
@@ -147,7 +147,7 @@ sdk.on("error", (error: { code: string; message: string }) => void);
 | `CHALLENGE_TIMEOUT`     | `LivenessEngine`                               | User did not complete challenge within `challengeTimeout` |
 | `POOR_LIGHTING`         | `LivenessEngine`                               | Frame brightness out of `[minBrightness, maxBrightness]`  |
 | `OCCLUSION_DETECTED`    | `LivenessEngine`                               | Eye landmark distance < 0.01                              |
-| `RECOGNITION_FAILED`    | `LivenessEngine`                               | Failure during MobileNet V2 tensor execution              |
+| `RECOGNITION_FAILED`    | `LivenessEngine`                               | Failure during ResNet-34 tensor execution                 |
 
 ---
 
@@ -161,4 +161,5 @@ Source: `packages/engine/src/utils.js`
 - `calculateBrightness(imageTensor)`: Computes mean brightness of face image tensor.
 - `checkOcclusion(landmarks)`: Checks euclidean distance between eye landmarks.
 - `generateIntegrityHash(descriptor, sessionToken, timestamp)`: Generates checksum string.
-- `calculateCosineSimilarity(vecA, vecB)`: Computes dot product across normalized 1792-d vectors.
+- `calculateCosineSimilarity(vecA, vecB)`: Computes cosine similarity across 128-d vectors.
+- `calculateEuclideanDistance(vecA, vecB)`: Computes euclidean distance across 128-d vectors.

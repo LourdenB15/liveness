@@ -4,7 +4,7 @@ import { z } from "zod";
 const commonPayload = {
   descriptor: z
     .array(z.number())
-    .length(1792, "Descriptor must be exactly 1792 dimensions"),
+    .length(128, "Descriptor must be exactly 128 dimensions"),
   sessionToken: z.string().min(1, "Session token is required"),
   timestamp: z.number(),
   challenges: z.array(z.string()).min(1, "Challenges are required"),
@@ -18,13 +18,15 @@ const enrollSchema = z.object({
 
 const verifySchema = z.object({
   ...commonPayload,
-  threshold: z.number().min(0).max(1).optional(),
+  threshold: z.number().optional(),
+  metric: z.enum(["cosine", "euclidean"]).optional(),
 });
 
 const verifyByIdSchema = z.object({
   ...commonPayload,
   targetId: z.string().uuid("targetId must be a valid UUID"),
-  threshold: z.number().min(0).max(1).optional(),
+  threshold: z.number().optional(),
+  metric: z.enum(["cosine", "euclidean"]).optional(),
 });
 
 export async function enrollUser(req, res) {
@@ -53,12 +55,13 @@ export async function verifyUser(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, threshold } = validation.data;
+  const { descriptor, threshold, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUser(
       descriptor,
       threshold,
       adminId,
+      metric,
     );
     res.json(responsePayload);
   } catch (error) {
@@ -73,13 +76,14 @@ export async function verifyUserById(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
-  const { descriptor, targetId, threshold } = validation.data;
+  const { descriptor, targetId, threshold, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUserById(
       descriptor,
       targetId,
       threshold,
       adminId,
+      metric,
     );
     res.json(responsePayload);
   } catch (error) {

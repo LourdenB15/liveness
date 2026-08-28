@@ -1,23 +1,53 @@
-# Universal AI Agent Rules for Liveness SDK
+# Liveness SDK Rules and Architectural Guidelines
 
 When implementing or modifying features involving @liveness/sdk and biometric face verification, all AI agents must adhere to the following rules:
 
-1. Video and Camera:
-   - Always include playsInline, autoPlay, and muted attributes on video elements.
-   - Always call sdk.stop(videoElement) and stop all tracks on videoElement.srcObject when unmounting.
+---
 
-2. Static Model Assets:
-   - The SDK requires MediaPipe Face Mesh (face_mesh/) and MobileNet V2 (mobilenet-v2/) binary assets.
-   - Configure basePath in new LivenessSDK({ basePath }) or host assets in public/.
+## 1. Video and Camera Configuration
 
-3. Active Challenge Pool:
-   - Supported active challenges: BLINK, TURN_LEFT, TURN_RIGHT.
-   - Initial positioning phase: WAITING.
+- Mobile Compatibility: Video elements used for camera feeds MUST always include the following attributes:
+  - autoPlay (or autoplay)
+  - playsInline (or playsinline)
+  - muted
+- Resolution and Facing Mode: Request facingMode: "user" with ideal dimensions 1280x720.
+- Cleanup: When a component unmounts or a verification session finishes, ALWAYS call sdk.stop(videoElement) and ensure all tracks on videoElement.srcObject are stopped (track.stop()) to release camera hardware.
 
-4. Privacy and Biometrics:
-   - Liveness checks and feature extraction execute 100% on the client.
-   - Never send raw camera streams to the server. Send only the 1792-dimensional numerical vector descriptor, session token, timestamp, challenges, and integrity hash.
-   - Cosine similarity threshold >= 0.80.
+---
 
-5. Webhooks:
-   - Verify HMAC-SHA256 signatures in x-liveness-signature against the raw body buffer (req.rawBody).
+## 2. Asset Hosting and basePath
+
+- WASM and Model Binaries: The SDK requires MediaPipe Face Mesh (face_mesh/) and TensorFlow.js ResNet-34 FaceRecognitionNet (face_recognition/) binary assets.
+- Configuration: Always configure basePath in new LivenessSDK({ basePath: "/assets/models" }) or copy assets to your framework public directory (e.g. public/face_mesh and public/face_recognition with basePath: "").
+- Required Headers: Static servers and CDNs hosting .wasm and .binarypb files must serve them with appropriate MIME types (application/wasm, application/octet-stream).
+
+---
+
+## 3. Active Challenges and Flow
+
+- Active Challenges: Supported challenges are WAITING, BLINK, TURN_LEFT, and TURN_RIGHT.
+- Event Sequence: ready -> challenge -> progress -> success / failure.
+
+---
+
+## 4. Privacy and Biometric Architecture
+
+- Client-Side Processing: Liveness detection and feature extraction execute 100% on the client inside WebAssembly/WebGL.
+- Biometric Descriptor: Never send raw webcam video or frames to the backend. Send only the 128-dimensional numerical descriptor vector, sessionToken, timestamp, challenges, and integrity hash.
+- Similarity Threshold: Use Cosine Similarity (threshold >= 0.98) and Euclidean Distance (threshold <= 0.20) for 1:1 and 1:N face verification.
+
+---
+
+## 5. Webhook Security
+
+- HMAC-SHA256 Verification: When listening for webhook events (e.g. verification.success, verification.failed), always verify the x-liveness-signature header against the raw body buffer (req.rawBody), not a re-stringified JSON object.
+
+---
+
+## 6. Error Handling and User Guidance
+
+- Handle common failure modes gracefully in the UI:
+  - POOR_LIGHTING: Guide user to a well-lit environment.
+  - OCCLUSION_DETECTED: Prompt user to remove masks, hats, or glasses covering the face.
+  - CAMERA_ACCESS_DENIED: Explain how to grant camera permissions in browser settings.
+  - WASM_NOT_SUPPORTED / WEBGL_NOT_SUPPORTED: Display system compatibility requirements.

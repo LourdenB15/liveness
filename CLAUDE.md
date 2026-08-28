@@ -14,7 +14,7 @@ When implementing `@liveness/sdk` in this project:
    - Call `sdk.stop(videoElement)` and stop stream tracks on unmount.
 
 2. Static Model Assets:
-   - MediaPipe Face Mesh (`face_mesh/`) and MobileNet V2 (`mobilenet-v2/`) must be hosted in the public assets directory.
+   - MediaPipe Face Mesh (`face_mesh/`) and ResNet-34 FaceRecognitionNet (`face_recognition/`) must be hosted in the public assets directory.
    - Configure `basePath` in `new LivenessSDK({ basePath })`.
 
 3. Active Challenge Pool:
@@ -23,8 +23,8 @@ When implementing `@liveness/sdk` in this project:
 
 4. Biometric Descriptor and Privacy:
    - Never send raw camera streams to the server.
-   - Transmit only the 1792-dimensional numerical vector descriptor, session token, timestamp, challenges, and integrity hash.
-   - Biometric matching threshold: Cosine similarity >= 0.80.
+   - Transmit only the 128-dimensional numerical vector descriptor, session token, timestamp, challenges, and integrity hash.
+   - Biometric matching threshold: Cosine similarity >= 0.98 and Euclidean distance <= 0.20.
 
 5. Webhook Security:
    - Verify incoming webhook signatures (`x-liveness-signature`) with HMAC-SHA256 against the raw request body buffer (`req.rawBody`).

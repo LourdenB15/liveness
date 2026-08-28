@@ -18,11 +18,20 @@ vi.mock("@mediapipe/face_mesh", () => {
   };
 });
 
-vi.mock("@tensorflow/tfjs", () => {
+vi.mock("./FaceRecognitionNet", () => {
   return {
-    loadGraphModel: vi.fn().mockResolvedValue({
-      inputs: [{ shape: [1, 224, 224, 3] }],
-    }),
+    FaceRecognitionNet: class {
+      load() {
+        return Promise.resolve();
+      }
+      predict() {
+        return {
+          data: () => Promise.resolve(new Float32Array(128)),
+          dataSync: () => new Float32Array(128),
+        };
+      }
+      dispose() {}
+    },
   };
 });
 

@@ -54,7 +54,7 @@ console.log(`  Target: ${targetDir}`);
 try {
   copyFolderRecursiveSync(sourceDir, targetDir);
   console.log(
-    `Successfully copied face_mesh and mobilenet-v2 assets to: ${targetDir}`,
+    `Successfully copied face_mesh and face_recognition assets to: ${targetDir}`,
   );
 } catch (err) {
   console.error(`Failed to copy assets: ${err.message}`);

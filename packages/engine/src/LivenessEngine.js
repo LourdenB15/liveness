@@ -1,6 +1,7 @@
 // src/engine/LivenessEngine.js
 import * as mpFaceMesh from "@mediapipe/face_mesh";
 import * as tf from "@tensorflow/tfjs";
+import { FaceRecognitionNet } from "./FaceRecognitionNet";
 import {
   calculateBrightness,
   calculateEAR,
@@ -51,6 +52,7 @@ export class LivenessEngine {
   #hasDetectedOpenEyes = false;
   #lastFrameTime = 0;
   #lastLandmarks = null;
+  #recordedDescriptor = null;
 
   constructor(callbacks, config = {}) {
     if (
@@ -86,9 +88,9 @@ export class LivenessEngine {
       });
       this.#faceMesh.onResults(this.#onFaceMeshResults.bind(this));
 
-      const modelUrl = `${cleanBasePath}/mobilenet-v2/model.json`;
-
-      this.#recognitionModel = await tf.loadGraphModel(modelUrl);
+      const modelUrl = `${cleanBasePath}/face_recognition`;
+      this.#recognitionModel = new FaceRecognitionNet();
+      await this.#recognitionModel.load(modelUrl);
 
       this.#isReady = true;
       this.#callbacks.onReady();
@@ -116,6 +118,7 @@ export class LivenessEngine {
     this.#lastChallengeTime = Date.now();
     this.#hasDetectedOpenEyes = false;
     this.#lastFrameTime = 0;
+    this.#recordedDescriptor = null;
 
     this.#challenges = this.#generateChallenges();
 
@@ -221,7 +224,11 @@ export class LivenessEngine {
         } else if (faceSize > this.#config.maxFaceSize) {
           distance = "FURTHER";
         } else {
-          challengePassed = true;
+          const turnRatio = Math.abs(calculateHeadTurnV2(landmarks));
+          if (turnRatio <= 0.2) {
+            challengePassed = true;
+            this.#recordCenterFace(landmarks);
+          }
         }
         this.#callbacks.onChallengeChanged(currentChallenge, distance);
         break;
@@ -306,18 +313,20 @@ export class LivenessEngine {
     }
   }
 
-  async #completeLiveness() {
-    this.stop();
-    this.#callbacks.onChallengeChanged("PROCESSING");
+  #recordCenterFace(landmarks) {
     try {
-      const inputSize = this.#recognitionModel.inputs[0].shape.slice(1, 3);
-      const faceTensor = this.#getFaceTensor(inputSize, this.#lastLandmarks);
+      const rawFaceTensor = this.#getFaceTensor([150, 150], landmarks);
+      const normalizedTensor = tf.tidy(() =>
+        rawFaceTensor.div(tf.scalar(127.5)).sub(tf.scalar(1.0)),
+      );
 
-      const brightness = calculateBrightness(faceTensor);
-      const occlusionDetected = checkOcclusion(this.#lastLandmarks);
+      const brightness = calculateBrightness(normalizedTensor);
+      const occlusionDetected = checkOcclusion(landmarks);
+
+      tf.dispose(normalizedTensor);
 
       if (brightness < this.#config.minBrightness) {
-        tf.dispose(faceTensor);
+        tf.dispose(rawFaceTensor);
         return this.#failChallenge({
           code: "POOR_LIGHTING",
           message: "Environment is too dark. Please move to a brighter area.",
@@ -325,7 +334,7 @@ export class LivenessEngine {
       }
 
       if (brightness > this.#config.maxBrightness) {
-        tf.dispose(faceTensor);
+        tf.dispose(rawFaceTensor);
         return this.#failChallenge({
           code: "POOR_LIGHTING",
           message:
@@ -334,7 +343,7 @@ export class LivenessEngine {
       }
 
       if (occlusionDetected) {
-        tf.dispose(faceTensor);
+        tf.dispose(rawFaceTensor);
         return this.#failChallenge({
           code: "OCCLUSION_DETECTED",
           message:
@@ -342,16 +351,64 @@ export class LivenessEngine {
         });
       }
 
-      const predictionTensor = this.#recognitionModel.predict(faceTensor);
-      const normalizedTensor = tf.tidy(() => {
-        const norm = predictionTensor.norm();
-        if (norm.dataSync()[0] > 1e-6) {
-          return predictionTensor.div(norm);
+      const predictionTensor = this.#recognitionModel.predict(rawFaceTensor);
+      this.#recordedDescriptor = Array.from(predictionTensor.dataSync());
+      tf.dispose([rawFaceTensor, predictionTensor]);
+    } catch (err) {
+      console.warn("Failed to record center face descriptor:", err);
+    }
+  }
+
+  async #completeLiveness() {
+    this.stop();
+    this.#callbacks.onChallengeChanged("PROCESSING");
+    try {
+      let descriptorArray = this.#recordedDescriptor;
+
+      if (!descriptorArray) {
+        const rawFaceTensor = this.#getFaceTensor(
+          [150, 150],
+          this.#lastLandmarks,
+        );
+        const normalizedTensor = tf.tidy(() =>
+          rawFaceTensor.div(tf.scalar(127.5)).sub(tf.scalar(1.0)),
+        );
+
+        const brightness = calculateBrightness(normalizedTensor);
+        const occlusionDetected = checkOcclusion(this.#lastLandmarks);
+
+        tf.dispose(normalizedTensor);
+
+        if (brightness < this.#config.minBrightness) {
+          tf.dispose(rawFaceTensor);
+          return this.#failChallenge({
+            code: "POOR_LIGHTING",
+            message: "Environment is too dark. Please move to a brighter area.",
+          });
         }
-        return predictionTensor;
-      });
-      const descriptorArray = Array.from(await normalizedTensor.data());
-      tf.dispose([faceTensor, predictionTensor, normalizedTensor]);
+
+        if (brightness > this.#config.maxBrightness) {
+          tf.dispose(rawFaceTensor);
+          return this.#failChallenge({
+            code: "POOR_LIGHTING",
+            message:
+              "Environment is too bright (Glare detected). Please adjust lighting.",
+          });
+        }
+
+        if (occlusionDetected) {
+          tf.dispose(rawFaceTensor);
+          return this.#failChallenge({
+            code: "OCCLUSION_DETECTED",
+            message:
+              "Face is partially covered. Please remove any masks or obstructions.",
+          });
+        }
+
+        const predictionTensor = this.#recognitionModel.predict(rawFaceTensor);
+        descriptorArray = Array.from(await predictionTensor.data());
+        tf.dispose([rawFaceTensor, predictionTensor]);
+      }
 
       const timestamp = Date.now();
       const sessionToken = this.#config.sessionToken || "local-session";
@@ -379,47 +436,88 @@ export class LivenessEngine {
 
   #getFaceTensor(inputSize, landmarks) {
     return tf.tidy(() => {
-      const image = tf.browser.fromPixels(this.#videoElement);
-      const [targetH, targetW] = inputSize;
+      const [targetH, targetW] = inputSize || [150, 150];
 
-      if (!landmarks) {
+      if (
+        !landmarks ||
+        landmarks.length < 468 ||
+        !this.#videoElement ||
+        typeof document === "undefined"
+      ) {
+        const image = tf.browser.fromPixels(this.#videoElement);
         return tf.image
           .resizeBilinear(image, [targetH, targetW])
           .toFloat()
-          .div(tf.scalar(127.5))
-          .sub(tf.scalar(1.0))
           .expandDims(0);
       }
 
-      const xs = landmarks.map((l) => l.x);
-      const ys = landmarks.map((l) => l.y);
-      const xMin = Math.min(...xs);
-      const xMax = Math.max(...xs);
-      const yMin = Math.min(...ys);
-      const yMax = Math.max(...ys);
+      // 1. Calculate Eye Centers using MediaPipe landmarks
+      // Left eye outer corner (33) & inner corner (133)
+      const leftEyeX = (landmarks[33].x + landmarks[133].x) / 2;
+      const leftEyeY = (landmarks[33].y + landmarks[133].y) / 2;
 
-      const w = xMax - xMin;
-      const h = yMax - yMin;
-      const padX = w * 0.2;
-      const padY = h * 0.2;
+      // Right eye inner corner (362) & outer corner (263)
+      const rightEyeX = (landmarks[362].x + landmarks[263].x) / 2;
+      const rightEyeY = (landmarks[362].y + landmarks[263].y) / 2;
 
-      const y1 = Math.max(0, yMin - padY);
-      const x1 = Math.max(0, xMin - padX);
-      const y2 = Math.min(1, yMax + padY);
-      const x2 = Math.min(1, xMax + padX);
+      // 2. Video Dimensions
+      const videoW =
+        this.#videoElement.videoWidth || this.#videoElement.width || 640;
+      const videoH =
+        this.#videoElement.videoHeight || this.#videoElement.height || 480;
 
-      const box = [[y1, x1, y2, x2]];
-      const boxInd = [0];
+      const srcLeftEye = { x: leftEyeX * videoW, y: leftEyeY * videoH };
+      const srcRightEye = { x: rightEyeX * videoW, y: rightEyeY * videoH };
 
-      const batchImage = image.expandDims(0).toFloat();
-      const cropped = tf.image.cropAndResize(
-        batchImage,
-        tf.tensor2d(box),
-        tf.tensor1d(boxInd, "int32"),
-        [targetH, targetW],
-      );
+      // 3. Compute rotation angle (radians) and eye distance
+      const dx = srcRightEye.x - srcLeftEye.x;
+      const dy = srcRightEye.y - srcLeftEye.y;
+      const eyeDist = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx);
 
-      return cropped.div(tf.scalar(127.5)).sub(tf.scalar(1.0));
+      const srcCenter = {
+        x: (srcLeftEye.x + srcRightEye.x) / 2,
+        y: (srcLeftEye.y + srcRightEye.y) / 2,
+      };
+
+      // 4. Canonical Alignment coordinates (ResNet-34 standard for 150x150)
+      const targetCenter = {
+        x: targetW * 0.5,
+        y: targetH * 0.45,
+      };
+      const targetEyeDist = targetW * 0.38;
+      const scale = targetEyeDist / Math.max(eyeDist, 1e-5);
+
+      // 5. In-memory canvas affine transformation
+      const canvas =
+        typeof OffscreenCanvas !== "undefined"
+          ? new OffscreenCanvas(targetW, targetH)
+          : document.createElement("canvas");
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext("2d");
+
+      if (ctx) {
+        ctx.save();
+        ctx.translate(targetCenter.x, targetCenter.y);
+        ctx.rotate(-angle);
+        ctx.scale(scale, scale);
+        ctx.translate(-srcCenter.x, -srcCenter.y);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(this.#videoElement, 0, 0, videoW, videoH);
+        ctx.restore();
+
+        const imageTensor = tf.browser.fromPixels(canvas);
+        return imageTensor.toFloat().expandDims(0);
+      }
+
+      // Fallback if canvas context is unavailable
+      const image = tf.browser.fromPixels(this.#videoElement);
+      return tf.image
+        .resizeBilinear(image, [targetH, targetW])
+        .toFloat()
+        .expandDims(0);
     });
   }
 

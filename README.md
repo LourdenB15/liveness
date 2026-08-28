@@ -1,13 +1,13 @@
 # Liveness SDK
 
-An event-driven JavaScript SDK for browser-based **Active Liveness Detection** and **Face Identity Verification**. This library leverages MediaPipe Face Mesh and TensorFlow.js (MobileNet V2) to provide a complete eKYC-ready frontend solution.
+An event-driven JavaScript SDK for browser-based **Active Liveness Detection** and **Face Identity Verification**. This library leverages MediaPipe Face Mesh and TensorFlow.js (ResNet-34 FaceRecognitionNet) to provide a complete eKYC-ready frontend solution.
 
 > **Note**: For the full interactive documentation, integration guides, and real-time API reference, please visit our **Documentation Portal** at http://localhost:5173/docs.
 
 ## Key Features
 
 - **Randomized Active Challenges**: Prevents replay attacks by requiring users to perform random actions (Blink, Turn Left, Turn Right) generated at runtime.
-- **Identity Enrollment & Verification**: Full biometric flow including face feature extraction and Cosine Similarity matching (>80% threshold).
+- **Identity Enrollment & Verification**: Full biometric flow including face feature extraction with Cosine Similarity and Euclidean Distance matching.
 - **Secure SaaS Cloud**: Complete management dashboard with JWT Authentication, API key management, and real-time webhook notifications.
 
 ## Project Structure
@@ -169,7 +169,7 @@ Copy `plugins/liveness-sdk-plugin/adapters/generic/AGENTS.md` to your project ro
 
 ### Copying Static Model Assets
 
-The SDK requires `face_mesh/` and `mobilenet-v2/` binary assets in your public directory:
+The SDK requires `face_mesh/` and `face_recognition/` (ResNet-34) binary assets in your public directory:
 
 ```bash
 node plugins/liveness-sdk-plugin/skills/liveness-sdk-integration/scripts/copy-liveness-assets.js ./public

@@ -41,11 +41,11 @@ app.post("/api/liveness/enroll", (req, res) => {
     !name ||
     !descriptor ||
     !Array.isArray(descriptor) ||
-    descriptor.length !== 1792
+    descriptor.length !== 128
   ) {
     return res
       .status(400)
-      .json({ error: "Invalid payload. 1792-d descriptor and name required." });
+      .json({ error: "Invalid payload. 128-d descriptor and name required." });
   }
 
   const id = crypto.randomUUID();
@@ -59,12 +59,12 @@ app.post("/api/liveness/enroll", (req, res) => {
  * 2. VERIFY USER (1:N or 1:1)
  */
 app.post("/api/liveness/verify", (req, res) => {
-  const { descriptor, targetId, threshold = 0.8 } = req.body;
+  const { descriptor, targetId, threshold = 0.98 } = req.body;
 
-  if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 1792) {
+  if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
     return res
       .status(400)
-      .json({ error: "1792-d descriptor vector required." });
+      .json({ error: "128-d descriptor vector required." });
   }
 
   // 1:1 Verification against specific target
@@ -76,10 +76,12 @@ app.post("/api/liveness/verify", (req, res) => {
         .json({ verified: false, error: "Target identity not found." });
     }
     const similarity = calculateCosineSimilarity(target.descriptor, descriptor);
-    const verified = similarity >= threshold;
+    const distance = calculateEuclideanDistance(target.descriptor, descriptor);
+    const verified = similarity >= threshold && distance <= 0.2;
     return res.json({
       verified,
       similarity: Number(similarity.toFixed(4)),
+      distance: Number(distance.toFixed(4)),
       match: verified ? { id: target.id, name: target.name } : null,
     });
   }
@@ -87,20 +89,25 @@ app.post("/api/liveness/verify", (req, res) => {
   // 1:N Verification against all enrolled identities
   let bestMatch = null;
   let maxSimilarity = -1;
+  let matchDistance = Infinity;
 
   for (const [id, user] of enrolledIdentities.entries()) {
     const sim = calculateCosineSimilarity(user.descriptor, descriptor);
+    const dist = calculateEuclideanDistance(user.descriptor, descriptor);
     if (sim > maxSimilarity) {
       maxSimilarity = sim;
+      matchDistance = dist;
       bestMatch = user;
     }
   }
 
-  const verified = maxSimilarity >= threshold && bestMatch !== null;
+  const verified =
+    maxSimilarity >= threshold && matchDistance <= 0.2 && bestMatch !== null;
 
   return res.json({
     verified,
     similarity: maxSimilarity > -1 ? Number(maxSimilarity.toFixed(4)) : 0,
+    distance: matchDistance < Infinity ? Number(matchDistance.toFixed(4)) : 0,
     match: verified ? { id: bestMatch.id, name: bestMatch.name } : null,
   });
 });

@@ -16,14 +16,11 @@ The assets are split into two directories:
 - face_mesh_solution_simd_wasm_bin.js (WASM glue runtime)
 - face_mesh_solution_simd_wasm_bin.wasm (SIMD-accelerated WASM binary)
 
-### mobilenet-v2/ (TensorFlow.js Face Feature Extractor)
+### face_recognition/ (TensorFlow.js ResNet-34 FaceRecognitionNet)
 
-- model.json (Graph model topology)
-- group1-shard1of5.bin
-- group1-shard2of5.bin
-- group1-shard3of5.bin
-- group1-shard4of5.bin
-- group1-shard5of5.bin
+- face_recognition_model-weights_manifest.json (Weight manifest)
+- face_recognition_model-shard1 (Model weights shard 1)
+- face_recognition_model-shard2 (Model weights shard 2)
 
 ---
 
@@ -34,7 +31,7 @@ When installed as a dependency:
 ```text
 node_modules/@liveness/engine/assets/
 ├── face_mesh/
-└── mobilenet-v2/
+└── face_recognition/
 ```
 
 Or copy them via the helper script provided in this plugin:
@@ -55,14 +52,14 @@ Copy assets into the public directory:
 my-next-app/
 └── public/
     ├── face_mesh/
-    └── mobilenet-v2/
+    └── face_recognition/
 ```
 
 In your component:
 
 ```typescript
 const sdk = new LivenessSDK({
-  basePath: "", // Resolves to /face_mesh/... and /mobilenet-v2/...
+  basePath: "", // Resolves to /face_mesh/... and /face_recognition/...
 });
 ```
 
@@ -74,7 +71,7 @@ Copy assets into public/:
 my-vite-app/
 └── public/
     ├── face_mesh/
-    └── mobilenet-v2/
+    └── face_recognition/
 ```
 
 In your code:
@@ -87,7 +84,7 @@ const sdk = new LivenessSDK({
 
 ### C. Webpack, Angular, Nuxt
 
-Ensure the build tool copies the face_mesh/ and mobilenet-v2/ directories to your build output distribution root.
+Ensure the build tool copies the face_mesh/ and face_recognition/ directories to your build output distribution root.
 
 ---
 
@@ -97,7 +94,7 @@ If serving assets from an external CDN:
 
 1. Upload the two folders to your bucket:
    https://cdn.example.com/liveness-models/face_mesh/...
-   https://cdn.example.com/liveness-models/mobilenet-v2/...
+   https://cdn.example.com/liveness-models/face_recognition/...
 2. Configure CORS on the storage bucket:
    ```json
    [

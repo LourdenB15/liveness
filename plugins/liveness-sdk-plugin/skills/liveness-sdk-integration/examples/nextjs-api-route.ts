@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
       targetId,
       sessionToken,
       integrity,
-      threshold = 0.8,
+      threshold = 0.98,
     } = body;
 
     if (
       !descriptor ||
       !Array.isArray(descriptor) ||
-      descriptor.length !== 1792
+      descriptor.length !== 128
     ) {
       return NextResponse.json(
-        { error: "A valid 1792-dimensional descriptor array is required." },
+        { error: "A valid 128-dimensional descriptor array is required." },
         { status: 400 },
       );
     }

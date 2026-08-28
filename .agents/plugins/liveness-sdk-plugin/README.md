@@ -63,7 +63,7 @@ cp -r /path/to/liveness-sdk-plugin ~/.gemini/config/plugins/
 
 ## Included Assets Helper Script
 
-To automatically copy the required MediaPipe Face Mesh and MobileNet V2 model assets to your web app's `public/` directory:
+To automatically copy the required MediaPipe Face Mesh and ResNet-34 FaceRecognitionNet model assets to your web app's `public/` directory:
 
 ```bash
 node .agents/plugins/liveness-sdk-plugin/skills/liveness-sdk-integration/scripts/copy-liveness-assets.js ./public

@@ -13,4 +13,8 @@ export function calculateCosineSimilarity(
   vecA: number[],
   vecB: number[],
 ): number;
+export function calculateEuclideanDistance(
+  vecA: number[],
+  vecB: number[],
+): number;
 export function calculateFaceSize(landmarks: Landmark[]): number;
