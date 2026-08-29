@@ -377,9 +377,10 @@ app.post("/webhooks/liveness", (req, res) => {
   "verified": true,
   "status": "SUCCESS",
   "match": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "name": "John Doe",
-    "similarity": 0.94,
-    "distance": 0.346
+    "similarity": 0.982,
+    "distance": 0.184
   },
   "metric": "cosine"
 }`}
@@ -425,8 +426,8 @@ app.post("/webhooks/liveness", (req, res) => {
   "match": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "name": "John Doe",
-    "similarity": 0.94,
-    "distance": 0.346
+    "similarity": 0.982,
+    "distance": 0.184
   },
   "metric": "cosine"
 }`}
