@@ -59,7 +59,7 @@ app.post("/api/liveness/enroll", (req, res) => {
  * 2. VERIFY USER (1:N or 1:1)
  */
 app.post("/api/liveness/verify", (req, res) => {
-  const { descriptor, targetId, threshold = 0.98 } = req.body;
+  const { descriptor, targetId, threshold = 0.95 } = req.body;
 
   if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
     return res.status(400).json({ error: "128-d descriptor vector required." });
@@ -75,7 +75,7 @@ app.post("/api/liveness/verify", (req, res) => {
     }
     const similarity = calculateCosineSimilarity(target.descriptor, descriptor);
     const distance = calculateEuclideanDistance(target.descriptor, descriptor);
-    const verified = similarity >= threshold && distance <= 0.2;
+    const verified = similarity >= threshold && distance <= 0.3;
     return res.json({
       verified,
       similarity: Number(similarity.toFixed(4)),
@@ -100,7 +100,7 @@ app.post("/api/liveness/verify", (req, res) => {
   }
 
   const verified =
-    maxSimilarity >= threshold && matchDistance <= 0.2 && bestMatch !== null;
+    maxSimilarity >= threshold && matchDistance <= 0.3 && bestMatch !== null;
 
   return res.json({
     verified,

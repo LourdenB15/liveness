@@ -156,7 +156,7 @@ import {
 
 const similarity = calculateCosineSimilarity(enrolledVector, probeVector);
 const distance = calculateEuclideanDistance(enrolledVector, probeVector);
-const isMatch = similarity >= 0.98 && distance <= 0.2;
+const isMatch = similarity >= 0.95 && distance <= 0.3;
 ```
 
 > See [Backend API and Webhooks Reference](./references/backend-api-and-webhooks.md) for endpoint contracts and HMAC-SHA256 signature verification.

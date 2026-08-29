@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       targetId,
       sessionToken,
       integrity,
-      threshold = 0.98,
+      threshold = 0.95,
     } = body;
 
     if (

@@ -26,8 +26,8 @@ export async function verifyUser(
   adminId,
   metric = "both",
 ) {
-  const cosineThreshold = typeof threshold === "number" ? threshold : 0.98;
-  const euclideanThreshold = 0.2;
+  const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
+  const euclideanThreshold = 0.3;
 
   const closestMatch = await livenessRepository.findClosestMatch(
     descriptor,
@@ -81,8 +81,8 @@ export async function verifyUserById(
   adminId,
   metric = "both",
 ) {
-  const cosineThreshold = typeof threshold === "number" ? threshold : 0.98;
-  const euclideanThreshold = 0.2;
+  const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
+  const euclideanThreshold = 0.3;
 
   const user = await livenessRepository.findMatchById(
     descriptor,

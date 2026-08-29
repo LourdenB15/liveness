@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Navbar from "../components/Navbar";
+import DashboardLayout from "../layouts/DashboardLayout";
 import { api } from "../services/api";
 
 const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
@@ -364,8 +365,8 @@ app.post("/webhooks/liveness", (req, res) => {
             <p className="mb-6 text-sm leading-relaxed text-slate-600">
               Compares a fresh liveness result against your enrolled user
               database. Returns a match if similarity exceeds{" "}
-              <strong>0.98</strong> (Cosine) and distance is within{" "}
-              <strong>0.20</strong> (Euclidean).
+              <strong>0.95</strong> (Cosine) and distance is within{" "}
+              <strong>0.30</strong> (Euclidean).
             </p>
             <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
               Response Schema

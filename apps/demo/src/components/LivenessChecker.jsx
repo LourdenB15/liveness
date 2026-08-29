@@ -28,8 +28,8 @@ const VERIFY_TYPE = {
   ONE_TO_ONE: "1:1",
 };
 
-const MATCH_THRESHOLD = 0.98;
-const EUCLIDEAN_THRESHOLD = 0.2;
+const MATCH_THRESHOLD = 0.95;
+const EUCLIDEAN_THRESHOLD = 0.3;
 
 export function LivenessChecker() {
   const [uiState, setUiState] = useState(UI_STATE.IDLE);

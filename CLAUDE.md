@@ -24,7 +24,7 @@ When implementing `@liveness/sdk` in this project:
 4. Biometric Descriptor and Privacy:
    - Never send raw camera streams to the server.
    - Transmit only the 128-dimensional numerical vector descriptor, session token, timestamp, challenges, and integrity hash.
-   - Biometric matching threshold: Cosine similarity >= 0.98 and Euclidean distance <= 0.20.
+   - Biometric matching threshold: Cosine similarity >= 0.95 and Euclidean distance <= 0.30.
 
 5. Webhook Security:
    - Verify incoming webhook signatures (`x-liveness-signature`) with HMAC-SHA256 against the raw request body buffer (`req.rawBody`).

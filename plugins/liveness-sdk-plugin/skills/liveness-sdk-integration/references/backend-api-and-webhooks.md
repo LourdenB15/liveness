@@ -59,7 +59,7 @@ Compares a fresh liveness vector against all enrolled identities in the tenant.
   "timestamp": 1716336000000,
   "challenges": ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"],
   "integrity": "9b3c4...sha256",
-  "threshold": 0.98
+  "threshold": 0.95
 }
 ```
 
@@ -93,7 +93,7 @@ Compares a fresh liveness vector directly against a specific `targetId` (User UU
   "timestamp": 1716336000000,
   "challenges": ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"],
   "integrity": "9b3c4...sha256",
-  "threshold": 0.98
+  "threshold": 0.95
 }
 ```
 
@@ -126,7 +126,7 @@ import {
 // vectorA and vectorB are 128-element arrays of numbers
 const similarity = calculateCosineSimilarity(enrolledVector, probeVector);
 const distance = calculateEuclideanDistance(enrolledVector, probeVector);
-const isMatch = similarity >= 0.98 && distance <= 0.2;
+const isMatch = similarity >= 0.95 && distance <= 0.3;
 
 console.log(
   `Match: ${isMatch}, Similarity: ${(similarity * 100).toFixed(2)}%, Distance: ${distance.toFixed(3)}`,

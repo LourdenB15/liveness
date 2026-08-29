@@ -7,5 +7,5 @@ When implementing or modifying features involving @liveness/sdk and biometric fa
 - Asset Paths: Provide basePath pointing to /face_mesh/ and /face_recognition/ (ResNet-34) binary assets or host them in public/.
 - Active Challenges: Supported active challenges are BLINK, TURN_LEFT, TURN_RIGHT. Initial framing occurs during WAITING with distance guidance CLOSER / FURTHER.
 - Client-Side Privacy: Only send the 128-dimensional numerical descriptor vector (ResNet-34) to the server. Never stream raw camera video to backend.
-- Biometric Matching: Use Cosine Similarity (threshold >= 0.98) and Euclidean Distance (threshold <= 0.20).
+- Biometric Matching: Use Cosine Similarity (threshold >= 0.95) and Euclidean Distance (threshold <= 0.30).
 - Webhooks: Always verify x-liveness-signature HMAC-SHA256 signatures against the raw body buffer (req.rawBody).

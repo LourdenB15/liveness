@@ -34,7 +34,7 @@ When implementing or modifying features involving @liveness/sdk and biometric fa
 
 - Client-Side Processing: Liveness detection and feature extraction execute 100% on the client inside WebAssembly/WebGL.
 - Biometric Descriptor: Never send raw webcam video or frames to the backend. Send only the 128-dimensional numerical descriptor vector, sessionToken, timestamp, challenges, and integrity hash.
-- Similarity Threshold: Use Cosine Similarity (threshold >= 0.98) and Euclidean Distance (threshold <= 0.20) for 1:1 and 1:N face verification.
+- Similarity Threshold: Use Cosine Similarity (threshold >= 0.95) and Euclidean Distance (threshold <= 0.30) for 1:1 and 1:N face verification.
 
 ---
 
