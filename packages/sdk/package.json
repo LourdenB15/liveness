@@ -1,6 +1,6 @@
 {
   "name": "@liveness/sdk",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "An event-driven JavaScript SDK for browser-based Active Liveness Detection and Face Identity Verification.",
   "author": "John Paul Patigas <johnpaulpatigas@gmail.com>",
   "license": "MIT",
