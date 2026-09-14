@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import DashboardLayout from "../layouts/DashboardLayout";
 import Navbar from "../components/Navbar";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { api } from "../services/api";
