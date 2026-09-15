@@ -31,7 +31,20 @@ export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
-  const user = api.auth.getCurrentUser();
+  const [user, setUser] = useState(() => api.auth.getCurrentUser());
+
+  // Listen for auth updates
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setUser(api.auth.getCurrentUser());
+    };
+    window.addEventListener("auth:login", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("auth:login", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
 
   // Fetch stats for authentic quota usage
   useEffect(() => {
@@ -42,6 +55,13 @@ export default function DashboardLayout({ children }) {
           setTotalChecks(stats.totalChecks);
         }
       } catch (err) {
+        // If the token is invalid/expired, the API interceptor handles redirection
+        if (
+          err?.message?.includes("token") ||
+          err?.message?.includes("Access token")
+        ) {
+          return;
+        }
         console.error("Failed to load quota stats", err);
       }
     };

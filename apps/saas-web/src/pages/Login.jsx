@@ -19,15 +19,19 @@ const loginSchema = z.object({
 });
 
 export default function Login({ modal = false }) {
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dashboard";
+  const sessionExpired = location.state?.sessionExpired;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    sessionExpired ? "Your session has expired. Please sign in again." : "",
+  );
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleClose = useCallback(() => {
     navigate(location.state?.backgroundLocation?.pathname || "/", {
@@ -113,7 +117,7 @@ export default function Login({ modal = false }) {
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div>
               <p className="mb-0.5 font-bold text-red-800">
-                Authentication Error
+                {sessionExpired ? "Session Expired" : "Authentication Error"}
               </p>
               <p className="leading-normal font-medium text-red-600">{error}</p>
             </div>

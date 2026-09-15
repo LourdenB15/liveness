@@ -22,7 +22,7 @@ export async function signup(username, password, firstName, lastName, email) {
   const token = jwt.sign(
     { id: admin.id, username: admin.username },
     JWT_SECRET,
-    { expiresIn: "24h" },
+    { expiresIn: "7d" },
   );
   return { ...admin, token };
 }
@@ -47,7 +47,7 @@ export async function login(username, password) {
   const token = jwt.sign(
     { id: admin.id, username: admin.username },
     JWT_SECRET,
-    { expiresIn: "24h" },
+    { expiresIn: "7d" },
   );
 
   return {

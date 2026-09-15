@@ -17,8 +17,27 @@ const request = async (endpoint, options = {}) => {
 
   if (!response.ok) {
     if (response.status === 204) return null;
-    const error = await response.json();
-    throw new Error(error.error || "Request failed");
+    let errorMessage = "Request failed";
+    try {
+      const error = await response.json();
+      errorMessage = error.error || errorMessage;
+    } catch {
+      // response wasn't JSON
+    }
+
+    // Auto-handle expired or unauthorized session (except login/signup where 401 indicates invalid credentials)
+    if (
+      (response.status === 401 || response.status === 403) &&
+      !endpoint.includes("/login") &&
+      !endpoint.includes("/signup")
+    ) {
+      localStorage.removeItem(ADMIN_KEY);
+      window.dispatchEvent(
+        new CustomEvent("auth:expired", { detail: { message: errorMessage } }),
+      );
+    }
+
+    throw new Error(errorMessage);
   }
 
   if (response.status === 204) return null;
@@ -44,16 +63,29 @@ export const api = {
         body: JSON.stringify({ username, password }),
       });
       localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
+      window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
     },
     logout: async () => {
-      await request("/dashboard/logout", { method: "POST" });
-      localStorage.removeItem(ADMIN_KEY);
+      try {
+        await request("/dashboard/logout", { method: "POST" });
+      } catch (err) {
+        console.warn("Logout request failed:", err);
+      } finally {
+        localStorage.removeItem(ADMIN_KEY);
+        window.dispatchEvent(new CustomEvent("auth:expired"));
+      }
     },
     getCurrentUser: () => {
-      const saved = localStorage.getItem(ADMIN_KEY);
-      return saved ? JSON.parse(saved) : null;
+      try {
+        const saved = localStorage.getItem(ADMIN_KEY);
+        return saved ? JSON.parse(saved) : null;
+      } catch {
+        localStorage.removeItem(ADMIN_KEY);
+        return null;
+      }
     },
+    me: () => request("/dashboard/me"),
     forgotPassword: (email) =>
       request("/dashboard/forgot-password", {
         method: "POST",

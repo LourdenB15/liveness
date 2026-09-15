@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ApiKeys from "./pages/ApiKeys";
@@ -15,21 +16,49 @@ import Users from "./pages/Users";
 import Webhooks from "./pages/Webhooks";
 import { api } from "./services/api";
 
+function useCurrentUser() {
+  const [user, setUser] = useState(() => api.auth.getCurrentUser());
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setUser(api.auth.getCurrentUser());
+    };
+    window.addEventListener("auth:expired", handleAuthChange);
+    window.addEventListener("auth:login", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("auth:expired", handleAuthChange);
+      window.removeEventListener("auth:login", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
+  return user;
+}
+
 function ProtectedRoute({ children }) {
-  const user = api.auth.getCurrentUser();
+  const user = useCurrentUser();
   const location = useLocation();
-  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location, sessionExpired: true }}
+        replace
+      />
+    );
+  }
   return <DashboardLayout>{children}</DashboardLayout>;
 }
 
 function PublicOnlyRoute({ children }) {
-  const user = api.auth.getCurrentUser();
+  const user = useCurrentUser();
   if (user) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
 function NotFound() {
-  const user = api.auth.getCurrentUser();
+  const user = useCurrentUser();
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-white px-4 text-center">
       <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100">
@@ -52,6 +81,7 @@ function NotFound() {
 }
 
 function App() {
+  const user = useCurrentUser();
   const location = useLocation();
 
   // If we navigated to /login or /signup with a background location,
@@ -63,13 +93,7 @@ function App() {
       <Routes location={backgroundLocation || location}>
         <Route
           path="/"
-          element={
-            api.auth.getCurrentUser() ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Landing />
-            )
-          }
+          element={user ? <Navigate to="/dashboard" replace /> : <Landing />}
         />
 
         {/* These still work as standalone full-page routes when accessed directly via URL */}

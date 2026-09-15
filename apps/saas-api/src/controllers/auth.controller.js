@@ -66,7 +66,7 @@ export async function signup(req, res) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json(admin);
@@ -99,7 +99,7 @@ export async function login(req, res) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({
       ...admin,
@@ -196,7 +196,11 @@ export async function updateProfile(req, res) {
 }
 
 export async function logout(req, res) {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
   res.status(204).send();
 }
 
