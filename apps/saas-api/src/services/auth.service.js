@@ -71,7 +71,9 @@ export async function forgotPassword(email) {
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   await authRepositories.addToken(admin.id, expiresAt, tokenHash);
   const cleanAppUrl = APP_URL.replace(/\/+$/, "");
-  const resetLink = `${cleanAppUrl}/reset-password?token=${token}`;
+  const resetLink = cleanAppUrl.includes("#")
+    ? `${cleanAppUrl}/reset-password?token=${token}`
+    : `${cleanAppUrl}/#/reset-password?token=${token}`;
   await sendResetPasswordEmail(admin.email, resetLink);
 }
 

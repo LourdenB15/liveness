@@ -42,7 +42,7 @@ jobs:
 
       - name: Build SDK and SaaS Web
         env:
-          VITE_BASE_PATH: "/${{ github.event.repository.name }}/"
+          VITE_BASE_PATH: "./"
           VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: npm run build:saas
 

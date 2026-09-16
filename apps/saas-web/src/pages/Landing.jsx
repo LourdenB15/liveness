@@ -33,6 +33,11 @@ export default function Landing() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const scrollToSection = (id) => (e) => {
+    e.preventDefault();
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-500 selection:text-white">
       {/* Navigation Header */}
@@ -367,7 +372,8 @@ export default function Landing() {
                 <li>
                   <a
                     href="#features"
-                    className="transition-colors hover:text-blue-600"
+                    onClick={scrollToSection("features")}
+                    className="cursor-pointer transition-colors hover:text-blue-600"
                   >
                     Features
                   </a>
@@ -375,7 +381,8 @@ export default function Landing() {
                 <li>
                   <a
                     href="#how-it-works"
-                    className="transition-colors hover:text-blue-600"
+                    onClick={scrollToSection("how-it-works")}
+                    className="cursor-pointer transition-colors hover:text-blue-600"
                   >
                     How it works
                   </a>
@@ -383,7 +390,8 @@ export default function Landing() {
                 <li>
                   <a
                     href="#pricing"
-                    className="transition-colors hover:text-blue-600"
+                    onClick={scrollToSection("pricing")}
+                    className="cursor-pointer transition-colors hover:text-blue-600"
                   >
                     Pricing
                   </a>
@@ -407,7 +415,7 @@ export default function Landing() {
               <ul className="space-y-2.5 text-xs font-medium text-slate-600">
                 <li>
                   <Link
-                    to="/docs#introduction"
+                    to="/docs?section=introduction"
                     className="transition-colors hover:text-blue-600"
                   >
                     Documentation
@@ -415,7 +423,7 @@ export default function Landing() {
                 </li>
                 <li>
                   <Link
-                    to="/docs#sdk-usage"
+                    to="/docs?section=sdk-usage"
                     className="transition-colors hover:text-blue-600"
                   >
                     Quickstart Guide
@@ -423,7 +431,7 @@ export default function Landing() {
                 </li>
                 <li>
                   <Link
-                    to="/docs#api-ref"
+                    to="/docs?section=api-ref"
                     className="transition-colors hover:text-blue-600"
                   >
                     API Reference
@@ -432,7 +440,8 @@ export default function Landing() {
                 <li>
                   <a
                     href="#faq"
-                    className="transition-colors hover:text-blue-600"
+                    onClick={scrollToSection("faq")}
+                    className="cursor-pointer transition-colors hover:text-blue-600"
                   >
                     FAQ
                   </a>

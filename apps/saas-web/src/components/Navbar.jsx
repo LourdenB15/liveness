@@ -26,6 +26,31 @@ const Navbar = () => {
 
   const isDocsPage = location.pathname === "/docs";
 
+  const scrollTo = (id) => (e) => {
+    e.preventDefault();
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleMobileNav = (id) => (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
@@ -51,66 +76,34 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden items-center space-x-8 md:flex">
-          {isDocsPage ? (
-            <Link
-              to="/#features"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              Features
-            </Link>
-          ) : (
-            <a
-              href="#features"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              Features
-            </a>
-          )}
-          {isDocsPage ? (
-            <Link
-              to="/#how-it-works"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              How it works
-            </Link>
-          ) : (
-            <a
-              href="#how-it-works"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              How it works
-            </a>
-          )}
-          {isDocsPage ? (
-            <Link
-              to="/#pricing"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              Pricing
-            </Link>
-          ) : (
-            <a
-              href="#pricing"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              Pricing
-            </a>
-          )}
-          {isDocsPage ? (
-            <Link
-              to="/#faq"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              FAQ
-            </Link>
-          ) : (
-            <a
-              href="#faq"
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-            >
-              FAQ
-            </a>
-          )}
+          <a
+            href="#features"
+            onClick={scrollTo("features")}
+            className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+          >
+            Features
+          </a>
+          <a
+            href="#how-it-works"
+            onClick={scrollTo("how-it-works")}
+            className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+          >
+            How it works
+          </a>
+          <a
+            href="#pricing"
+            onClick={scrollTo("pricing")}
+            className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+          >
+            Pricing
+          </a>
+          <a
+            href="#faq"
+            onClick={scrollTo("faq")}
+            className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
+          >
+            FAQ
+          </a>
           <Link
             to="/docs"
             className={`text-sm font-medium transition-colors ${
@@ -161,85 +154,41 @@ const Navbar = () => {
                 : "absolute top-full right-0 left-0 border-b border-slate-200"
             }`}
           >
-            {isDocsPage ? (
-              <Link
-                to="/#features"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>Features</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </Link>
-            ) : (
-              <a
-                href="#features"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>Features</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </a>
-            )}
+            <a
+              href="#features"
+              onClick={handleMobileNav("features")}
+              className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
+            >
+              <span>Features</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </a>
 
-            {isDocsPage ? (
-              <Link
-                to="/#how-it-works"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>How it works</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </Link>
-            ) : (
-              <a
-                href="#how-it-works"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>How it works</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </a>
-            )}
+            <a
+              href="#how-it-works"
+              onClick={handleMobileNav("how-it-works")}
+              className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
+            >
+              <span>How it works</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </a>
 
-            {isDocsPage ? (
-              <Link
-                to="/#pricing"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>Pricing</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </Link>
-            ) : (
-              <a
-                href="#pricing"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>Pricing</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </a>
-            )}
+            <a
+              href="#pricing"
+              onClick={handleMobileNav("pricing")}
+              className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
+            >
+              <span>Pricing</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </a>
 
-            {isDocsPage ? (
-              <Link
-                to="/#faq"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>FAQ</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </Link>
-            ) : (
-              <a
-                href="#faq"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-              >
-                <span>FAQ</span>
-                <ChevronRight className="h-4 w-4 text-slate-400" />
-              </a>
-            )}
+            <a
+              href="#faq"
+              onClick={handleMobileNav("faq")}
+              className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
+            >
+              <span>FAQ</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </a>
 
             <Link
               to="/docs"
