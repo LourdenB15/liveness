@@ -25,12 +25,23 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- API Keys table
+CREATE TABLE IF NOT EXISTS api_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    key_hash VARCHAR(255) NOT NULL UNIQUE,
+    masked_key VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Users table with face descriptor vector
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     descriptor vector(128) NOT NULL,
+    api_key_id UUID REFERENCES api_keys(id) ON DELETE SET NULL,
     enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -52,17 +63,8 @@ CREATE TABLE IF NOT EXISTS verification_logs (
     user_name VARCHAR(255),
     score FLOAT NOT NULL,
     status VARCHAR(50) NOT NULL,
+    api_key_id UUID REFERENCES api_keys(id) ON DELETE SET NULL,
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- API Keys table
-CREATE TABLE IF NOT EXISTS api_keys (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    key_hash VARCHAR(255) NOT NULL UNIQUE,
-    masked_key VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index for faster vector similarity search

@@ -1,4 +1,3 @@
-// src/components/LivenessChecker.jsx
 import {
   calculateCosineSimilarity,
   calculateEuclideanDistance,
@@ -740,10 +739,10 @@ export function LivenessChecker() {
             <button
               onClick={handleStartClick}
               disabled={isStartDisabled}
-              className={`flex transform items-center gap-2 rounded-full px-8 py-3 font-bold shadow-lg transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold shadow-xs transition-colors ${
                 isStartDisabled
-                  ? "cursor-not-allowed bg-slate-500 text-slate-200 opacity-75"
-                  : "cursor-pointer bg-blue-600 text-white hover:scale-105 hover:bg-blue-500 active:scale-95"
+                  ? "cursor-not-allowed bg-slate-600 text-slate-300 opacity-75"
+                  : "cursor-pointer bg-blue-600 text-white hover:bg-blue-500"
               }`}
             >
               {uiState === UI_STATE.READY_TO_START

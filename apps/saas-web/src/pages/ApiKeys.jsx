@@ -128,7 +128,7 @@ export default function ApiKeys() {
               closeCreateModal();
               setIsCreating(true);
             }}
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95"
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700"
           >
             <Plus className="h-4 w-4" />
             Issue New Key
@@ -206,10 +206,10 @@ export default function ApiKeys() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`rounded-xl px-5 py-2 text-xs font-black text-white transition-all ${
+                    className={`rounded-xl px-5 py-2 text-xs font-semibold text-white transition-colors ${
                       isSubmitting
                         ? "cursor-not-allowed bg-blue-400 opacity-75"
-                        : "cursor-pointer bg-blue-600 shadow-md shadow-blue-500/20 hover:bg-blue-700 active:scale-95"
+                        : "cursor-pointer bg-blue-600 shadow-xs hover:bg-blue-700"
                     }`}
                   >
                     {isSubmitting ? "Generating Key..." : "Generate Secret Key"}
@@ -288,7 +288,7 @@ export default function ApiKeys() {
                           setDeleteTarget(key);
                           setConfirmInput("");
                         }}
-                        className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-600 active:scale-95"
+                        className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                         title="Revoke access"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -495,9 +495,9 @@ export default function ApiKeys() {
                     disabled={
                       confirmInput !== deleteTarget.name || isDeletingKey
                     }
-                    className={`rounded-xl px-5 py-2 text-xs font-black text-white transition-all ${
+                    className={`rounded-xl px-5 py-2 text-xs font-semibold text-white transition-colors ${
                       confirmInput === deleteTarget.name && !isDeletingKey
-                        ? "cursor-pointer bg-rose-600 shadow-md shadow-rose-500/20 hover:bg-rose-700 active:scale-95"
+                        ? "cursor-pointer bg-rose-600 shadow-xs hover:bg-rose-700"
                         : "cursor-not-allowed bg-slate-300 opacity-60"
                     }`}
                   >

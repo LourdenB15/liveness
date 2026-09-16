@@ -24,7 +24,7 @@ export default function TermsOfService() {
 
         <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-10 md:p-12">
           <div className="border-b border-slate-100 pb-6 sm:pb-8">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-blue-100 bg-blue-50/80 px-2.5 py-1 text-xs font-semibold text-blue-700">
               <FileText className="h-3.5 w-3.5" />
               Legal
             </div>
@@ -67,10 +67,10 @@ export default function TermsOfService() {
                 3. Accounts and credentials
               </h2>
               <p>
-                You must provide an accurate email address and keep your
-                account information current. You are responsible for safeguarding
-                your account password and secret API keys. Any action taken
-                using your API keys or account credentials will be treated as
+                You must provide an accurate email address and keep your account
+                information current. You are responsible for safeguarding your
+                account password and secret API keys. Any action taken using
+                your API keys or account credentials will be treated as
                 authorized by you.
               </p>
             </section>
@@ -123,7 +123,8 @@ export default function TermsOfService() {
               <p>
                 The client SDK package is distributed under the MIT License. The
                 Liveness Cloud platform name, verification backend, dashboard
-                interfaces, and documentation are the property of Liveness Cloud.
+                interfaces, and documentation are the property of Liveness
+                Cloud.
               </p>
             </section>
 
@@ -181,9 +182,7 @@ export default function TermsOfService() {
               <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 11. Contact
               </h2>
-              <p>
-                If you have questions about these terms, contact us at:
-              </p>
+              <p>If you have questions about these terms, contact us at:</p>
               <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 p-4 font-mono text-xs text-slate-700 sm:text-sm">
                 support@liveness.cloud
               </div>

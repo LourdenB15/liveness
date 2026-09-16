@@ -111,10 +111,7 @@ export default function DashboardLayout({ children }) {
     (location.pathname === "/settings" ? "Settings" : "Dashboard");
 
   return (
-    <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-white font-sans text-slate-900">
-      {/* Background Subtle Gradient Glow matching Landing Page */}
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-50/40 via-white to-white" />
-
+    <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-slate-50/40 font-sans text-slate-900">
       {/* Standalone Sidebar Component */}
       <Sidebar
         sidebarCollapsed={sidebarCollapsed}
@@ -160,7 +157,7 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Search Button (Beside Hamburger Button) */}
             <button
               onClick={() => setSearchModalOpen(true)}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-2xs transition-all hover:bg-blue-50 hover:text-blue-600 active:scale-95 md:hidden"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-2xs transition-colors hover:bg-slate-100 hover:text-slate-800 md:hidden"
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
@@ -230,7 +227,7 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Hamburger Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-2xs transition-all hover:bg-slate-50 active:scale-95 md:hidden"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-2xs transition-colors hover:bg-slate-100 md:hidden"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? (
@@ -254,15 +251,15 @@ export default function DashboardLayout({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-all ${
+                className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-colors ${
                   isActive
                     ? "font-extrabold text-blue-600"
                     : "font-medium text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <item.icon
-                  className={`h-5 w-5 transition-transform ${
-                    isActive ? "scale-110 text-blue-600" : "text-slate-400"
+                  className={`h-5 w-5 ${
+                    isActive ? "text-blue-600" : "text-slate-400"
                   }`}
                 />
                 <span className="mt-1 text-[10px] tracking-tight">

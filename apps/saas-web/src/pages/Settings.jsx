@@ -343,7 +343,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={profileLoading || !isProfileDirty}
-                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {profileLoading
                       ? "Saving Profile..."
@@ -370,7 +370,7 @@ export default function Settings() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
                     <span className="font-bold text-slate-800">
                       Active Session
                     </span>
@@ -550,7 +550,7 @@ export default function Settings() {
                       !newPassword ||
                       !confirmPassword
                     }
-                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-extrabold text-white shadow-2xs transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? "Updating Credentials..." : "Update Password"}
                   </button>

@@ -1,4 +1,3 @@
-// src/App.jsx
 import { LivenessChecker } from "./components/LivenessChecker";
 
 function App() {
@@ -39,7 +38,7 @@ function App() {
 
       <main className="flex grow flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-3xl text-center">
-          <div className="mb-4 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold tracking-wider text-blue-600 uppercase">
+          <div className="mb-4 inline-block rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
             Information Technology Capstone 2026
           </div>
           <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
@@ -53,8 +52,7 @@ function App() {
           </p>
         </div>
 
-        <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-xl ring-1 ring-slate-900/5">
-          <div className="bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 p-1 opacity-80"></div>
+        <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
           <div className="p-6 sm:p-10">
             <LivenessChecker />
           </div>

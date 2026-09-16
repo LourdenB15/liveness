@@ -1,5 +1,3 @@
-// src/services/api.js
-
 const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 const ADMIN_KEY = "liveness_admin";
@@ -162,7 +160,7 @@ export const api = {
   },
 
   stats: {
-    getOverview: () => request("/dashboard/stats"),
+    getOverview: (days = 7) => request(`/dashboard/stats?days=${days}`),
   },
 
   system: {

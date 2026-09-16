@@ -2,10 +2,10 @@ import pool from "../db.js";
 
 const formatVector = (vector) => `[${vector.join(",")}]`;
 
-export async function addUser(adminId, name, descriptor) {
+export async function addUser(adminId, name, descriptor, apiKeyId = null) {
   const result = await pool.query(
-    "INSERT INTO users (admin_id, name, descriptor) VALUES($1, $2, $3) RETURNING id, name, enrolled_at",
-    [adminId, name, formatVector(descriptor)],
+    "INSERT INTO users (admin_id, name, descriptor, api_key_id) VALUES($1, $2, $3, $4) RETURNING id, name, enrolled_at",
+    [adminId, name, formatVector(descriptor), apiKeyId],
   );
   return result.rows[0];
 }
@@ -16,10 +16,11 @@ export async function addVerificationLog(
   enrolledUserName,
   similarity,
   status,
+  apiKeyId = null,
 ) {
   await pool.query(
-    "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status) VALUES ($1, $2, $3, $4, $5)",
-    [adminId, enrolledUserId, enrolledUserName, similarity, status],
+    "INSERT INTO verification_logs (admin_id, user_id, user_name, score, status, api_key_id) VALUES ($1, $2, $3, $4, $5, $6)",
+    [adminId, enrolledUserId, enrolledUserName, similarity, status, apiKeyId],
   );
 }
 

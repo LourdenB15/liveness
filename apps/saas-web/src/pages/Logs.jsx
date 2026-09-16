@@ -6,6 +6,7 @@ import {
   Cpu,
   Filter,
   Fingerprint,
+  Key,
   Search,
   ShieldAlert,
   ShieldCheck,
@@ -53,9 +54,11 @@ export default function Logs() {
   };
 
   const filteredLogs = logs.filter((log) => {
-    const matchesSearch = (log.userName || "")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase();
+    const matchesSearch =
+      (log.userName || "").toLowerCase().includes(term) ||
+      (log.apiKeyName || "").toLowerCase().includes(term) ||
+      (log.apiKeyMasked || "").toLowerCase().includes(term);
     const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -239,6 +242,7 @@ export default function Logs() {
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                   <th className="px-6 py-3.5">Result</th>
                   <th className="px-6 py-3.5">Subject</th>
+                  <th className="px-6 py-3.5">API Key</th>
                   <th className="px-6 py-3.5">Score / Confidence</th>
                   <th className="px-6 py-3.5 text-right">Timestamp</th>
                 </tr>
@@ -281,6 +285,23 @@ export default function Logs() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
+                      {log.apiKeyName ? (
+                        <div className="flex items-center gap-1.5">
+                          <Key className="h-3 w-3 shrink-0 text-slate-400" />
+                          <span className="text-xs font-semibold text-slate-800">
+                            {log.apiKeyName}
+                          </span>
+                          {log.apiKeyMasked && (
+                            <span className="font-mono text-[10px] text-slate-400">
+                              ({log.apiKeyMasked.slice(-8)})
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100 sm:w-28">
                           <div
@@ -308,7 +329,7 @@ export default function Logs() {
                 ))}
                 {filteredLogs.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="px-6 py-14 text-center">
+                    <td colSpan="5" className="px-6 py-14 text-center">
                       <div className="flex flex-col items-center">
                         <AlertCircle className="mb-3 h-8 w-8 text-slate-300" />
                         <p className="text-xs font-extrabold tracking-widest text-slate-400 uppercase">
@@ -360,7 +381,7 @@ export default function Logs() {
               {/* Scrollable Content */}
               <div className="space-y-4 overflow-y-auto pr-1 text-xs">
                 {/* Status & Subject Header Card */}
-                <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                <div className="grid grid-cols-1 gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 sm:grid-cols-3">
                   <div>
                     <span className="mb-1 block text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
                       Subject Name
@@ -383,6 +404,26 @@ export default function Logs() {
                       }`}
                     >
                       {selectedLog.status}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="mb-1 block text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">
+                      Origin API Key
+                    </span>
+                    <span className="text-xs font-semibold text-slate-800">
+                      {selectedLog.apiKeyName ? (
+                        <span className="inline-flex items-center gap-1">
+                          <Key className="h-3 w-3 shrink-0 text-slate-400" />
+                          <span>
+                            {selectedLog.apiKeyName}{" "}
+                            <span className="font-mono text-[10px] text-slate-400">
+                              ({selectedLog.apiKeyMasked || ""})
+                            </span>
+                          </span>
+                        </span>
+                      ) : (
+                        "—"
+                      )}
                     </span>
                   </div>
                 </div>

@@ -1,4 +1,3 @@
-// src/FaceRecognitionNet.js
 import * as tf from "@tensorflow/tfjs";
 
 function scale(x, params) {

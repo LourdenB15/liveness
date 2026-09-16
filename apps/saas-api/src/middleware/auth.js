@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { findAdminByApiKey } from "../services/api-key.service.js";
+import { findApiKeyDetails } from "../services/api-key.service.js";
 
 const JWT_SECRET =
   process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
@@ -36,8 +36,11 @@ export async function authenticateApiKey(req, res, next) {
       .json({ error: "API key is required in x-api-key header" });
   }
   try {
-    const adminId = await findAdminByApiKey(apiKey);
-    req.adminId = adminId;
+    const details = await findApiKeyDetails(apiKey);
+    req.adminId = details.adminId;
+    req.apiKeyId = details.apiKeyId;
+    req.apiKeyName = details.keyName;
+    req.apiKeyMasked = details.maskedKey;
     next();
   } catch (error) {
     console.error("API Key Auth Error:", error);

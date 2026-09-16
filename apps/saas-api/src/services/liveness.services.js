@@ -1,10 +1,11 @@
 import * as livenessRepository from "../repositories/liveness.repository.js";
 
-export async function enrollUser(adminId, name, descriptor) {
+export async function enrollUser(adminId, name, descriptor, apiKeyId = null) {
   const enrolledUser = await livenessRepository.addUser(
     adminId,
     name,
     descriptor,
+    apiKeyId,
   );
 
   await livenessRepository.addVerificationLog(
@@ -13,6 +14,7 @@ export async function enrollUser(adminId, name, descriptor) {
     enrolledUser.name,
     1.0,
     "ENROLLED",
+    apiKeyId,
   );
 
   return enrolledUser;
@@ -23,6 +25,7 @@ export async function verifyUser(
   threshold,
   adminId,
   metric = "both",
+  apiKeyId = null,
 ) {
   const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
   const euclideanThreshold = 0.3;
@@ -53,6 +56,7 @@ export async function verifyUser(
     match?.name || "Unknown",
     match?.similarity || 0,
     status,
+    apiKeyId,
   );
 
   const responsePayload = {
@@ -77,6 +81,7 @@ export async function verifyUserById(
   threshold,
   adminId,
   metric = "both",
+  apiKeyId = null,
 ) {
   const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
   const euclideanThreshold = 0.3;
@@ -107,6 +112,7 @@ export async function verifyUserById(
     match?.name || "Unknown",
     match?.similarity || 0,
     status,
+    apiKeyId,
   );
 
   const responsePayload = {

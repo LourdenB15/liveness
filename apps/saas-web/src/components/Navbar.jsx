@@ -67,7 +67,7 @@ const Navbar = () => {
         }`}
       >
         <Link to="/" className="group flex cursor-pointer items-center gap-2">
-          <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600 transition-transform group-hover:scale-105" />
+          <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600" />
           <span className="text-xl font-extrabold tracking-tight text-slate-900">
             Liveness
             <span className="ml-0.5 font-light text-blue-600">Cloud</span>
@@ -113,13 +113,13 @@ const Navbar = () => {
         <div className="hidden items-center space-x-3 md:flex">
           <button
             onClick={() => openModal("/login")}
-            className="cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-100/80 hover:text-slate-900 active:scale-98"
+            className="cursor-pointer rounded-lg px-3.5 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100/80 hover:text-slate-900"
           >
             Log in
           </button>
           <button
             onClick={() => openModal("/signup")}
-            className="cursor-pointer rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95"
+            className="cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700"
           >
             Get Started
           </button>
@@ -200,7 +200,7 @@ const Navbar = () => {
                 setMobileMenuOpen(false);
                 openModal("/signup");
               }}
-              className="cursor-pointer rounded-full bg-blue-600 py-3 text-center text-base font-semibold text-white hover:bg-blue-700"
+              className="cursor-pointer rounded-xl bg-blue-600 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
               Get Started
             </button>

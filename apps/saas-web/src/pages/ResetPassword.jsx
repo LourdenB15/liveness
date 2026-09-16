@@ -101,7 +101,7 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95"
+            className="cursor-pointer rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -200,9 +200,9 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full cursor-pointer justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:translate-y-0 disabled:opacity-50"
+            className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
           >
-            {loading ? "Updating password..." : "Reset Password"}
+            {loading ? "Updating password..." : "Reset password"}
           </button>
         </form>
       )}

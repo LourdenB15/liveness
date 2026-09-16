@@ -125,7 +125,7 @@
 
       sdk.on("failure", (error) => {
         log(`Failed: ${error.code}`);
-        statusEl.textContent = `❌ Failed: ${error.message}`;
+        statusEl.textContent = `Failed: ${error.message}`;
         statusEl.style.color = "red";
         startBtn.disabled = false;
         startBtn.textContent = "Retry";

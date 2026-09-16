@@ -1,4 +1,3 @@
-// src/components/ProgressBar.jsx
 const Arrow = ({ direction }) => (
   <div
     className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white`}

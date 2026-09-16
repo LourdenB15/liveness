@@ -26,7 +26,7 @@ export async function deleteApiKey(id, adminId) {
 
 export async function findByKeyHash(hash) {
   const result = await pool.query(
-    'SELECT admin_id as "adminId" FROM api_keys WHERE key_hash = $1',
+    'SELECT id, admin_id as "adminId", name, masked_key as "maskedKey" FROM api_keys WHERE key_hash = $1',
     [hash],
   );
   return result.rows;

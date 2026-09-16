@@ -26,7 +26,7 @@ export async function deleteApiKey(id, adminId) {
   return deleteCount;
 }
 
-export async function findAdminByApiKey(apiKey) {
+export async function findApiKeyDetails(apiKey) {
   const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
   const apiKeys = await apiKeyRepositories.findByKeyHash(hash);
   if (apiKeys.length === 0) {
@@ -35,6 +35,16 @@ export async function findAdminByApiKey(apiKey) {
     throw error;
   }
 
-  const { adminId } = apiKeys[0];
-  return adminId;
+  const key = apiKeys[0];
+  return {
+    adminId: key.adminId,
+    apiKeyId: key.id,
+    keyName: key.name,
+    maskedKey: key.maskedKey,
+  };
+}
+
+export async function findAdminByApiKey(apiKey) {
+  const details = await findApiKeyDetails(apiKey);
+  return details.adminId;
 }

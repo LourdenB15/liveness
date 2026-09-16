@@ -3,6 +3,7 @@ import {
   Calendar,
   CheckCircle2,
   Fingerprint,
+  Key,
   Search,
   ShieldCheck,
   Trash2,
@@ -55,11 +56,15 @@ export default function Users() {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.id.toString().includes(searchTerm),
-  );
+  const filteredUsers = users.filter((user) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      user.name.toLowerCase().includes(term) ||
+      user.id.toString().toLowerCase().includes(term) ||
+      (user.apiKeyName && user.apiKeyName.toLowerCase().includes(term)) ||
+      (user.apiKeyMasked && user.apiKeyMasked.toLowerCase().includes(term))
+    );
+  });
 
   return (
     <div className="animate-in fade-in space-y-6 duration-500">
@@ -118,6 +123,7 @@ export default function Users() {
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
                   <th className="px-6 py-3.5">Enrolled Subject</th>
                   <th className="px-6 py-3.5">Identity ID</th>
+                  <th className="px-6 py-3.5">Origin API Key</th>
                   <th className="px-6 py-3.5">Enrolled Date</th>
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
@@ -130,7 +136,7 @@ export default function Users() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white shadow-xs transition-transform group-hover:scale-105">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white shadow-xs">
                           {user.name.charAt(0)}
                         </div>
                         <div className="ml-3.5">
@@ -151,6 +157,25 @@ export default function Users() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
+                      {user.apiKeyName ? (
+                        <div className="flex items-center gap-1.5">
+                          <Key className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                          <div>
+                            <p className="text-xs font-semibold text-slate-800">
+                              {user.apiKeyName}
+                            </p>
+                            {user.apiKeyMasked && (
+                              <p className="font-mono text-[10px] text-slate-400">
+                                {user.apiKeyMasked}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
                         <Calendar className="h-3.5 w-3.5 text-slate-400" />
                         {new Date(user.enrolledAt).toLocaleDateString(
@@ -169,7 +194,7 @@ export default function Users() {
                           setDeleteTarget(user);
                           setConfirmInput("");
                         }}
-                        className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-600 active:scale-95"
+                        className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                         title="Delete identity"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -179,7 +204,7 @@ export default function Users() {
                 ))}
                 {filteredUsers.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="px-6 py-14 text-center">
+                    <td colSpan="5" className="px-6 py-14 text-center">
                       <div className="flex flex-col items-center">
                         <User className="mb-3 h-8 w-8 text-slate-300" />
                         <p className="text-xs font-extrabold tracking-widest text-slate-400 uppercase">
@@ -290,9 +315,9 @@ export default function Users() {
                     <button
                       type="submit"
                       disabled={confirmInput !== deleteTarget.name}
-                      className={`rounded-xl px-5 py-2.5 text-xs font-black text-white shadow-md transition-all ${
+                      className={`rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors ${
                         confirmInput === deleteTarget.name
-                          ? "cursor-pointer bg-rose-600 shadow-rose-500/20 hover:bg-rose-700 active:scale-95"
+                          ? "cursor-pointer bg-rose-600 hover:bg-rose-700"
                           : "cursor-not-allowed bg-slate-300 opacity-60 shadow-none"
                       }`}
                     >

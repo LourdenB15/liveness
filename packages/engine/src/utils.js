@@ -1,4 +1,3 @@
-// src/engine/utils.js
 import * as tf from "@tensorflow/tfjs";
 
 const EYE_INDICES = {

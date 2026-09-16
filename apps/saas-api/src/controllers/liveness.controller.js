@@ -36,11 +36,13 @@ export async function enrollUser(req, res) {
   }
   const { name, descriptor } = validation.data;
   const adminId = req.adminId;
+  const apiKeyId = req.apiKeyId || null;
   try {
     const enrolledUser = await livenessServices.enrollUser(
       adminId,
       name,
       descriptor,
+      apiKeyId,
     );
     res.status(201).json(enrolledUser);
   } catch (error) {
@@ -55,6 +57,7 @@ export async function verifyUser(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
+  const apiKeyId = req.apiKeyId || null;
   const { descriptor, threshold, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUser(
@@ -62,6 +65,7 @@ export async function verifyUser(req, res) {
       threshold,
       adminId,
       metric,
+      apiKeyId,
     );
     res.json(responsePayload);
   } catch (error) {
@@ -76,6 +80,7 @@ export async function verifyUserById(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
   const adminId = req.adminId;
+  const apiKeyId = req.apiKeyId || null;
   const { descriptor, targetId, threshold, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUserById(
@@ -84,6 +89,7 @@ export async function verifyUserById(req, res) {
       threshold,
       adminId,
       metric,
+      apiKeyId,
     );
     res.json(responsePayload);
   } catch (error) {

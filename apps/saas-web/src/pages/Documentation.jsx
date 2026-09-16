@@ -28,7 +28,7 @@ const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
     >
       {Icon && (
         <Icon
-          className={`mr-3 h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+          className={`mr-3 h-4.5 w-4.5 shrink-0 ${
             activeId === id
               ? "text-blue-600"
               : "text-slate-400 group-hover:text-slate-600"
@@ -41,20 +41,11 @@ const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
 );
 
 const CodeBlock = ({ code, language, title }) => (
-  <div className="relative my-6 overflow-hidden rounded-xl bg-slate-900 text-slate-300 shadow-2xl">
-    <div className="flex items-center justify-between border-b border-slate-800 bg-slate-800/50 px-4 py-2">
-      <div className="flex items-center gap-3">
-        <div className="flex gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-red-500/80"></div>
-          <div className="h-2.5 w-2.5 rounded-full bg-amber-500/80"></div>
-          <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></div>
-        </div>
-        {title && (
-          <span className="max-w-50 truncate text-xs font-medium text-slate-400 sm:max-w-none">
-            {title}
-          </span>
-        )}
-      </div>
+  <div className="relative my-6 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 text-slate-300 shadow-xs">
+    <div className="flex items-center justify-between border-b border-slate-800 bg-slate-800/50 px-4 py-2.5">
+      <span className="max-w-50 truncate font-mono text-xs font-medium text-slate-400 sm:max-w-none">
+        {title || language}
+      </span>
       <span className="shrink-0 text-[10px] font-semibold tracking-wider text-slate-500 uppercase sm:text-xs">
         {language}
       </span>
@@ -67,15 +58,15 @@ const CodeBlock = ({ code, language, title }) => (
 
 const IntroContent = () => (
   <div>
-    <div className="mb-6 inline-flex items-center rounded-full bg-blue-50 px-4 py-1.5 text-xs font-bold text-blue-700">
+    <div className="mb-6 inline-flex items-center rounded-md border border-blue-100 bg-blue-50/80 px-2.5 py-1 text-xs font-semibold text-blue-700">
       <Book className="mr-2 h-3.5 w-3.5" /> Documentation v1.0.0
     </div>
     <h1 className="mb-6 text-3xl font-black tracking-tight text-slate-900 sm:mb-8 sm:text-5xl md:text-6xl">
       Liveness SDK
     </h1>
     <p className="mb-8 text-lg leading-relaxed text-slate-600 sm:mb-12 sm:text-2xl">
-      JavaScript SDK for browser-based active liveness detection and
-      biometric identity verification.
+      JavaScript SDK for browser-based active liveness detection and biometric
+      identity verification.
     </p>
 
     <div className="grid gap-6 md:grid-cols-2">
@@ -121,7 +112,7 @@ const IntroContent = () => (
           </li>
           <li className="flex items-center text-sm text-slate-600">
             <CheckCircle2 className="mr-2 h-4 w-4 shrink-0 text-green-500" />{" "}
-            Secure Identity Vault
+            Vector and Identity Storage
           </li>
         </ul>
       </div>
@@ -202,6 +193,7 @@ await sdk.start(video, canvas);`}
   // Send to your backend for verification
   fetch("/api/verify", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(result)
   });
 });
@@ -221,8 +213,8 @@ const CloudUsageContent = () => (
       Liveness Cloud Guide
     </h2>
     <p className="mb-6 text-base text-slate-600 sm:mb-8 sm:text-lg">
-      Liveness Cloud provides endpoints to verify descriptors, manage API
-      keys, and query verification logs.
+      Liveness Cloud provides endpoints to verify descriptors, manage API keys,
+      and query verification logs.
     </p>
 
     <div className="space-y-8 sm:space-y-12">
@@ -701,7 +693,7 @@ const Documentation = () => {
                       >
                         {ItemIcon && (
                           <ItemIcon
-                            className={`mr-3 h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+                            className={`mr-3 h-4.5 w-4.5 shrink-0 ${
                               isActive
                                 ? "text-blue-600"
                                 : "text-slate-400 group-hover:text-slate-600"

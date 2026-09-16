@@ -49,7 +49,7 @@ export default function Sidebar({
             onClick={() => setMobileMenuOpen(false)}
             className="group flex items-center gap-2"
           >
-            <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600 transition-transform group-hover:scale-105" />
+            <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600" />
             <span className="text-lg font-extrabold tracking-tight text-slate-900">
               Liveness
               <span className="ml-0.5 font-light text-blue-600">Cloud</span>
@@ -103,7 +103,7 @@ export default function Sidebar({
                     }`}
                   >
                     <item.icon
-                      className={`h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-105 ${
+                      className={`h-4.5 w-4.5 shrink-0 ${
                         isCollapsed ? "" : "mr-3"
                       } ${
                         isActive
@@ -192,7 +192,7 @@ export default function Sidebar({
               to="/dashboard"
               className="group flex items-center gap-2 truncate"
             >
-              <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600 transition-transform group-hover:scale-105" />
+              <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600" />
               <span className="truncate text-sm font-extrabold tracking-tight text-slate-900">
                 Liveness
                 <span className="ml-0.5 font-light text-blue-600">Cloud</span>

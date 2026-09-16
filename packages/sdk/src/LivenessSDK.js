@@ -1,4 +1,3 @@
-// src/sdk/LivenessSDK.js
 import { LivenessEngine } from "@liveness/engine";
 
 export class LivenessSDK {

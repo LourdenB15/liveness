@@ -102,7 +102,7 @@ export default function Login({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 active:scale-95"
+            className="cursor-pointer rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -236,9 +236,9 @@ export default function Login({ modal = false }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/20 focus:outline-none active:scale-98 disabled:opacity-50"
+          className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
         >
-          {loading ? "Signing in..." : "Sign in to Dashboard"}
+          {loading ? "Signing in..." : "Sign in"}
         </button>
       </form>
 

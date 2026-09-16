@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
 
         <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-10 md:p-12">
           <div className="border-b border-slate-100 pb-6 sm:pb-8">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-blue-100 bg-blue-50/80 px-2.5 py-1 text-xs font-semibold text-blue-700">
               <ShieldCheck className="h-3.5 w-3.5" />
               Privacy Policy
             </div>
@@ -44,8 +44,8 @@ export default function PrivacyPolicy() {
               <p>
                 Liveness Cloud ("we", "us", or "our") provides biometric face
                 verification and active liveness detection developer tools. This
-                policy explains what information we collect, how it is processed,
-                and your rights regarding your data.
+                policy explains what information we collect, how it is
+                processed, and your rights regarding your data.
               </p>
             </section>
 
@@ -55,15 +55,16 @@ export default function PrivacyPolicy() {
               </h2>
               <p>
                 The SDK processes camera frames directly on the user's device
-                using WebAssembly and WebGL. Raw webcam video, frame captures, and
-                photos never leave the browser and are never sent to our servers.
+                using WebAssembly and WebGL. Raw webcam video, frame captures,
+                and photos never leave the browser and are never sent to our
+                servers.
               </p>
               <p className="mt-3">
-                During verification, the client library measures facial landmarks
-                and converts them into a 128-dimensional numerical descriptor.
-                Only this mathematical vector and session metadata reach the
-                backend API. The numerical descriptor cannot be reverse-engineered
-                to recreate a photograph of the user's face.
+                During verification, the client library measures facial
+                landmarks and converts them into a 128-dimensional numerical
+                descriptor. Only this mathematical vector and session metadata
+                reach the backend API. The numerical descriptor cannot be
+                reverse-engineered to recreate a photograph of the user's face.
               </p>
             </section>
 
@@ -81,13 +82,13 @@ export default function PrivacyPolicy() {
                   and a salted cryptographic hash of your password.
                 </li>
                 <li>
-                  API key records, including the key name, identifier, and creation
-                  date.
+                  API key records, including the key name, identifier, and
+                  creation date.
                 </li>
                 <li>
-                  Enrolled biometric descriptors, consisting of a user identifier
-                  and the 128-dimensional numerical vector used for 1:1 or 1:N
-                  matching.
+                  Enrolled biometric descriptors, consisting of a user
+                  identifier and the 128-dimensional numerical vector used for
+                  1:1 or 1:N matching.
                 </li>
                 <li>
                   Verification logs containing session identifiers, match
@@ -105,7 +106,9 @@ export default function PrivacyPolicy() {
               <p>We use the collected information to:</p>
               <ul className="mt-3 list-disc space-y-2 pl-6">
                 <li>Authenticate API requests and evaluate liveness checks.</li>
-                <li>Compare verification descriptors against enrolled vectors.</li>
+                <li>
+                  Compare verification descriptors against enrolled vectors.
+                </li>
                 <li>Display audit logs and analytics in your console.</li>
                 <li>Protect against fraudulent requests and replay attacks.</li>
                 <li>Maintain and improve platform reliability.</li>
@@ -138,7 +141,9 @@ export default function PrivacyPolicy() {
                 We use standard security measures to protect stored records:
               </p>
               <ul className="mt-3 list-disc space-y-2 pl-6">
-                <li>All data in transit is encrypted using modern TLS (HTTPS).</li>
+                <li>
+                  All data in transit is encrypted using modern TLS (HTTPS).
+                </li>
                 <li>
                   Verification descriptors are matched in memory without writing
                   unnecessary intermediary files.
@@ -154,10 +159,10 @@ export default function PrivacyPolicy() {
                 7. Developer responsibilities
               </h2>
               <p>
-                If you integrate the Liveness SDK into your own software, you are
-                responsible for providing notice to your end users and obtaining
-                any consents required by applicable local privacy regulations
-                prior to initiating biometric verification sessions.
+                If you integrate the Liveness SDK into your own software, you
+                are responsible for providing notice to your end users and
+                obtaining any consents required by applicable local privacy
+                regulations prior to initiating biometric verification sessions.
               </p>
             </section>
 

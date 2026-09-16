@@ -2,7 +2,17 @@ import pool from "../db.js";
 
 export async function getUsers(adminId) {
   const result = await pool.query(
-    'SELECT id, name, enrolled_at as "enrolledAt" FROM users WHERE admin_id = $1 ORDER BY enrolled_at DESC',
+    `SELECT 
+       u.id, 
+       u.name, 
+       u.enrolled_at as "enrolledAt",
+       u.api_key_id as "apiKeyId",
+       ak.name as "apiKeyName",
+       ak.masked_key as "apiKeyMasked"
+     FROM users u
+     LEFT JOIN api_keys ak ON u.api_key_id = ak.id
+     WHERE u.admin_id = $1 
+     ORDER BY u.enrolled_at DESC`,
     [adminId],
   );
   return result.rows;

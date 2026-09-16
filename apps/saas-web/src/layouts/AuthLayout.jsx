@@ -22,13 +22,13 @@ export default function AuthLayout({ children }) {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openModal("/login")}
-            className="cursor-pointer px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:text-blue-600"
+            className="cursor-pointer px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:text-slate-900"
           >
             Log in
           </button>
           <button
             onClick={() => openModal("/signup")}
-            className="cursor-pointer rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700"
+            className="cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-blue-700"
           >
             Sign up
           </button>
