@@ -8,9 +8,11 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Logs from "./pages/Logs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import Signup from "./pages/Signup";
+import TermsOfService from "./pages/TermsOfService";
 import Users from "./pages/Users";
 import { api } from "./services/api";
 
@@ -90,6 +92,8 @@ const ROUTE_TITLES = {
   "/signup": "Create Account | Liveness Cloud",
   "/forgot-password": "Forgot Password | Liveness Cloud",
   "/reset-password": "Reset Password | Liveness Cloud",
+  "/privacy": "Privacy Policy | Liveness Cloud",
+  "/terms": "Terms of Service | Liveness Cloud",
 };
 
 function App() {
@@ -103,6 +107,9 @@ function App() {
   useEffect(() => {
     const currentPath = backgroundLocation?.pathname || location.pathname;
     document.title = ROUTE_TITLES[currentPath] || "Liveness Cloud Console";
+    if (!backgroundLocation) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
   }, [location.pathname, backgroundLocation]);
 
   return (
@@ -148,6 +155,8 @@ function App() {
         />
 
         <Route path="/docs" element={<Documentation />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
 
         <Route
           path="/dashboard"

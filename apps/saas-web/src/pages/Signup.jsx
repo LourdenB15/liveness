@@ -434,6 +434,28 @@ export default function Signup({ modal = false }) {
         >
           {loading ? "Creating account..." : "Create Free Account"}
         </button>
+
+        <p className="mt-3 text-center text-[11px] leading-relaxed text-slate-400">
+          By creating an account, you agree to our{" "}
+          <Link
+            to="/terms"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-blue-600"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            to="/privacy"
+            target="_blank"
+            rel="noreferrer"
+            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-blue-600"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </form>
 
       <div className="mt-6 text-center">

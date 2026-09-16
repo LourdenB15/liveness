@@ -349,15 +349,24 @@ export default function Landing() {
               reserved.
             </p>
             <div className="flex items-center space-x-6">
-              <a href="#" className="transition-colors hover:text-slate-600">
+              <Link
+                to="/privacy"
+                className="transition-colors hover:text-slate-600"
+              >
                 Privacy Policy
-              </a>
-              <a href="#" className="transition-colors hover:text-slate-600">
+              </Link>
+              <Link
+                to="/terms"
+                className="transition-colors hover:text-slate-600"
+              >
                 Terms of Service
-              </a>
-              <a href="#" className="transition-colors hover:text-slate-600">
-                Security
-              </a>
+              </Link>
+              <Link
+                to="/docs"
+                className="transition-colors hover:text-slate-600"
+              >
+                Documentation
+              </Link>
             </div>
           </div>
         </div>
