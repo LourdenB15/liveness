@@ -219,115 +219,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section
-        id="pricing"
-        className="bg-white px-4 py-20 sm:px-6 md:px-12 md:py-24"
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-12 md:mb-16">
-            <h2 className="mb-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-              Flexible plans designed to scale from side projects to enterprise
-              applications.
-            </p>
-          </div>
-          <div className="grid gap-8 text-left md:grid-cols-2">
-            <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-slate-300 sm:p-8">
-              <div>
-                <div className="mb-4">
-                  <h3 className="text-xl font-bold text-slate-900">Free</h3>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Ideal for prototyping & testing
-                  </p>
-                </div>
-                <p className="mb-6 text-4xl font-black text-slate-900">
-                  $0
-                  <span className="text-base font-normal text-slate-400">
-                    /mo
-                  </span>
-                </p>
-                <ul className="mb-8 space-y-3.5 text-xs text-slate-600 sm:text-sm">
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    1,000 checks / month
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Standard API rate limits
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Community Support
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Basic Analytics Dashboard
-                  </li>
-                </ul>
-              </div>
-              <button
-                onClick={() => openModal("/signup")}
-                className="w-full cursor-pointer rounded-xl bg-slate-100 py-3 text-center text-sm font-bold text-slate-900 transition-colors hover:bg-slate-200"
-              >
-                Start for free
-              </button>
-            </div>
-            <div className="relative flex flex-col justify-between rounded-2xl border-2 border-blue-600 bg-white p-6 shadow-xl shadow-blue-600/5 sm:p-8">
-              <div>
-                <div className="mb-4 flex items-start justify-between">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">Pro</h3>
-                    <p className="mt-0.5 text-xs text-slate-500">
-                      For production & growing teams
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full border border-blue-200/80 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
-                    POPULAR
-                  </span>
-                </div>
-                <p className="mb-6 text-4xl font-black text-slate-900">
-                  $49
-                  <span className="text-base font-normal text-slate-400">
-                    /mo
-                  </span>
-                </p>
-                <ul className="mb-8 space-y-3.5 text-xs text-slate-600 sm:text-sm">
-                  <li className="flex items-center font-medium text-slate-900">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Unlimited checks
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    High-throughput API access
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Priority 24/7 Support
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="mr-3 h-4 w-4 shrink-0 text-green-500 sm:h-5 sm:w-5" />{" "}
-                    Advanced Analytics & Real-Time Logs
-                  </li>
-                </ul>
-              </div>
-              <button
-                onClick={() => openModal("/signup")}
-                className="w-full cursor-pointer rounded-xl bg-blue-600 py-3 text-center text-sm font-bold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-98"
-              >
-                Get Pro Access
-              </button>
-            </div>
-          </div>
-
-          <p className="mt-10 text-xs font-medium text-slate-400">
-            Billed monthly • Cancel anytime • 99.99% Uptime SLA Included
-          </p>
-        </div>
-      </section>
-
       {/* FAQ Section */}
       <FAQSection />
 
@@ -385,15 +276,6 @@ export default function Landing() {
                     className="cursor-pointer transition-colors hover:text-blue-600"
                   >
                     How it works
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    onClick={scrollToSection("pricing")}
-                    className="cursor-pointer transition-colors hover:text-blue-600"
-                  >
-                    Pricing
                   </a>
                 </li>
                 <li>
@@ -516,9 +398,9 @@ const FAQ_DATA = [
       "Fewer than 10 lines of code. Most developers complete frontend and backend integration in under 15 minutes.",
   },
   {
-    question: "Can I test it before choosing a paid plan?",
+    question: "Is there a limit on API usage?",
     answer:
-      "Yes! The Free tier includes 1,000 verifications per month with full SDK and API access — no credit card required.",
+      "No! Liveness Cloud provides full SDK and API access with unrestricted verifications and keys — no credit card or subscription required.",
   },
 ];
 

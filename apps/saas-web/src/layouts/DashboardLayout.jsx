@@ -3,7 +3,6 @@ import {
   Book,
   ChevronDown,
   ChevronRight,
-  CreditCard,
   Key,
   LayoutDashboard,
   LogOut,
@@ -26,7 +25,6 @@ export default function DashboardLayout({ children }) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [totalChecks, setTotalChecks] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -43,28 +41,6 @@ export default function DashboardLayout({ children }) {
       window.removeEventListener("auth:login", handleAuthChange);
       window.removeEventListener("storage", handleAuthChange);
     };
-  }, []);
-
-  // Fetch stats for authentic quota usage
-  useEffect(() => {
-    const fetchUsage = async () => {
-      try {
-        const stats = await api.stats.getOverview();
-        if (stats && typeof stats.totalChecks === "number") {
-          setTotalChecks(stats.totalChecks);
-        }
-      } catch (err) {
-        // If the token is invalid/expired, the API interceptor handles redirection
-        if (
-          err?.message?.includes("token") ||
-          err?.message?.includes("Access token")
-        ) {
-          return;
-        }
-        console.error("Failed to load quota stats", err);
-      }
-    };
-    fetchUsage();
   }, []);
 
   // Handle Escape key to close modal and Cmd+K / Ctrl+K shortcut
@@ -130,15 +106,9 @@ export default function DashboardLayout({ children }) {
     ? `${user.firstName} ${user.lastName}`
     : "Administrator";
 
-  const currentPlan = user?.subscriptionTier?.toUpperCase() || "STARTER";
-
   const currentPageLabel =
     navItems.find((n) => n.path === location.pathname)?.label ||
-    (location.pathname === "/billing"
-      ? "Billing"
-      : location.pathname === "/settings"
-        ? "Settings"
-        : "Dashboard");
+    (location.pathname === "/settings" ? "Settings" : "Dashboard");
 
   return (
     <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-white font-sans text-slate-900">
@@ -152,8 +122,6 @@ export default function DashboardLayout({ children }) {
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
         setSearchModalOpen={setSearchModalOpen}
-        totalChecks={totalChecks}
-        currentPlan={currentPlan}
         fullName={fullName}
         initials={initials}
         user={user}
@@ -244,20 +212,6 @@ export default function DashboardLayout({ children }) {
                   >
                     <SettingsIcon className="h-4 w-4 text-slate-400" />
                     Account Settings
-                  </Link>
-
-                  <Link
-                    to="/billing"
-                    onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <CreditCard className="h-4 w-4 text-slate-400" />
-                      Billing & Subscription
-                    </div>
-                    <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-600 uppercase">
-                      {currentPlan}
-                    </span>
                   </Link>
 
                   <div className="my-1 border-t border-slate-100" />

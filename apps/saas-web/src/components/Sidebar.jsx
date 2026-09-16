@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
   Book,
-  CreditCard,
   Key,
   LayoutDashboard,
   LogOut,
@@ -22,8 +21,6 @@ export default function Sidebar({
   mobileMenuOpen,
   setMobileMenuOpen,
   setSearchModalOpen,
-  totalChecks,
-  currentPlan,
   fullName,
   initials,
   user,
@@ -77,9 +74,6 @@ export default function Sidebar({
               <div className="flex items-center gap-2">
                 <span className="truncate text-sm font-extrabold text-slate-900">
                   {fullName}
-                </span>
-                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-black text-blue-700 uppercase">
-                  {currentPlan}
                 </span>
               </div>
               <span className="truncate text-[11px] font-medium text-slate-500">
@@ -150,25 +144,6 @@ export default function Sidebar({
               </Link>
             </li>
             <li>
-              <Link
-                to="/billing"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition-colors duration-150 sm:text-sm ${
-                  location.pathname === "/billing"
-                    ? "bg-blue-50/80 font-extrabold text-blue-600"
-                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
-                }`}
-              >
-                <div className="flex items-center">
-                  <CreditCard className="mr-3 h-4.5 w-4.5 shrink-0 text-slate-400" />
-                  Billing & Plans
-                </div>
-                <span className="rounded-md bg-blue-50 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-600 uppercase">
-                  {currentPlan}
-                </span>
-              </Link>
-            </li>
-            <li>
               <button
                 onClick={handleLogout}
                 className="flex w-full cursor-pointer items-center rounded-xl px-3.5 py-2.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-50 sm:text-sm"
@@ -179,77 +154,6 @@ export default function Sidebar({
             </li>
           </ul>
         </div>
-      </div>
-
-      {/* Subscription Quota Card */}
-      <div
-        className={`border-t border-slate-100 bg-white ${isCollapsed ? "p-2" : "p-4"}`}
-      >
-        <Link
-          to="/billing"
-          onClick={() => setMobileMenuOpen(false)}
-          title={isCollapsed ? `${currentPlan} Tier` : undefined}
-          className={`group block cursor-pointer rounded-2xl border border-slate-200/80 bg-slate-50/70 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-100/60 ${
-            isCollapsed ? "p-2 text-center" : "p-3.5"
-          }`}
-        >
-          {isCollapsed ? (
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-blue-600 uppercase">
-                {currentPlan}
-              </span>
-              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                <div
-                  style={{
-                    width:
-                      currentPlan === "PRO"
-                        ? "100%"
-                        : `${Math.min(100, Math.max(4, (totalChecks / 1000) * 100))}%`,
-                  }}
-                  className={`h-full rounded-full ${
-                    currentPlan === "PRO" ? "bg-emerald-500" : "bg-blue-600"
-                  }`}
-                />
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-[10px] font-black tracking-wider text-slate-400 uppercase">
-                  Subscription
-                </span>
-                <span className="rounded-md bg-blue-100/80 px-2 py-0.5 text-[10px] font-extrabold text-blue-700 uppercase">
-                  {currentPlan}
-                </span>
-              </div>
-
-              <div className="mb-2 flex items-baseline justify-between">
-                <span className="truncate text-xs font-bold text-slate-900">
-                  {currentPlan === "PRO"
-                    ? `${(totalChecks || 0).toLocaleString()} checks`
-                    : `${(totalChecks || 0).toLocaleString()} / 1,000 checks`}
-                </span>
-                <span className="ml-1 shrink-0 text-[11px] font-bold text-blue-600 transition-transform group-hover:translate-x-0.5">
-                  {currentPlan === "PRO" ? "Manage" : "Upgrade"} &rarr;
-                </span>
-              </div>
-
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200/80">
-                <div
-                  style={{
-                    width:
-                      currentPlan === "PRO"
-                        ? "100%"
-                        : `${Math.min(100, Math.max(4, ((totalChecks || 0) / 1000) * 100))}%`,
-                  }}
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    currentPlan === "PRO" ? "bg-emerald-500" : "bg-blue-600"
-                  }`}
-                />
-              </div>
-            </>
-          )}
-        </Link>
       </div>
     </div>
   );

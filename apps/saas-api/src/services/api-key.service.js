@@ -7,18 +7,6 @@ export async function getApiKeys(adminId) {
 }
 
 export async function createApiKey(name, adminId) {
-  const tier =
-    (await apiKeyRepositories.getSubscriptionTier(adminId)) || "free";
-  if (tier === "free") {
-    const keyCount = parseInt(await apiKeyRepositories.getKeysCount(adminId));
-    if (keyCount >= 1) {
-      const error = new Error(
-        "Starter plan is limited to 1 API key. Please upgrade to Pro to issue more keys.",
-      );
-      error.status = 403;
-      throw error;
-    }
-  }
   const rawKey = `live_pk_${crypto.randomBytes(24).toString("hex")}`;
   const hash = crypto.createHash("sha256").update(rawKey).digest("hex");
   const maskedKey = `live_pk_****${rawKey.slice(-4)}`;
@@ -47,25 +35,6 @@ export async function findAdminByApiKey(apiKey) {
     throw error;
   }
 
-  const { adminId, subscriptionTier } = apiKeys[0];
-
-  if (subscriptionTier === "free") {
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
-
-    const countResult = await apiKeyRepositories.countVerificationsSince(
-      adminId,
-      startOfMonth,
-    );
-    const count = parseInt(countResult.count);
-    if (count >= 1000) {
-      const error = new Error(
-        "Verification monthly quota exceeded. Starter plan is limited to 1,000 checks per month. Please upgrade to Pro.",
-      );
-      error.status = 402;
-      throw error;
-    }
-  }
+  const { adminId } = apiKeys[0];
   return adminId;
 }

@@ -56,7 +56,6 @@ export async function login(username, password) {
     firstName: admin.first_name,
     lastName: admin.last_name,
     email: admin.email,
-    subscriptionTier: admin.subscription_tier,
     token: token,
   };
 }
@@ -271,6 +270,5 @@ export async function getCurrentUser(adminId) {
     firstName: admin.first_name,
     lastName: admin.last_name,
     email: admin.email,
-    subscriptionTier: admin.subscription_tier,
   };
 }

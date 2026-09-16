@@ -91,13 +91,6 @@ const Navbar = () => {
             How it works
           </a>
           <a
-            href="#pricing"
-            onClick={scrollTo("pricing")}
-            className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
-          >
-            Pricing
-          </a>
-          <a
             href="#faq"
             onClick={scrollTo("faq")}
             className="cursor-pointer text-sm font-medium text-slate-600 transition-colors hover:text-blue-600"
@@ -169,15 +162,6 @@ const Navbar = () => {
               className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
             >
               <span>How it works</span>
-              <ChevronRight className="h-4 w-4 text-slate-400" />
-            </a>
-
-            <a
-              href="#pricing"
-              onClick={handleMobileNav("pricing")}
-              className="flex cursor-pointer items-center justify-between text-base font-semibold text-slate-700 hover:text-blue-600"
-            >
-              <span>Pricing</span>
               <ChevronRight className="h-4 w-4 text-slate-400" />
             </a>
 

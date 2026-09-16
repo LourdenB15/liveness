@@ -165,14 +165,6 @@ export const api = {
     getOverview: () => request("/dashboard/stats"),
   },
 
-  billing: {
-    getTier: () => request("/dashboard/billing"),
-    upgrade: () =>
-      request("/dashboard/billing/upgrade", {
-        method: "POST",
-      }),
-  },
-
   system: {
     getHealth: () => {
       const healthUrl = API_BASE_URL.endsWith("/api")

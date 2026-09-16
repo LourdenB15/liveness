@@ -8,7 +8,7 @@ export async function createAdmin(
   email,
 ) {
   const result = await pool.query(
-    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, subscription_tier as "subscriptionTier", created_at',
+    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, created_at',
     [username, passwordHash, firstName, lastName, email],
   );
   return result.rows[0];
@@ -53,7 +53,7 @@ export async function markTokenUsed(tokenId) {
 
 export async function updateAdminProfile(adminId, firstName, lastName) {
   const result = await pool.query(
-    'UPDATE admins SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING id, username, first_name as "firstName", last_name as "lastName", email, subscription_tier as "subscriptionTier", created_at',
+    'UPDATE admins SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING id, username, first_name as "firstName", last_name as "lastName", email, created_at',
     [firstName, lastName, adminId],
   );
   return result.rows[0];

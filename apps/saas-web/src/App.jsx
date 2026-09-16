@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ApiKeys from "./pages/ApiKeys";
-import Billing from "./pages/Billing";
 import Dashboard from "./pages/Dashboard";
 import Documentation from "./pages/Documentation";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -85,7 +84,6 @@ const ROUTE_TITLES = {
   "/users": "Identities | Liveness Cloud",
   "/logs": "Verification Logs | Liveness Cloud",
   "/api-keys": "API Keys | Liveness Cloud",
-  "/billing": "Billing & Plans | Liveness Cloud",
   "/settings": "Account Settings | Liveness Cloud",
   "/docs": "Documentation | Liveness Cloud",
   "/login": "Sign In | Liveness Cloud",
@@ -180,14 +178,6 @@ function App() {
           element={
             <ProtectedRoute>
               <ApiKeys />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/billing"
-          element={
-            <ProtectedRoute>
-              <Billing />
             </ProtectedRoute>
           }
         />
