@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Bell,
   Book,
   CheckCircle2,
   ChevronDown,
@@ -118,7 +117,7 @@ const IntroContent = () => (
           </li>
           <li className="flex items-center text-sm text-slate-600">
             <CheckCircle2 className="mr-2 h-4 w-4 shrink-0 text-green-500" />{" "}
-            Webhook Integrations
+            Verification Audit Logs
           </li>
           <li className="flex items-center text-sm text-slate-600">
             <CheckCircle2 className="mr-2 h-4 w-4 shrink-0 text-green-500" />{" "}
@@ -223,7 +222,7 @@ const CloudUsageContent = () => (
     </h2>
     <p className="mb-6 text-base text-slate-600 sm:mb-8 sm:text-lg">
       The Liveness Cloud provides a managed backend for handling biometric data,
-      API keys, and webhooks.
+      API keys, and verification endpoints.
     </p>
 
     <div className="space-y-8 sm:space-y-12">
@@ -247,74 +246,8 @@ const CloudUsageContent = () => (
       </div>
 
       <div>
-        <h3 className="mb-3 flex items-center text-xl font-bold sm:mb-4 sm:text-2xl">
-          <Bell className="mr-2 h-5 w-5 text-blue-600 sm:h-6 sm:w-6" /> 2.
-          Configuring Webhooks
-        </h3>
-        <p className="mb-3 text-sm text-slate-600 sm:mb-4 sm:text-base">
-          Get real-time notifications on your server whenever a liveness check
-          is completed.
-        </p>
-        <ul className="mb-6 space-y-4">
-          <li className="flex gap-4">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold">
-              1
-            </div>
-            <p className="text-sm text-slate-600">
-              Enter your endpoint URL in the <strong>Webhooks</strong> tab.
-            </p>
-          </li>
-          <li className="flex gap-4">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold">
-              2
-            </div>
-            <p className="text-sm text-slate-600">
-              Subscribe to <code>verification.success</code> or{" "}
-              <code>verification.failed</code> events.
-            </p>
-          </li>
-          <li className="flex gap-4">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold">
-              3
-            </div>
-            <p className="text-sm text-slate-600">
-              Save the <strong>Webhook Secret</strong> for signature
-              verification.
-            </p>
-          </li>
-        </ul>
-        <p className="mb-4 text-sm text-slate-600 sm:text-base">
-          To verify incoming webhook payloads and avoid formatting issues, use
-          the raw request body buffer:
-        </p>
-        <CodeBlock
-          language="javascript"
-          title="Webhook Signature Verification (Node.js/Express)"
-          code={`const crypto = require("crypto");
-
-app.post("/webhooks/liveness", (req, res) => {
-  const signature = req.headers["x-liveness-signature"];
-  const secret = process.env.WEBHOOK_SECRET;
-
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(req.rawBody) // Verify using the raw body buffer
-    .digest("hex");
-
-  if (signature !== expected) {
-    return res.status(401).send("Invalid signature");
-  }
-
-  // Handle verified payload
-  const { event, data } = req.body;
-  res.status(200).send("Verified!");
-});`}
-        />
-      </div>
-
-      <div>
         <h3 className="mb-3 text-xl font-bold sm:mb-4 sm:text-2xl">
-          3. Cloud API Endpoints
+          2. Cloud API Endpoints
         </h3>
         <p className="mb-6 text-sm text-slate-600 sm:text-base">
           The Liveness Cloud provides secure endpoints for biometric enrollment
@@ -437,7 +370,7 @@ app.post("/webhooks/liveness", (req, res) => {
 
       <div>
         <h3 className="mb-3 text-xl font-bold sm:mb-4 sm:text-2xl">
-          4. Payload Integrity
+          3. Payload Integrity
         </h3>
         <p className="mb-3 text-sm text-slate-600 sm:mb-4 sm:text-base">
           To prevent man-in-the-middle attacks, the Cloud API validates the{" "}

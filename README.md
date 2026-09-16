@@ -8,7 +8,7 @@ An event-driven JavaScript SDK for browser-based **Active Liveness Detection** a
 
 - **Randomized Active Challenges**: Prevents replay attacks by requiring users to perform random actions (Blink, Turn Left, Turn Right) generated at runtime.
 - **Identity Enrollment & Verification**: Full biometric flow including face feature extraction with Cosine Similarity and Euclidean Distance matching.
-- **Secure SaaS Cloud**: Complete management dashboard with JWT Authentication, API key management, and real-time webhook notifications.
+- **Secure SaaS Cloud**: Complete management dashboard with JWT Authentication, API key management, and real-time verification logs.
 
 ## Project Structure
 
@@ -90,29 +90,6 @@ Use the following commands from the root directory to start the services:
 - `challenge`: A new challenge starts.
 - `success`: All checks passed; biometric vector generated.
 - `failure`: Challenge failed or recognition error.
-
-## Webhook Security
-
-All webhook payloads are signed with **HMAC-SHA256**. To prevent formatting or key-ordering issues, verify the `x-liveness-signature` header using the raw request body buffer:
-
-```javascript
-const expected = crypto
-  .createHmac("sha256", WEBHOOK_SECRET)
-  .update(req.rawBody) // Use raw request body buffer
-  .digest("hex");
-```
-
-To capture `req.rawBody` in an Express application:
-
-```javascript
-app.use(
-  express.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf;
-    },
-  }),
-);
-```
 
 ## Error Codes
 

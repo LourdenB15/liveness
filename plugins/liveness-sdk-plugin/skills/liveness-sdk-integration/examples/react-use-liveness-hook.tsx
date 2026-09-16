@@ -18,6 +18,7 @@ export type LivenessStatus =
 export interface ChallengeInfo {
   type: string;
   instruction: string;
+  distance?: "CLOSER" | "FURTHER" | null;
 }
 
 export interface UseLivenessOptions {

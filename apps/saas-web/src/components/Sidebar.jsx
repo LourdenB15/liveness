@@ -13,7 +13,6 @@ import {
   Settings as SettingsIcon,
   ShieldCheck,
   Users,
-  Webhook,
   X,
 } from "lucide-react";
 
@@ -37,7 +36,6 @@ export default function Sidebar({
     { path: "/users", icon: Users, label: "Users" },
     { path: "/logs", icon: BarChart3, label: "Logs" },
     { path: "/api-keys", icon: Key, label: "API Keys" },
-    { path: "/webhooks", icon: Webhook, label: "Webhooks" },
     { path: "/docs", icon: Book, label: "Documentation" },
   ];
 

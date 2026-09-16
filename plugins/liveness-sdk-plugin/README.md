@@ -17,14 +17,14 @@ liveness-sdk-plugin/
 │       ├── SKILL.md            # Primary agent runbook and workflow guide
 │       ├── references/
 │       │   ├── sdk-api-reference.md             # Complete JS/TS API documentation
-│       │   ├── backend-api-and-webhooks.md      # REST API and HMAC signature verification
+│       │   ├── backend-api-reference.md         # REST API specifications and matching guide
 │       │   ├── model-assets-guide.md            # WASM/model hosting and basePath setup
 │       │   └── troubleshooting-and-edgecases.md # Lighting, Safari quirks, CSP fixes
 │       ├── examples/
 │       │   ├── react-use-liveness-hook.tsx      # Production React custom hook
 │       │   ├── react-liveness-modal.tsx         # Clean Tailwind CSS verification dialog
 │       │   ├── vanilla-html-js.html             # Zero-dependency vanilla JS demo
-│       │   ├── backend-verification-node.js     # Express API and webhook receiver
+│       │   ├── backend-verification-node.js     # Express biometric verification backend
 │       │   └── nextjs-api-route.ts              # Next.js App Router verification route
 │       └── scripts/
 │           └── copy-liveness-assets.js          # CLI tool to copy model assets into public/
@@ -77,7 +77,7 @@ When a user prompts the AI agent with requests such as:
 
 - "Add liveness detection to our React login form"
 - "Integrate @liveness/sdk into our Next.js onboarding"
-- "How do I verify the webhook signature for liveness events?"
+- "How do I verify the biometric descriptor on the backend?"
 - "Help me fix a camera permission or poor lighting issue with the liveness SDK"
 
 The agent automatically activates the `liveness-sdk-integration` skill, loads the relevant API references and code examples via progressive disclosure, and generates robust integration code matching the actual Liveness SDK implementation.

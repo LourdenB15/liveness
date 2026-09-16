@@ -12,7 +12,6 @@ import {
   Settings as SettingsIcon,
   ShieldCheck,
   Users,
-  Webhook,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -111,7 +110,6 @@ export default function DashboardLayout({ children }) {
     { path: "/users", icon: Users, label: "Users" },
     { path: "/logs", icon: BarChart3, label: "Logs" },
     { path: "/api-keys", icon: Key, label: "API Keys" },
-    { path: "/webhooks", icon: Webhook, label: "Webhooks" },
     { path: "/docs", icon: Book, label: "Documentation" },
   ];
 
@@ -397,9 +395,9 @@ export default function DashboardLayout({ children }) {
                     },
                     {
                       id: "cloud-usage",
-                      label: "Documentation: Cloud API & Webhooks",
+                      label: "Documentation: Cloud API Guide",
                       path: "/docs#cloud-usage",
-                      desc: "API Keys, Webhooks, Signature Verification",
+                      desc: "API Keys, Enrollment, Verification Endpoints",
                     },
                     {
                       id: "methodology",

@@ -1,5 +1,4 @@
 import * as livenessRepository from "../repositories/liveness.repository.js";
-import { triggerWebhooks } from "../services/webhook.service.js";
 
 export async function enrollUser(adminId, name, descriptor) {
   const enrolledUser = await livenessRepository.addUser(
@@ -16,7 +15,6 @@ export async function enrollUser(adminId, name, descriptor) {
     "ENROLLED",
   );
 
-  triggerWebhooks(adminId, "user.enrolled", enrolledUser);
   return enrolledUser;
 }
 
@@ -70,7 +68,6 @@ export async function verifyUser(
     status,
     metric,
   };
-  triggerWebhooks(adminId, "liveness.verified", responsePayload);
   return responsePayload;
 }
 
@@ -125,6 +122,5 @@ export async function verifyUserById(
     status,
     metric,
   };
-  triggerWebhooks(adminId, "liveness.verified", responsePayload);
   return responsePayload;
 }

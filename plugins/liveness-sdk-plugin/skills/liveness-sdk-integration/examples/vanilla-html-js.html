@@ -121,7 +121,8 @@
       const sdk = new LivenessSDK({
         basePath: "", // Set path to /face_mesh/ and /mobilenet-v2/ assets
         challengeTimeout: 8000,
-        minBrightness: 30,
+        minBrightness: -0.8,
+        maxBrightness: 0.9,
       });
 
       sdk.on("ready", () => {

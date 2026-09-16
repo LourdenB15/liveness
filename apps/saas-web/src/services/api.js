@@ -161,20 +161,6 @@ export const api = {
       }),
   },
 
-  webhooks: {
-    list: () => request("/dashboard/webhooks"),
-    create: (url) =>
-      request("/dashboard/webhooks", {
-        method: "POST",
-        body: JSON.stringify({ url }),
-      }),
-    delete: (id) =>
-      request(`/dashboard/webhooks/${id}`, {
-        method: "DELETE",
-      }),
-    logs: () => request("/dashboard/webhooks/logs"),
-  },
-
   stats: {
     getOverview: () => request("/dashboard/stats"),
   },

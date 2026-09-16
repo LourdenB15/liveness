@@ -38,13 +38,7 @@ When implementing or modifying features involving @liveness/sdk and biometric fa
 
 ---
 
-## 5. Webhook Security
-
-- HMAC-SHA256 Verification: When listening for webhook events (e.g. verification.success, verification.failed), always verify the x-liveness-signature header against the raw body buffer (req.rawBody), not a re-stringified JSON object.
-
----
-
-## 6. Error Handling and User Guidance
+## 5. Error Handling and User Guidance
 
 - Handle common failure modes gracefully in the UI:
   - POOR_LIGHTING: Guide user to a well-lit environment.

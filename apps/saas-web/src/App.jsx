@@ -13,7 +13,6 @@ import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import Signup from "./pages/Signup";
 import Users from "./pages/Users";
-import Webhooks from "./pages/Webhooks";
 import { api } from "./services/api";
 
 function useCurrentUser() {
@@ -86,7 +85,6 @@ const ROUTE_TITLES = {
   "/users": "Identities | Liveness Cloud",
   "/logs": "Verification Logs | Liveness Cloud",
   "/api-keys": "API Keys | Liveness Cloud",
-  "/webhooks": "Webhooks | Liveness Cloud",
   "/billing": "Billing & Plans | Liveness Cloud",
   "/settings": "Account Settings | Liveness Cloud",
   "/docs": "Documentation | Liveness Cloud",
@@ -182,14 +180,6 @@ function App() {
           element={
             <ProtectedRoute>
               <ApiKeys />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/webhooks"
-          element={
-            <ProtectedRoute>
-              <Webhooks />
             </ProtectedRoute>
           }
         />

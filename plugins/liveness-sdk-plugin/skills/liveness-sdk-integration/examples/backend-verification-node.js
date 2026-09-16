@@ -3,17 +3,8 @@ import crypto from "crypto";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const WEBHOOK_SECRET =
-  process.env.LIVENESS_WEBHOOK_SECRET || "webhook-secret-key";
 
-// Capture raw body buffer for HMAC signature verification
-app.use(
-  express.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf;
-    },
-  }),
-);
+app.use(express.json());
 
 // In-memory identity database (Replace with PostgreSQL + pgvector for production)
 const enrolledIdentities = new Map();
@@ -108,42 +99,6 @@ app.post("/api/liveness/verify", (req, res) => {
     distance: matchDistance < Infinity ? Number(matchDistance.toFixed(4)) : 0,
     match: verified ? { id: bestMatch.id, name: bestMatch.name } : null,
   });
-});
-
-/**
- * 3. WEBHOOK ENDPOINT (WITH HMAC SIGNATURE VALIDATION)
- */
-app.post("/webhooks/liveness", (req, res) => {
-  const signature = req.headers["x-liveness-signature"];
-
-  if (!signature) {
-    return res
-      .status(401)
-      .json({ error: "Missing x-liveness-signature header" });
-  }
-
-  // Generate expected HMAC-SHA256 signature from raw body buffer
-  const expectedSignature = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
-    .update(req.rawBody)
-    .digest("hex");
-
-  // Constant-time comparison to prevent timing attacks
-  const sigBuffer = Buffer.from(signature, "hex");
-  const expectedBuffer = Buffer.from(expectedSignature, "hex");
-
-  if (
-    sigBuffer.length !== expectedBuffer.length ||
-    !crypto.timingSafeEqual(sigBuffer, expectedBuffer)
-  ) {
-    console.error("[Webhook] Signature verification failed.");
-    return res.status(401).json({ error: "Invalid signature" });
-  }
-
-  const { event, data } = req.body;
-  console.log(`[Webhook] Verified event received: ${event}`, data);
-
-  return res.status(200).json({ received: true });
 });
 
 app.listen(PORT, () => {

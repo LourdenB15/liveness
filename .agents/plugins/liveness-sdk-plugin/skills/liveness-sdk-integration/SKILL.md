@@ -1,7 +1,7 @@
 ---
 name: liveness-sdk-integration
 description: >-
-  Use this skill when implementing browser-based active liveness detection, face identity verification, or integrating @liveness/sdk into web applications (React, Next.js, Vue, Svelte, or Vanilla JavaScript). Covers setup, model asset hosting, camera/canvas rendering, challenge UI, event handling, backend verification endpoints, and webhook security.
+  Use this skill when implementing browser-based active liveness detection, face identity verification, or integrating @liveness/sdk into web applications (React, Next.js, Vue, Svelte, or Vanilla JavaScript). Covers setup, model asset hosting, camera/canvas rendering, challenge UI, event handling, and backend verification endpoints.
 ---
 
 # Liveness SDK Integration Skill
@@ -21,7 +21,6 @@ Follow this procedure when implementing the Liveness SDK:
 4. Bind Event Listeners (ready, challenge, progress, success, failure)
 5. Initialize Models (load) and Start Camera Detection (start)
 6. Transmit Biometric Descriptor to Backend Verification Endpoint
-7. Validate Webhooks with HMAC-SHA256 Signatures
 ```
 
 ---
@@ -159,7 +158,7 @@ const distance = calculateEuclideanDistance(enrolledVector, probeVector);
 const isMatch = similarity >= 0.95 && distance <= 0.3;
 ```
 
-> See [Backend API and Webhooks Reference](./references/backend-api-and-webhooks.md) for endpoint contracts and HMAC-SHA256 signature verification.
+> See [Backend API Reference](./references/backend-api-reference.md) for endpoint contracts.
 
 ---
 
@@ -179,5 +178,4 @@ const isMatch = similarity >= 0.95 && distance <= 0.3;
 - Model assets are served with correct MIME types (`application/wasm`, `application/octet-stream`).
 - `sdk.load()` is awaited before calling `sdk.start()`.
 - Hardware cleanup (`sdk.stop()` and track stops) is performed when unmounting.
-- Webhook signatures are validated using raw request body buffers (`req.rawBody`).
 - See [Troubleshooting and Edge Cases](./references/troubleshooting-and-edgecases.md) for lighting, CSP, and permissions guidance.

@@ -51,13 +51,13 @@ Content-Security-Policy:
 
 ### A. Frequent POOR_LIGHTING Failures
 
-- The SDK computes average pixel luma across the bounding box of the face.
-- Default thresholds: minBrightness: 30, maxBrightness: 235.
-- If testing in low-light environments, adjust configuration during initialization:
+- The SDK computes normalized mean tensor brightness across the face region (values ranging from -1.0 to 1.0).
+- Default thresholds: `minBrightness: -0.8`, `maxBrightness: 0.9`.
+- If testing in darker or high-contrast environments, adjust configuration during initialization:
   ```javascript
   const sdk = new LivenessSDK({
-    minBrightness: 20,
-    maxBrightness: 245,
+    minBrightness: -0.9,
+    maxBrightness: 0.95,
   });
   ```
 
