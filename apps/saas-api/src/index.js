@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
+      .map((o) => o.trim().replace(/\/+$/, ""))
+      .filter(Boolean)
   : [
       "http://localhost:5173",
       "http://localhost:5174",
@@ -28,7 +30,8 @@ app.use(
       ) {
         return callback(null, true);
       }
-      if (allowedOrigins.includes(origin)) {
+      const normalizedOrigin = origin.replace(/\/+$/, "");
+      if (allowedOrigins.includes(normalizedOrigin)) {
         return callback(null, true);
       }
       return callback(new Error("Not allowed by CORS"));

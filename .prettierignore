@@ -1,0 +1,8 @@
+node_modules/
+dist/
+**/dist/**
+**/public/face_mesh/**
+**/public/face_recognition/**
+**/public/mobilenet-v2/**
+packages/engine/assets/**
+package-lock.json

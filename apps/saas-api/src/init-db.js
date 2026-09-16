@@ -1,11 +1,7 @@
 import pool from "./db.js";
 
-const schema = `
--- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
--- Drop existing tables to ensure UUID migration (destructive)
+const dropSchema = `
+-- Drop existing tables (destructive)
 DROP TABLE IF EXISTS webhook_logs CASCADE;
 DROP TABLE IF EXISTS verification_logs CASCADE;
 DROP TABLE IF EXISTS api_keys CASCADE;
@@ -13,9 +9,15 @@ DROP TABLE IF EXISTS webhooks CASCADE;
 DROP TABLE IF EXISTS password_reset_tokens CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS admins CASCADE;
+`;
+
+const schema = `
+-- Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Admins table for dashboard access
-CREATE TABLE admins (
+CREATE TABLE IF NOT EXISTS admins (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
@@ -27,7 +29,7 @@ CREATE TABLE admins (
 );
 
 -- Users table with face descriptor vector
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -36,7 +38,7 @@ CREATE TABLE users (
 );
 
 -- Password reset tokens table
-CREATE TABLE password_reset_tokens (
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
   token_hash VARCHAR(255) NOT NULL UNIQUE,
@@ -46,7 +48,7 @@ CREATE TABLE password_reset_tokens (
 );
 
 -- Verification logs table
-CREATE TABLE verification_logs (
+CREATE TABLE IF NOT EXISTS verification_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -57,7 +59,7 @@ CREATE TABLE verification_logs (
 );
 
 -- API Keys table
-CREATE TABLE api_keys (
+CREATE TABLE IF NOT EXISTS api_keys (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
@@ -67,7 +69,7 @@ CREATE TABLE api_keys (
 );
 
 -- Webhooks table
-CREATE TABLE webhooks (
+CREATE TABLE IF NOT EXISTS webhooks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
     url TEXT NOT NULL,
@@ -77,7 +79,7 @@ CREATE TABLE webhooks (
 );
 
 -- Webhook logs table
-CREATE TABLE webhook_logs (
+CREATE TABLE IF NOT EXISTS webhook_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     webhook_id UUID REFERENCES webhooks(id) ON DELETE CASCADE,
     admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
@@ -95,12 +97,26 @@ CREATE INDEX IF NOT EXISTS users_descriptor_hnsw_idx ON users USING hnsw (descri
 `;
 
 async function initDb() {
-  console.log("Re-initializing database schema with UUIDs (Destructive)...");
+  const isForce =
+    process.argv.includes("--force") || process.env.FORCE_DB_RESET === "true";
+
+  if (isForce) {
+    console.log(
+      "WARNING: Resetting database schema with --force (Destructive)...",
+    );
+  } else {
+    console.log("Ensuring database schema exists (Safe / Non-destructive)...");
+  }
+
   try {
     const client = await pool.connect();
     try {
+      if (isForce) {
+        await client.query(dropSchema);
+        console.log("Old tables dropped.");
+      }
       await client.query(schema);
-      console.log("Database schema initialized successfully with UUIDs.");
+      console.log("Database schema ready.");
     } finally {
       client.release();
     }

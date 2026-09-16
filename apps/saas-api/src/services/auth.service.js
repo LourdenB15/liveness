@@ -70,7 +70,8 @@ export async function forgotPassword(email) {
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   await authRepositories.addToken(admin.id, expiresAt, tokenHash);
-  const resetLink = `${APP_URL}/reset-password?token=${token}`;
+  const cleanAppUrl = APP_URL.replace(/\/+$/, "");
+  const resetLink = `${cleanAppUrl}/reset-password?token=${token}`;
   await sendResetPasswordEmail(admin.email, resetLink);
 }
 

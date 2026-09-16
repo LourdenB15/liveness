@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ApiKeys from "./pages/ApiKeys";
 import Billing from "./pages/Billing";
@@ -70,12 +70,12 @@ function NotFound() {
       <p className="mt-3 text-sm font-medium text-slate-500">
         The page you're looking for doesn't exist or has been moved.
       </p>
-      <a
-        href={user ? "/dashboard" : "/"}
+      <Link
+        to={user ? "/dashboard" : "/"}
         className="mt-8 inline-flex items-center rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0"
       >
         {user ? "Go to Dashboard" : "Back to Home"}
-      </a>
+      </Link>
     </div>
   );
 }

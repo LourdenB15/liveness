@@ -5,11 +5,10 @@ const JWT_SECRET =
   process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
 
 export const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
   const token =
-    req.cookies?.token ||
-    (req.headers.authorization?.startsWith("Bearer ")
-      ? req.headers.authorization.split(" ")[1]
-      : null);
+    (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null) ||
+    req.cookies?.token;
 
   if (!token) {
     return res.status(401).json({ error: "Access token required" });
@@ -20,7 +19,7 @@ export const authenticateToken = (req, res, next) => {
       res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       });
       return res.status(401).json({ error: "Invalid or expired token" });
     }

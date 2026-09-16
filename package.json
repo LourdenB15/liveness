@@ -12,7 +12,7 @@
     "dev:saas": "npm run dev -w apps/saas-web",
     "dev:api": "npm run dev -w apps/saas-api",
     "build": "npm run build -w packages/sdk && npm run build -w apps/demo",
-    "build:saas": "npm run build -w apps/saas-web",
+    "build:saas": "npm run build -w packages/sdk && npm run build -w apps/saas-web",
     "build:sdk": "npm run build -w packages/sdk",
     "lint": "eslint .",
     "format": "prettier --write .",

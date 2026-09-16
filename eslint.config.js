@@ -47,9 +47,14 @@ export default [
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
     },
   },
-  // Node.js code (saas-api and engine tests)
+  // Node.js code (saas-api, config files, scripts, and engine tests)
   {
-    files: ["apps/saas-api/**/*.js", "packages/engine/src/**/*.test.js"],
+    files: [
+      "apps/saas-api/**/*.js",
+      "packages/engine/src/**/*.test.js",
+      "**/vite.config.js",
+      "scripts/**/*.js",
+    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: {

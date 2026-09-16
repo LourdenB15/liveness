@@ -65,11 +65,14 @@ export async function signup(req, res) {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(201).json(admin);
+    res.status(201).json({
+      ...admin,
+      token,
+    });
   } catch (error) {
     if (error.code === "23505") {
       if (error.detail.includes("username")) {
@@ -98,11 +101,12 @@ export async function login(req, res) {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({
       ...admin,
+      token,
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -199,7 +203,7 @@ export async function logout(req, res) {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
   res.status(204).send();
 }
