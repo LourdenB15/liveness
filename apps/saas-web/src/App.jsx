@@ -80,6 +80,22 @@ function NotFound() {
   );
 }
 
+const ROUTE_TITLES = {
+  "/": "Liveness Cloud — Biometric Identity Platform",
+  "/dashboard": "Dashboard | Liveness Cloud",
+  "/users": "Identities | Liveness Cloud",
+  "/logs": "Verification Logs | Liveness Cloud",
+  "/api-keys": "API Keys | Liveness Cloud",
+  "/webhooks": "Webhooks | Liveness Cloud",
+  "/billing": "Billing & Plans | Liveness Cloud",
+  "/settings": "Account Settings | Liveness Cloud",
+  "/docs": "Documentation | Liveness Cloud",
+  "/login": "Sign In | Liveness Cloud",
+  "/signup": "Create Account | Liveness Cloud",
+  "/forgot-password": "Forgot Password | Liveness Cloud",
+  "/reset-password": "Reset Password | Liveness Cloud",
+};
+
 function App() {
   const user = useCurrentUser();
   const location = useLocation();
@@ -87,6 +103,11 @@ function App() {
   // If we navigated to /login or /signup with a background location,
   // render that background location underneath the modal.
   const backgroundLocation = location.state?.backgroundLocation;
+
+  useEffect(() => {
+    const currentPath = backgroundLocation?.pathname || location.pathname;
+    document.title = ROUTE_TITLES[currentPath] || "Liveness Cloud Console";
+  }, [location.pathname, backgroundLocation]);
 
   return (
     <>
