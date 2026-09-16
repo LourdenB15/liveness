@@ -1,6 +1,6 @@
 # @liveness/engine
 
-Core computer vision logic and mathematical utilities for Active Liveness Detection. This package leverages MediaPipe Face Mesh and TensorFlow.js to provide low-level detection capabilities.
+Computer vision and mathematical utilities for active liveness detection. This package uses MediaPipe Face Mesh and TensorFlow.js for face landmark and pose tracking.
 
 ## Installation
 
@@ -10,13 +10,13 @@ npm install @liveness/engine
 
 ## Features
 
-- **Face Mesh Integration**: Uses MediaPipe for accurate 3D facial landmark detection.
-- **Mathematical Utilities**: EAR (Eye Aspect Ratio), Head Pose Yaw/Pitch estimation, Cosine Similarity matching.
-- **Configuration Driven**: Highly customizable detection parameters.
+- 3D facial landmark detection with MediaPipe.
+- Eye aspect ratio (EAR), head pose estimation (yaw and pitch), and cosine similarity matching.
+- Configurable detection thresholds and timeouts.
 
 ## Usage
 
-This package is intended for use within the `@liveness/sdk` or for custom liveness detection implementations.
+This package is intended for use within `@liveness/sdk` or custom liveness detection setups.
 
 ```javascript
 import { LivenessEngine } from "@liveness/engine";

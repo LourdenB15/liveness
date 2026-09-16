@@ -1,24 +1,24 @@
 # Liveness SDK
 
-An event-driven JavaScript SDK for browser-based **Active Liveness Detection** and **Face Identity Verification**. This library leverages MediaPipe Face Mesh and TensorFlow.js (ResNet-34 FaceRecognitionNet) to provide a complete eKYC-ready frontend solution.
+JavaScript SDK for browser-based active liveness detection and face verification. It uses MediaPipe Face Mesh and TensorFlow.js (ResNet-34 FaceRecognitionNet) to run verification checks on the client.
 
-> **Note**: For the full interactive documentation, integration guides, and real-time API reference, please visit our **Documentation Portal** at http://localhost:5173/docs.
+> Interactive documentation and API references are at http://localhost:5173/docs.
 
-## Key Features
+## Features
 
-- **Randomized Active Challenges**: Prevents replay attacks by requiring users to perform random actions (Blink, Turn Left, Turn Right) generated at runtime.
-- **Identity Enrollment & Verification**: Full biometric flow including face feature extraction with Cosine Similarity and Euclidean Distance matching.
-- **Secure SaaS Cloud**: Complete management dashboard with JWT Authentication, API key management, and real-time verification logs.
+- Runtime challenges (blink, turn left, turn right) to block replay attacks.
+- Face feature extraction matching with cosine similarity and Euclidean distance.
+- Management dashboard with API key generation and verification logs.
 
-## Project Structure
+## Project structure
 
-This project is organized as a monorepo:
+Repository layout:
 
-- `apps/demo`: The primary React-based demonstration and playground.
-- `apps/saas-web`: The SaaS platform frontend dashboard and documentation portal.
-- `apps/saas-api`: The SaaS orchestration and verification backend.
-- `packages/engine`: Core computer vision logic and mathematical utilities.
-- `packages/sdk`: The public-facing SDK wrapper for easy integration.
+- `apps/demo`: React demonstration app.
+- `apps/saas-web`: SaaS platform dashboard and documentation.
+- `apps/saas-api`: Verification and orchestration backend.
+- `packages/engine`: Core vision engine and mathematical utilities.
+- `packages/sdk`: Public SDK wrapper package.
 
 ## Installation
 
@@ -26,7 +26,7 @@ This project is organized as a monorepo:
 npm install @liveness/sdk
 ```
 
-## Quick Start
+## Quick start
 
 ```javascript
 import { LivenessSDK } from "@liveness/sdk";
@@ -45,14 +45,14 @@ await sdk.load();
 await sdk.start(videoElement, canvasElement);
 ```
 
-## Local Development
+## Local development
 
 ### Prerequisites
 
-- **Node.js**: v18 or higher.
-- **PostgreSQL**: With the `pgvector` extension installed.
+- Node.js v18 or higher.
+- PostgreSQL with the `pgvector` extension installed.
 
-### Initial Setup
+### Setup
 
 1. Install dependencies from the root directory:
    ```bash
@@ -64,48 +64,48 @@ await sdk.start(videoElement, canvasElement);
    npm run init-db
    ```
 
-### Running the Project
+### Running services
 
-Use the following commands from the root directory to start the services:
+Start services from the root directory:
 
-- **Start Demo App**: `npm run dev`
-- **Start SaaS API**: `npm run dev:api`
-- **Start SaaS Dashboard**: `npm run dev:saas`
+- Demo app: `npm run dev`
+- SaaS API: `npm run dev:api`
+- SaaS dashboard: `npm run dev:saas`
 
-## Testing and Building
+## Testing and building
 
-- **Run Tests**: `npm test`
-- **Build SDK**: `npm run build:sdk`
+- Run tests: `npm test`
+- Build SDK: `npm run build:sdk`
 
-## API Reference
+## API reference
 
 ### `new LivenessSDK(config)`
 
 - `minBrightness` (number, default: -0.8): Minimum required normalized tensor brightness [-1.0, 1.0].
-- `challengeTimeout` (number, default: 5000): Max duration per challenge.
+- `challengeTimeout` (number, default: 5000): Max duration per challenge in milliseconds.
 
-### Events Reference
+### Events
 
-- `ready`: Models are fully loaded.
+- `ready`: Models are loaded.
 - `challenge`: A new challenge starts.
-- `success`: All checks passed; biometric vector generated.
+- `success`: All checks passed and biometric vector generated.
 - `failure`: Challenge failed or recognition error.
 
-## Error Codes
+## Error codes
 
 - `POOR_LIGHTING`: Environment is too dark or has excessive glare.
 - `OCCLUSION_DETECTED`: Face is partially covered.
-- `CHALLENGE_TIMEOUT`: User exceeded maximum allowed time for an active challenge.
+- `CHALLENGE_TIMEOUT`: User exceeded maximum allowed time for a challenge.
 - `FACE_NOT_FOUND`: No face detected in camera viewport.
-- `CAMERA_ACCESS_DENIED`: Camera permission was blocked by user.
+- `CAMERA_ACCESS_DENIED`: Camera permission was blocked by the user.
 
-## AI Agent Skills and Rules (Claude, Antigravity, Cursor, Windsurf)
+## AI agent skills and rules
 
-This repository includes a multi-agent skills plugin (`plugins/liveness-sdk-plugin`) that enables AI coding assistants (Claude Code, Antigravity / Gemini CLI, Cursor, Windsurf, GitHub Copilot) to implement, configure, and troubleshoot the Liveness SDK with architectural fidelity.
+The `plugins/liveness-sdk-plugin` directory contains rules and skills for AI coding assistants (Claude Code, Antigravity, Cursor, Windsurf, GitHub Copilot) integrating `@liveness/sdk`.
 
-### Automated Setup
+### Automated setup
 
-To automatically configure agent rules and skills in the current project or any target directory:
+Configure agent rules and skills in the current project or a target directory:
 
 ```bash
 # Set up all agents in the current workspace
@@ -117,7 +117,7 @@ node scripts/setup-agent-skills.js /path/to/target-project --agent=cursor
 node scripts/setup-agent-skills.js /path/to/target-project --agent=antigravity
 ```
 
-### Manual Installation by Agent
+### Manual installation by agent
 
 #### 1. Claude Code
 
@@ -144,7 +144,7 @@ Copy `plugins/liveness-sdk-plugin/adapters/copilot/copilot-instructions.md` to `
 
 Copy `plugins/liveness-sdk-plugin/adapters/generic/AGENTS.md` to your project root as `AGENTS.md`.
 
-### Copying Static Model Assets
+### Static model assets
 
 The SDK requires `face_mesh/` and `face_recognition/` (ResNet-34) binary assets in your public directory:
 

@@ -70,7 +70,7 @@ export default function Users() {
             User Directory
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
-            Manage, verify, and audit biometric enrolled user identities.
+            View and manage enrolled user profiles and biometric vectors.
           </p>
         </div>
 

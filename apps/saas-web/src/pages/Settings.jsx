@@ -169,7 +169,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Sub-navigation Tabs — Segmented Control */}
+      {/* Sub-navigation Tabs: Segmented Control */}
       <div className="inline-flex items-center gap-0.5 rounded-xl border border-slate-200/60 bg-slate-100/80 p-1">
         <button
           onClick={() => setActiveTab("general")}
@@ -330,8 +330,7 @@ export default function Settings() {
                     className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-xs font-bold text-slate-500 shadow-2xs select-none"
                   />
                   <p className="mt-1.5 text-[11px] font-medium text-slate-400">
-                    Your email address serves as your primary identity and SSO
-                    authentication account identifier.
+                    Your email address is your primary account identifier.
                   </p>
                 </div>
 

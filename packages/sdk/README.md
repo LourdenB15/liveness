@@ -1,6 +1,6 @@
 # @liveness/sdk
 
-An event-driven JavaScript SDK for browser-based **Active Liveness Detection** and **Face Identity Verification**.
+JavaScript SDK for browser-based active liveness detection and face verification.
 
 ## Installation
 
@@ -8,7 +8,7 @@ An event-driven JavaScript SDK for browser-based **Active Liveness Detection** a
 npm install @liveness/sdk
 ```
 
-## Quick Start
+## Quick start
 
 ```javascript
 import { LivenessSDK } from "@liveness/sdk";
@@ -29,12 +29,12 @@ await sdk.start(videoElement, canvasElement);
 
 ## Features
 
-- **Randomized Active Challenges**: Blink, Turn Left, Turn Right.
-- **Identity Verification**: Face identity feature extraction and matching.
+- Runtime challenges (blink, turn left, turn right).
+- Face identity feature extraction and vector matching.
 
-## AI Agent Integration (Claude, Antigravity, Cursor)
+## AI agent integration
 
-To help AI coding agents implement and configure this SDK in your projects:
+To configure agent rules and skills in your workspace:
 
 ```bash
 # Automated cross-agent setup
@@ -44,7 +44,7 @@ npx @liveness/sdk setup-agents
 node ./node_modules/@liveness/engine/scripts/copy-assets.js ./public
 ```
 
-Agent rules and skill definitions are available in the repository `plugins/liveness-sdk-plugin`.
+Agent rules and skill definitions are located in `plugins/liveness-sdk-plugin`.
 
 ## License
 

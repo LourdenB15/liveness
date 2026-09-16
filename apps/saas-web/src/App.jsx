@@ -79,7 +79,7 @@ function NotFound() {
 }
 
 const ROUTE_TITLES = {
-  "/": "Liveness Cloud — Biometric Identity Platform",
+  "/": "Liveness Cloud | Biometric Identity Platform",
   "/dashboard": "Dashboard | Liveness Cloud",
   "/users": "Identities | Liveness Cloud",
   "/logs": "Verification Logs | Liveness Cloud",
@@ -192,7 +192,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {/* Modal routes — rendered on top of the background location */}
+      {/* Modal routes: rendered on top of the background location */}
       {backgroundLocation && (
         <Routes>
           <Route

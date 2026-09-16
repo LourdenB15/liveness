@@ -30,7 +30,7 @@ export default function Logs() {
     { id: "ALL", label: "All Statuses", color: "bg-slate-400" },
     { id: "SUCCESS", label: "Passed Verification", color: "bg-emerald-500" },
     { id: "ENROLLED", label: "Enrolled Identities", color: "bg-purple-500" },
-    { id: "FAILURE", label: "Spoof Attacks / Failed", color: "bg-rose-500" },
+    { id: "FAILURE", label: "Failed / Blocked", color: "bg-rose-500" },
   ];
 
   const selectedOption =
@@ -80,11 +80,11 @@ export default function Logs() {
       <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-            Audit & Telemetry Logs
+            Verification Logs
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
-            Real-time inspection of biometric score confidence, facial mesh
-            depth, and presentation attack telemetry.
+            Inspection log of verification attempts, similarity scores, and
+            failure reasons.
           </p>
         </div>
 

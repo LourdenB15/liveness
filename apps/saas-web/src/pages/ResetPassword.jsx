@@ -41,7 +41,7 @@ export default function ResetPassword({ modal = false }) {
 
   useEffect(() => {
     if (!tokenFromUrl) {
-      // No token in URL — redirect back to forgot-password
+      // No token in URL: redirect back to forgot-password
       navigate("/forgot-password", { replace: true });
     }
   }, [tokenFromUrl, navigate]);

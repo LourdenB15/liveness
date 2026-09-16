@@ -74,8 +74,8 @@ const IntroContent = () => (
       Liveness SDK
     </h1>
     <p className="mb-8 text-lg leading-relaxed text-slate-600 sm:mb-12 sm:text-2xl">
-      The industry-standard JavaScript SDK for browser-based Active Liveness
-      Detection and Biometric Identity Verification.
+      JavaScript SDK for browser-based active liveness detection and
+      biometric identity verification.
     </p>
 
     <div className="grid gap-6 md:grid-cols-2">
@@ -84,8 +84,8 @@ const IntroContent = () => (
           <Terminal className="mr-2 h-5 w-5 text-blue-600" /> For Developers
         </h3>
         <p className="mb-6 text-sm text-slate-500">
-          Everything you need to integrate biometric security into your web
-          application in minutes.
+          Client-side tools to run active liveness challenges and extract
+          biometric feature vectors in the browser.
         </p>
         <ul className="mb-8 space-y-3">
           <li className="flex items-center text-sm text-slate-600">
@@ -107,8 +107,8 @@ const IntroContent = () => (
           <Cloud className="mr-2 h-5 w-5 text-blue-600" /> For Enterprises
         </h3>
         <p className="mb-6 text-sm text-slate-500">
-          Managed infrastructure for secure biometric storage, identity
-          matching, and audit logs.
+          Backend services for vector storage, identity matching, and audit
+          logs.
         </p>
         <ul className="mb-8 space-y-3">
           <li className="flex items-center text-sm text-slate-600">
@@ -135,8 +135,8 @@ const SDKUsageContent = () => (
       Using the SDK
     </h2>
     <p className="mb-6 text-base text-slate-600 sm:mb-8 sm:text-lg">
-      Integrate the Liveness SDK into your frontend to start capturing biometric
-      data securely.
+      Integrate the SDK into your frontend to run active liveness checks and
+      generate descriptors.
     </p>
 
     <div className="space-y-8 sm:space-y-12">
@@ -221,8 +221,8 @@ const CloudUsageContent = () => (
       Liveness Cloud Guide
     </h2>
     <p className="mb-6 text-base text-slate-600 sm:mb-8 sm:text-lg">
-      The Liveness Cloud provides a managed backend for handling biometric data,
-      API keys, and verification endpoints.
+      Liveness Cloud provides endpoints to verify descriptors, manage API
+      keys, and query verification logs.
     </p>
 
     <div className="space-y-8 sm:space-y-12">
@@ -407,8 +407,8 @@ const MethodologyContent = () => (
           Active Verification (State Machine)
         </h3>
         <p className="mb-6 text-sm leading-relaxed text-slate-600 sm:text-base">
-          The SDK validates "aliveness" by requiring physiological responses to
-          randomized challenges.
+          The SDK checks liveness by requiring physical responses to randomized
+          prompts during the session.
         </p>
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="rounded-xl bg-slate-50 p-5 sm:rounded-2xl sm:p-6">
@@ -582,7 +582,7 @@ const Documentation = () => {
       ],
     },
     {
-      title: "Deep Dive",
+      title: "Architecture",
       items: [
         { id: "methodology", label: "Methodology", icon: Layers },
         { id: "api-ref", label: "API Reference", icon: FileCode },

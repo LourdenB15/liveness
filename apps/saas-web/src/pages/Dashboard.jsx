@@ -75,7 +75,7 @@ export default function Dashboard() {
       badge: "Enrolled",
       badgeColor: "bg-blue-50 text-blue-700 border-blue-200/80",
       iconBg: "bg-blue-50 border-blue-100 text-blue-600",
-      description: "Enrolled user biometric identities",
+      description: "Enrolled biometric profiles",
     },
     {
       label: "Verification Checks",
@@ -84,7 +84,7 @@ export default function Dashboard() {
       badge: "Real-time",
       badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
       iconBg: "bg-indigo-50 border-indigo-100 text-indigo-600",
-      description: "Total liveness challenge executions",
+      description: "Completed challenge runs",
     },
     {
       label: "Spoof Attacks Blocked",
@@ -93,7 +93,7 @@ export default function Dashboard() {
       badge: "Active Defense",
       badgeColor: "bg-rose-50 text-rose-700 border-rose-200/80",
       iconBg: "bg-rose-50 border-rose-100 text-rose-600",
-      description: "Photo, screen replay & mask attempts stopped",
+      description: "Blocked photo and screen replay attempts",
     },
     {
       label: "Validation Pass Rate",
@@ -102,7 +102,7 @@ export default function Dashboard() {
       badge: "Live Telemetry",
       badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
       iconBg: "bg-emerald-50 border-emerald-100 text-emerald-600",
-      description: "Authentic liveness detection ratio",
+      description: "Percentage of passed verifications",
     },
   ];
 
@@ -138,8 +138,8 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
             Console Overview
           </h1>
           <p className="mt-1 max-w-2xl text-sm font-medium text-slate-600">
-            Monitor real-time liveness verification metrics, security telemetry,
-            and API status across your platform.
+            Monitor verification volume, pass rates, and API status across your
+            platform.
           </p>
         </div>
 
@@ -374,10 +374,6 @@ print(f"Pass: {response.is_real_person}, Confidence: {response.score}")`,
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
                 <span>In-memory active challenge encryption</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-                <span>SOC2 Type II & GDPR compliant pipeline</span>
               </li>
             </ul>
           </div>

@@ -51,8 +51,8 @@ export default function Landing() {
             <span className="text-blue-600">Verification</span>
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
-            Protect your platform from spoofing attacks with an enterprise-grade
-            liveness detection API. Fast, accurate, and easy to integrate.
+            Verify real users and block spoofing attempts with client-side
+            liveness checks and biometric verification.
           </p>
           <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <button
@@ -122,8 +122,8 @@ export default function Landing() {
               Why Liveness Cloud?
             </h2>
             <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-              Industry-leading biometric security built for high-throughput
-              modern applications.
+              Biometric verification running directly in the browser with
+              server-side descriptor matching.
             </p>
           </div>
           <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
@@ -135,8 +135,8 @@ export default function Landing() {
                 Real-time Detection
               </h3>
               <p className="mb-6 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                Process liveness checks in milliseconds using optimized facial
-                mesh neural networks.
+                Process liveness checks in milliseconds using client-side facial
+                landmark tracking.
               </p>
               <div className="space-y-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500">
                 <div className="flex items-center gap-2">
@@ -155,11 +155,11 @@ export default function Landing() {
                 <LineChart className="h-6 w-6" />
               </div>
               <h3 className="mb-2 text-lg font-bold text-slate-900 sm:text-xl">
-                Advanced Analytics
+                Analytics and Logs
               </h3>
               <p className="mb-6 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                Gain insights into verification patterns and security metrics
-                with our dashboard.
+                Review verification rates, audit logs, and security metrics in
+                the dashboard.
               </p>
               <div className="space-y-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500">
                 <div className="flex items-center gap-2">
@@ -181,8 +181,8 @@ export default function Landing() {
                 Spoof Protection
               </h3>
               <p className="mb-6 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                Robust detection against photos, videos, masks, and deepfake
-                attempts.
+                Block printed photos, screen replays, 3D masks, and recorded
+                video attempts.
               </p>
               <div className="space-y-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500">
                 <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ export default function Landing() {
               How it works
             </h2>
             <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-              Integrate liveness verification in 3 straightforward steps.
+              Integrate liveness verification in three steps.
             </p>
           </div>
 
@@ -240,8 +240,8 @@ export default function Landing() {
                 </span>
               </Link>
               <p className="text-xs leading-relaxed text-slate-500">
-                Enterprise-grade facial liveness detection API & SDK designed to
-                stop spoofing attacks in real time.
+                Facial liveness detection API and SDK for client-side identity
+                verification.
               </p>
               <div className="space-y-2 pt-1">
                 <a
@@ -336,20 +336,10 @@ export default function Landing() {
               <h4 className="mb-4 text-xs font-bold tracking-wider text-slate-900 uppercase">
                 Trust & Security
               </h4>
-              <p className="mb-3 text-xs leading-relaxed text-slate-500">
-                Zero raw biometric image retention. Full in-memory encryption
-                during active liveness challenges.
+              <p className="text-xs leading-relaxed text-slate-500">
+                Camera feeds stay on the device. Descriptors are processed in
+                memory and scored without storing raw images.
               </p>
-              <ul className="space-y-2 text-xs font-medium text-slate-500">
-                <li className="flex items-center gap-1.5 text-slate-600">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-emerald-500" />{" "}
-                  SOC2 Compliant Pipeline
-                </li>
-                <li className="flex items-center gap-1.5 text-slate-600">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-emerald-500" />{" "}
-                  GDPR & Privacy Ready
-                </li>
-              </ul>
             </div>
           </div>
 
@@ -380,27 +370,27 @@ const FAQ_DATA = [
   {
     question: "How accurate is the liveness detection?",
     answer:
-      "Our facial mesh neural network achieves 99.8%+ accuracy against photos, screen replays, 3D masks, and deepfake attempts in real time.",
+      "The SDK tracks 468 facial landmarks to verify natural movement and head orientation, blocking static photos and screen replays.",
   },
   {
     question: "What browsers and devices are supported?",
     answer:
-      "Our SDK supports all modern web browsers (Chrome, Safari, Firefox, Edge) across iOS, Android, macOS, and Windows.",
+      "The SDK runs in Chrome, Safari, Firefox, and Edge on iOS, Android, macOS, and Windows.",
   },
   {
     question: "Is user biometric data stored on your servers?",
     answer:
-      "No raw biometric images are saved. Verification processes encrypted facial descriptors in-memory and discards them immediately after scoring.",
+      "Servers never receive camera images. The client extracts a 128-dimensional numerical vector, and matching runs without storing raw photos.",
   },
   {
     question: "How long does SDK integration take?",
     answer:
-      "Fewer than 10 lines of code. Most developers complete frontend and backend integration in under 15 minutes.",
+      "Basic integration requires calling load() and start() on the video element, then posting the resulting descriptor to your verification endpoint.",
   },
   {
     question: "Is there a limit on API usage?",
     answer:
-      "No! Liveness Cloud provides full SDK and API access with unrestricted verifications and keys — no credit card or subscription required.",
+      "API keys and verification requests have no usage caps, and you do not need a credit card to get started.",
   },
 ];
 
@@ -422,8 +412,7 @@ const FAQSection = () => {
             Frequently Asked Questions
           </h2>
           <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-            Everything you need to know about integrating and using Liveness
-            Cloud.
+            Common questions about integrating and deploying Liveness Cloud.
           </p>
         </div>
 
@@ -468,7 +457,7 @@ const STEPS_DATA = [
     step: "Step 1",
     title: "Install Package",
     description:
-      "Add @liveness/sdk to your web application or mobile project using your favorite package manager.",
+      "Add @liveness/sdk to your project using npm or yarn.",
     fileName: "Terminal",
     code: `npm install @liveness/sdk`,
     statusMessage: "Package ready for initialization",
@@ -479,7 +468,7 @@ const STEPS_DATA = [
     step: "Step 2",
     title: "Run Active Session",
     description:
-      "Bind to your HTML camera video element and handle real-time biometric liveness verification events.",
+      "Attach the SDK to your video element and listen for challenge events.",
     fileName: "LivenessCamera.jsx",
     code: `import { LivenessSDK } from '@liveness/sdk';
 
@@ -498,7 +487,7 @@ await sdk.start(videoElement, {
     step: "Step 3",
     title: "Verify via Cloud API",
     description:
-      "Post payload to your backend endpoint to verify biometric descriptor against our secure AI cloud.",
+      "Send the descriptor payload to your backend to compare against enrolled users.",
     fileName: "api/verify.js",
     code: `// Express / Node.js Backend Handler
 app.post('/api/liveness/verify', async (req, res) => {
@@ -513,7 +502,7 @@ app.post('/api/liveness/verify', async (req, res) => {
   const result = await response.json();
   res.json({ isRealPerson: result.isRealPerson, score: result.score });
 });`,
-    statusMessage: "HTTP 200 OK — Real Person Confirmed (99.8%)",
+    statusMessage: "HTTP 200 OK: Real Person Confirmed (99.8%)",
     tag: "Backend Verification",
   },
 ];
