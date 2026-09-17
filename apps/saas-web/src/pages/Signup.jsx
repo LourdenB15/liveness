@@ -61,7 +61,10 @@ const signupSchema = z
     password: z
       .string()
       .min(6, "Password must be at least 6 characters")
-      .max(72, "Password must not exceed 72 characters"),
+      .max(72, "Password must not exceed 72 characters")
+      .regex(/[A-Z]/, "Password must have at least 1 upper case letter.")
+      .regex(/[a-z]/, "Password must have at least 1 lower case letter.")
+      .regex(/[0-9]/, "Password must have at least 1 number."),
     confirmPassword: z.string(),
     firstName: nameRule,
     lastName: nameRule,

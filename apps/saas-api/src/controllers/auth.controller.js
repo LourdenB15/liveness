@@ -1,16 +1,21 @@
 import { z } from "zod";
 import * as authServices from "../services/auth.service.js";
 
+const passwordComplexitySchema = z
+  .string()
+  .min(6, "Password must be at least 6 characters")
+  .max(72, "Password must not exceed 72 characters")
+  .regex(/[A-Z]/, "Password must have at least 1 upper case.")
+  .regex(/[a-z]/, "Password must have at least 1 lower case.")
+  .regex(/[0-9]/, "Password must have at least 1 number.");
+
 const signupSchema = z.object({
   username: z
     .string()
     .trim()
     .min(3, "Username must be at least 3 characters")
     .max(255, "Username must not exceed 255 characters"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(72, "Password must not exceed 72 characters"),
+  password: passwordComplexitySchema,
   firstName: z
     .string()
     .trim()
@@ -50,13 +55,7 @@ const forgotPasswordSchema = z.object({
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1, "Token is required"),
-  newPassword: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .regex(/[A-Z]/, "Password must have at least 1 upper case.")
-    .regex(/[a-z]/, "Password must have at least 1 lower case.")
-    .regex(/[0-9]/, "Password must have at least 1 number.")
-    .max(72, "Password must not exceed 72 characters"),
+  newPassword: passwordComplexitySchema,
 });
 
 const changePasswordSchema = z.object({
@@ -64,13 +63,7 @@ const changePasswordSchema = z.object({
     .string()
     .min(1, "Password is required")
     .max(72, "Password must not exceed 72 characters"),
-  newPassword: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .regex(/[A-Z]/, "Password must have at least 1 upper case.")
-    .regex(/[a-z]/, "Password must have at least 1 lower case.")
-    .regex(/[0-9]/, "Password must have at least 1 number.")
-    .max(72, "Password must not exceed 72 characters"),
+  newPassword: passwordComplexitySchema,
 });
 
 export async function signup(req, res) {
