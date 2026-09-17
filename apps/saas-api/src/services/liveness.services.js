@@ -1,4 +1,73 @@
+import crypto from "crypto";
 import * as livenessRepository from "../repositories/liveness.repository.js";
+
+const activeSessions = new Map();
+const SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function pruneExpiredSessions() {
+  const now = Date.now();
+  for (const [token, session] of activeSessions.entries()) {
+    if (session.expiresAt <= now) {
+      activeSessions.delete(token);
+    }
+  }
+}
+
+const sessionPruneInterval = setInterval(pruneExpiredSessions, 2 * 60 * 1000);
+if (sessionPruneInterval.unref) {
+  sessionPruneInterval.unref();
+}
+
+export function createSession(adminId, apiKeyId = null, customChallenges = null) {
+  const sessionToken = `live_sess_${crypto.randomBytes(24).toString("hex")}`;
+  const pool = ["BLINK", "TURN_LEFT", "TURN_RIGHT"];
+  const shuffled = [...pool];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  const challenges =
+    customChallenges &&
+    Array.isArray(customChallenges) &&
+    customChallenges.length > 0
+      ? customChallenges
+      : ["WAITING", ...shuffled, "WAITING"];
+
+  const now = Date.now();
+  const expiresAt = now + SESSION_TTL_MS;
+
+  const session = {
+    sessionToken,
+    adminId,
+    apiKeyId,
+    challenges,
+    createdAt: now,
+    expiresAt,
+    used: false,
+  };
+
+  activeSessions.set(sessionToken, session);
+
+  return {
+    sessionToken,
+    challenges,
+    expiresAt,
+  };
+}
+
+export function getSession(sessionToken) {
+  return activeSessions.get(sessionToken) || null;
+}
+
+export function consumeSession(sessionToken) {
+  const session = activeSessions.get(sessionToken);
+  if (session) {
+    session.used = true;
+    return true;
+  }
+  return false;
+}
 
 export async function enrollUser(adminId, name, descriptor, apiKeyId = null) {
   const enrolledUser = await livenessRepository.addUser(

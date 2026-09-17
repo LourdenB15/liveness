@@ -42,6 +42,36 @@ const verifyByIdSchema = z.object({
   metric: z.enum(["cosine", "euclidean"]).optional(),
 });
 
+const sessionSchema = z.object({
+  challenges: z
+    .array(z.enum(["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"]))
+    .min(1)
+    .max(10)
+    .optional(),
+});
+
+export async function createSession(req, res) {
+  const validation = sessionSchema.safeParse(req.body || {});
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+  const adminId = req.adminId;
+  const apiKeyId = req.apiKeyId || null;
+  try {
+    const session = livenessServices.createSession(
+      adminId,
+      apiKeyId,
+      validation.data?.challenges,
+    );
+    res.status(201).json(session);
+  } catch (error) {
+    console.error("Session creation error:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to initialize verification session." });
+  }
+}
+
 export async function enrollUser(req, res) {
   const validation = enrollSchema.safeParse(req.body);
   if (!validation.success) {

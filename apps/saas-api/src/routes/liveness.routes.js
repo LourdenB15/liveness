@@ -14,6 +14,12 @@ const livenessLimiter = createRateLimiter({
 });
 
 router.post(
+  "/session",
+  authenticateApiKey,
+  livenessLimiter,
+  livenessController.createSession,
+);
+router.post(
   "/enroll",
   authenticateApiKey,
   livenessLimiter,

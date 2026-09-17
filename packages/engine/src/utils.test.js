@@ -8,6 +8,7 @@ import {
   calculateFaceSize,
   calculateHeadTurnV2,
   checkOcclusion,
+  generateIntegrityHash,
 } from "./utils";
 
 const p = (x, y, z = 0) => ({ x, y, z });
@@ -276,5 +277,38 @@ describe("Liveness Algorithms", () => {
         outBlank,
       ]);
     }, 30000);
+  });
+
+  describe("generateIntegrityHash", () => {
+    it("should produce a deterministic non-empty hash string", () => {
+      const descriptor = Array(128).fill(0.123);
+      const sessionToken = "live_sess_test_token_123456";
+      const timestamp = 1716336000000;
+
+      const hash1 = generateIntegrityHash(descriptor, sessionToken, timestamp);
+      const hash2 = generateIntegrityHash(descriptor, sessionToken, timestamp);
+
+      expect(typeof hash1).toBe("string");
+      expect(hash1.length).toBeGreaterThan(0);
+      expect(hash1).toBe(hash2);
+    });
+
+    it("should produce different hashes if descriptor or token changes", () => {
+      const descriptorA = Array(128).fill(0.1);
+      const descriptorB = Array(128).fill(0.2);
+      const sessionToken = "live_sess_test_token_123456";
+      const timestamp = 1716336000000;
+
+      const hashA = generateIntegrityHash(descriptorA, sessionToken, timestamp);
+      const hashB = generateIntegrityHash(descriptorB, sessionToken, timestamp);
+      const hashDiffToken = generateIntegrityHash(
+        descriptorA,
+        "live_sess_different_token",
+        timestamp,
+      );
+
+      expect(hashA).not.toBe(hashB);
+      expect(hashA).not.toBe(hashDiffToken);
+    });
   });
 });

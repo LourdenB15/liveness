@@ -1,6 +1,10 @@
 import crypto from "crypto";
+import {
+  consumeSession,
+  getSession,
+} from "../services/liveness.services.js";
 
-function generateIntegrityHash(descriptor, sessionToken, timestamp) {
+function generateLegacyHash(descriptor, sessionToken, timestamp) {
   const data = JSON.stringify(descriptor) + sessionToken + timestamp;
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
@@ -9,6 +13,11 @@ function generateIntegrityHash(descriptor, sessionToken, timestamp) {
     hash |= 0;
   }
   return hash.toString(16);
+}
+
+function generateSha256Hash(descriptor, sessionToken, timestamp) {
+  const data = JSON.stringify(descriptor) + sessionToken + timestamp;
+  return crypto.createHash("sha256").update(data).digest("hex");
 }
 
 // In-memory token registry for single-use replay protection with TTL cleanup
@@ -43,7 +52,8 @@ export function validateIntegrity(req, res, next) {
     return res.status(400).json({ error: "Invalid request payload" });
   }
 
-  const { descriptor, sessionToken, timestamp, integrity } = req.body;
+  const { descriptor, sessionToken, timestamp, challenges, integrity } =
+    req.body;
   if (!descriptor || !sessionToken || !timestamp || !integrity) {
     return res.status(400).json({ error: "Missing security metadata" });
   }
@@ -71,6 +81,39 @@ export function validateIntegrity(req, res, next) {
       .json({ error: "Session expired or clock out of sync" });
   }
 
+  // Verify server-orchestrated session if token was server-issued
+  const serverSession = getSession(sessionToken);
+  if (serverSession) {
+    if (serverSession.used) {
+      return res.status(400).json({
+        error: "Session token has already been consumed (replay detected)",
+      });
+    }
+    if (now > serverSession.expiresAt) {
+      return res.status(400).json({
+        error: "Verification session has expired. Please request a new session.",
+      });
+    }
+    if (serverSession.adminId !== req.adminId) {
+      return res.status(403).json({
+        error: "Session does not belong to the authenticating account.",
+      });
+    }
+    // Verify client submitted the required challenges
+    if (Array.isArray(challenges) && challenges.length > 0) {
+      const expectedChallenges = serverSession.challenges;
+      const isMatch =
+        challenges.length === expectedChallenges.length &&
+        challenges.every((c, idx) => c === expectedChallenges[idx]);
+      if (!isMatch) {
+        return res.status(400).json({
+          error:
+            "Biometric challenge sequence does not match session requirements.",
+        });
+      }
+    }
+  }
+
   // Replay protection: prevent reuse of previously accepted sessionToken
   if (consumedTokens.has(sessionToken)) {
     return res.status(400).json({
@@ -78,18 +121,30 @@ export function validateIntegrity(req, res, next) {
     });
   }
 
-  const expectedHash = generateIntegrityHash(
+  const expectedSha256 = generateSha256Hash(
+    descriptor,
+    sessionToken,
+    timestamp,
+  );
+  const expectedLegacy = generateLegacyHash(
     descriptor,
     sessionToken,
     timestamp,
   );
 
-  if (!safeCompare(integrity, expectedHash)) {
+  const isValidIntegrity =
+    safeCompare(integrity, expectedSha256) ||
+    safeCompare(integrity, expectedLegacy);
+
+  if (!isValidIntegrity) {
     return res.status(400).json({ error: "Payload integrity check failed" });
   }
 
   // Register token as consumed
   consumedTokens.set(sessionToken, now + TOKEN_TTL_MS);
+  if (serverSession) {
+    consumeSession(sessionToken);
+  }
 
   next();
 }
