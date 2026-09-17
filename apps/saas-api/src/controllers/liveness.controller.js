@@ -18,14 +18,12 @@ const enrollSchema = z.object({
 
 const verifySchema = z.object({
   ...commonPayload,
-  threshold: z.number().optional(),
   metric: z.enum(["cosine", "euclidean"]).optional(),
 });
 
 const verifyByIdSchema = z.object({
   ...commonPayload,
   targetId: z.string().uuid("targetId must be a valid UUID"),
-  threshold: z.number().optional(),
   metric: z.enum(["cosine", "euclidean"]).optional(),
 });
 
@@ -58,11 +56,10 @@ export async function verifyUser(req, res) {
   }
   const adminId = req.adminId;
   const apiKeyId = req.apiKeyId || null;
-  const { descriptor, threshold, metric } = validation.data;
+  const { descriptor, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUser(
       descriptor,
-      threshold,
       adminId,
       metric,
       apiKeyId,
@@ -81,12 +78,11 @@ export async function verifyUserById(req, res) {
   }
   const adminId = req.adminId;
   const apiKeyId = req.apiKeyId || null;
-  const { descriptor, targetId, threshold, metric } = validation.data;
+  const { descriptor, targetId, metric } = validation.data;
   try {
     const responsePayload = await livenessServices.verifyUserById(
       descriptor,
       targetId,
-      threshold,
       adminId,
       metric,
       apiKeyId,

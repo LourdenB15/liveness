@@ -20,16 +20,15 @@ export async function enrollUser(adminId, name, descriptor, apiKeyId = null) {
   return enrolledUser;
 }
 
+export const COSINE_SIMILARITY_THRESHOLD = 0.95;
+export const EUCLIDEAN_DISTANCE_THRESHOLD = 0.3;
+
 export async function verifyUser(
   descriptor,
-  threshold,
   adminId,
   metric = "both",
   apiKeyId = null,
 ) {
-  const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
-  const euclideanThreshold = 0.3;
-
   const closestMatch = await livenessRepository.findClosestMatch(
     descriptor,
     adminId,
@@ -42,8 +41,8 @@ export async function verifyUser(
   if (closestMatch.length > 0) {
     match = closestMatch[0];
     const isVerified =
-      Number(match.similarity) >= cosineThreshold &&
-      Number(match.distance) <= euclideanThreshold;
+      Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD &&
+      Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
 
     if (isVerified) {
       status = "SUCCESS";
@@ -78,14 +77,10 @@ export async function verifyUser(
 export async function verifyUserById(
   descriptor,
   targetId,
-  threshold,
   adminId,
   metric = "both",
   apiKeyId = null,
 ) {
-  const cosineThreshold = typeof threshold === "number" ? threshold : 0.95;
-  const euclideanThreshold = 0.3;
-
   const user = await livenessRepository.findMatchById(
     descriptor,
     targetId,
@@ -98,8 +93,8 @@ export async function verifyUserById(
   if (user.length > 0) {
     match = user[0];
     const isVerified =
-      Number(match.similarity) >= cosineThreshold &&
-      Number(match.distance) <= euclideanThreshold;
+      Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD &&
+      Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
 
     if (isVerified) {
       status = "SUCCESS";
