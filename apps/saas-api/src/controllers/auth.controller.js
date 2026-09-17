@@ -150,13 +150,12 @@ export async function forgotPassword(req, res) {
   const { email } = validation.data;
   try {
     await authServices.forgotPassword(email);
-    res.json({
-      message: "If that email is registered, a reset link has been sent.",
-    });
   } catch (error) {
     console.error("Forgot password error:", error);
-    res.status(500).json({ error: "Something went wrong." });
   }
+  res.json({
+    message: "If that email is registered, a reset link has been sent.",
+  });
 }
 
 export async function resetPassword(req, res) {

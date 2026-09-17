@@ -77,6 +77,8 @@ export async function login(username, password) {
 export async function forgotPassword(email) {
   const admin = await authRepositories.findAdminByEmail(email);
   if (!admin) {
+    // Perform dummy work to prevent timing side-channels
+    crypto.createHash("sha256").update(crypto.randomBytes(24)).digest("hex");
     return;
   }
   const token = crypto.randomBytes(24).toString("hex");
@@ -87,7 +89,11 @@ export async function forgotPassword(email) {
   const resetLink = cleanAppUrl.includes("#")
     ? `${cleanAppUrl}/reset-password?token=${token}`
     : `${cleanAppUrl}/#/reset-password?token=${token}`;
-  await sendResetPasswordEmail(admin.email, resetLink);
+
+  // Dispatch email asynchronously so SMTP network latency or errors do not leak account existence
+  sendResetPasswordEmail(admin.email, resetLink).catch((err) => {
+    console.error("Failed to send password reset email:", err);
+  });
 }
 
 const transporter = nodemailer.createTransport({
