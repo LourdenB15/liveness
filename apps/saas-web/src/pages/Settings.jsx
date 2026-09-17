@@ -51,10 +51,17 @@ const profileSchema = z.object({
 
 const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required"),
+    currentPassword: z
+      .string()
+      .min(1, "Current password is required")
+      .max(72, "Password must not exceed 72 characters"),
     newPassword: z
       .string()
-      .min(6, "New password must be at least 6 characters"),
+      .min(6, "New password must be at least 6 characters")
+      .max(72, "Password must not exceed 72 characters")
+      .regex(/[A-Z]/, "Password must have at least 1 upper case letter.")
+      .regex(/[a-z]/, "Password must have at least 1 lower case letter.")
+      .regex(/[0-9]/, "Password must have at least 1 number."),
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
   .refine((data) => data.newPassword !== data.currentPassword, {

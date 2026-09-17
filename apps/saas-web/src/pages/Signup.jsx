@@ -58,7 +58,10 @@ const signupSchema = z
       .refine((val) => !containsBannedWord(val), {
         message: "Username contains inappropriate language",
       }),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(72, "Password must not exceed 72 characters"),
     confirmPassword: z.string(),
     firstName: nameRule,
     lastName: nameRule,

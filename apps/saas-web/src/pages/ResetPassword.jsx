@@ -13,7 +13,13 @@ import { api } from "../services/api";
 const resetPasswordSchema = z
   .object({
     token: z.string().min(1, "Reset token is required"),
-    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+    newPassword: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(72, "Password must not exceed 72 characters")
+      .regex(/[A-Z]/, "Password must have at least 1 upper case.")
+      .regex(/[a-z]/, "Password must have at least 1 lower case.")
+      .regex(/[0-9]/, "Password must have at least 1 number."),
     confirmPassword: z.string().min(6, "Password confirmation is required"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
