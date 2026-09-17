@@ -4,8 +4,22 @@ import * as authRepositories from "../repositories/auth.repository.js";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
+const getJwtSecret = () => {
+  if (process.env.JWT_SECRET) {
+    return process.env.JWT_SECRET;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "FATAL: JWT_SECRET environment variable is required in production mode.",
+    );
+  }
+  console.warn(
+    "SECURITY WARNING: Using fallback JWT secret for local development. Set JWT_SECRET in production.",
+  );
+  return "your-fallback-secret-for-dev-only";
+};
+
+const JWT_SECRET = getJwtSecret();
 const APP_URL = process.env.APP_URL || "http://localhost:5173";
 
 export async function signup(username, password, firstName, lastName, email) {
@@ -22,7 +36,7 @@ export async function signup(username, password, firstName, lastName, email) {
   const token = jwt.sign(
     { id: admin.id, username: admin.username },
     JWT_SECRET,
-    { expiresIn: "7d" },
+    { algorithm: "HS256", expiresIn: "7d" },
   );
   return { ...admin, token };
 }
@@ -47,7 +61,7 @@ export async function login(username, password) {
   const token = jwt.sign(
     { id: admin.id, username: admin.username },
     JWT_SECRET,
-    { expiresIn: "7d" },
+    { algorithm: "HS256", expiresIn: "7d" },
   );
 
   return {

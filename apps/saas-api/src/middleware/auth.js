@@ -1,8 +1,22 @@
 import jwt from "jsonwebtoken";
 import { findApiKeyDetails } from "../services/api-key.service.js";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-fallback-secret-for-dev-only";
+const getJwtSecret = () => {
+  if (process.env.JWT_SECRET) {
+    return process.env.JWT_SECRET;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "FATAL: JWT_SECRET environment variable is required in production mode.",
+    );
+  }
+  console.warn(
+    "SECURITY WARNING: Using fallback JWT secret for local development. Set JWT_SECRET in production.",
+  );
+  return "your-fallback-secret-for-dev-only";
+};
+
+const JWT_SECRET = getJwtSecret();
 
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -14,7 +28,7 @@ export const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: "Access token required" });
   }
 
-  jwt.verify(token, JWT_SECRET, (err, user) => {
+  jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }, (err, user) => {
     if (err) {
       const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
       res.clearCookie("token", {
