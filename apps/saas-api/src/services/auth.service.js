@@ -34,7 +34,11 @@ export async function signup(username, password, firstName, lastName, email) {
     email,
   );
   const token = jwt.sign(
-    { id: admin.id, username: admin.username },
+    {
+      id: admin.id,
+      username: admin.username,
+      tokenVersion: admin.tokenVersion || 1,
+    },
     JWT_SECRET,
     { algorithm: "HS256", expiresIn: "7d" },
   );
@@ -59,7 +63,11 @@ export async function login(username, password) {
   }
 
   const token = jwt.sign(
-    { id: admin.id, username: admin.username },
+    {
+      id: admin.id,
+      username: admin.username,
+      tokenVersion: admin.token_version || 1,
+    },
     JWT_SECRET,
     { algorithm: "HS256", expiresIn: "7d" },
   );

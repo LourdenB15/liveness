@@ -22,8 +22,12 @@ CREATE TABLE IF NOT EXISTS admins (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    token_version INT NOT NULL DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Ensure token_version column exists if migrating existing schema
+ALTER TABLE admins ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 1;
 
 -- API Keys table
 CREATE TABLE IF NOT EXISTS api_keys (

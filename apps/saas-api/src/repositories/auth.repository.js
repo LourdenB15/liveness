@@ -8,7 +8,7 @@ export async function createAdmin(
   email,
 ) {
   const result = await pool.query(
-    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, created_at',
+    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, token_version as "tokenVersion", created_at',
     [username, passwordHash, firstName, lastName, email],
   );
   return result.rows[0];
@@ -60,15 +60,15 @@ export async function updateAdminProfile(adminId, firstName, lastName) {
 }
 
 export async function updateAdminPassword(adminId, passwordHash) {
-  await pool.query("UPDATE admins SET password_hash = $1 WHERE id = $2", [
-    passwordHash,
-    adminId,
-  ]);
+  await pool.query(
+    "UPDATE admins SET password_hash = $1, token_version = token_version + 1 WHERE id = $2",
+    [passwordHash, adminId],
+  );
 }
 
 export async function changePassword(adminId, newPasswordHashed) {
   const result = await pool.query(
-    "UPDATE admins SET password_hash = $1 WHERE id = $2",
+    "UPDATE admins SET password_hash = $1, token_version = token_version + 1 WHERE id = $2",
     [newPasswordHashed, adminId],
   );
   return result.rowCount;
@@ -79,4 +79,19 @@ export async function findAdminById(adminId) {
     adminId,
   ]);
   return result.rows[0];
+}
+
+export async function findAdminTokenVersion(adminId) {
+  const result = await pool.query(
+    "SELECT token_version FROM admins WHERE id = $1",
+    [adminId],
+  );
+  return result.rows[0]?.token_version ?? null;
+}
+
+export async function incrementTokenVersion(adminId) {
+  await pool.query(
+    "UPDATE admins SET token_version = token_version + 1 WHERE id = $1",
+    [adminId],
+  );
 }

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { findApiKeyDetails } from "../services/api-key.service.js";
+import { findAdminTokenVersion } from "../repositories/auth.repository.js";
 
 const getJwtSecret = () => {
   if (process.env.JWT_SECRET) {
@@ -28,9 +29,9 @@ export const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: "Access token required" });
   }
 
-  jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }, (err, user) => {
+  jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }, async (err, user) => {
+    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
     if (err) {
-      const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
       res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -38,8 +39,31 @@ export const authenticateToken = (req, res, next) => {
       });
       return res.status(401).json({ error: "Invalid or expired token" });
     }
-    req.user = user;
-    next();
+
+    try {
+      const currentVersion = await findAdminTokenVersion(user.id);
+      if (
+        currentVersion === null ||
+        (user.tokenVersion !== undefined && user.tokenVersion !== currentVersion)
+      ) {
+        res.clearCookie("token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: sameSitePolicy,
+        });
+        return res
+          .status(401)
+          .json({ error: "Session revoked or expired. Please sign in again." });
+      }
+
+      req.user = user;
+      next();
+    } catch (dbError) {
+      console.error("Token version verification error:", dbError);
+      return res
+        .status(500)
+        .json({ error: "Internal server error during authentication" });
+    }
   });
 };
 
