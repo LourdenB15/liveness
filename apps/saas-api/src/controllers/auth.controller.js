@@ -61,11 +61,12 @@ export async function signup(req, res) {
     );
 
     const { token, ...admin } = result;
+    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: sameSitePolicy,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -98,10 +99,11 @@ export async function login(req, res) {
   try {
     const result = await authServices.login(username, password);
     const { token, ...admin } = result;
+    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: sameSitePolicy,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({
@@ -200,10 +202,11 @@ export async function updateProfile(req, res) {
 }
 
 export async function logout(req, res) {
+  const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: sameSitePolicy,
   });
   res.status(204).send();
 }

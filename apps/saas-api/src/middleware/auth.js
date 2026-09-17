@@ -16,10 +16,11 @@ export const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
+      const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
       res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: sameSitePolicy,
       });
       return res.status(401).json({ error: "Invalid or expired token" });
     }
