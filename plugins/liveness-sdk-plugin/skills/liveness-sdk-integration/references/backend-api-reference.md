@@ -10,6 +10,8 @@ Base URL: `https://<your-domain-or-saas-host>/api/liveness` (e.g. `http://localh
 
 All requests require the `x-api-key` header with a valid API key.
 
+> **Security Architecture Notice:** Keep your `x-api-key` strictly on your backend server. Never expose it in client-side applications. Frontends should obtain an ephemeral session from your backend via `POST /session` and proxy biometric submissions.
+
 ```http
 x-api-key: your_live_api_key_here
 Content-Type: application/json
@@ -17,7 +19,31 @@ Content-Type: application/json
 
 ---
 
-### A. Enroll Biometric Identity (POST /enroll)
+### A. Initialize Verification Session (POST /session)
+
+Initializes a server-orchestrated verification session with authoritative challenge sequencing and replay protection.
+
+#### Request Body (Optional)
+
+```json
+{
+  "challenges": ["WAITING", "BLINK", "TURN_LEFT", "WAITING"]
+}
+```
+
+#### Response (201 Created)
+
+```json
+{
+  "sessionToken": "live_sess_7f8a9b0c1d2e3f4a...",
+  "challenges": ["WAITING", "BLINK", "TURN_LEFT", "WAITING"],
+  "expiresAt": 1716336300000
+}
+```
+
+---
+
+### B. Enroll Biometric Identity (POST /enroll)
 
 Enrolls a user's 128-dimensional face descriptor as an enrolled identity.
 

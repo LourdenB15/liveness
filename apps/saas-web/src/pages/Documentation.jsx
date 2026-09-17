@@ -241,12 +241,48 @@ const CloudUsageContent = () => (
         <h3 className="mb-3 text-xl font-bold sm:mb-4 sm:text-2xl">
           2. Cloud API Endpoints
         </h3>
-        <p className="mb-6 text-sm text-slate-600 sm:text-base">
+        <p className="mb-4 text-sm text-slate-600 sm:text-base">
           The Liveness Cloud provides secure endpoints for biometric enrollment
           and identity matching. All requests require the <code>x-api-key</code>{" "}
           header.
         </p>
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs leading-relaxed text-amber-800 sm:text-sm">
+          <strong>Security Notice:</strong> Keep your secret API key (
+          <code>x-api-key</code>) on your server backend. Never expose secret
+          API keys in public browser repositories or client-side bundles. For
+          browser client verification, have your backend call{" "}
+          <code>POST /api/liveness/session</code> to initialize an ephemeral
+          session, and forward the session token to the client SDK.
+        </div>
         <div className="space-y-6 sm:space-y-8">
+          {/* Session Endpoint */}
+          <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm sm:rounded-2xl sm:p-8">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <span className="w-fit rounded bg-blue-100 px-2.5 py-1 text-xs font-black text-blue-700">
+                POST
+              </span>
+              <code className="text-sm font-bold break-all text-slate-900 sm:text-lg">
+                /api/liveness/session
+              </code>
+            </div>
+            <p className="mb-6 text-sm leading-relaxed text-slate-600">
+              Initializes a server-orchestrated verification session. Returns a
+              unique session token and an authoritative challenge sequence for
+              replay-protected verification.
+            </p>
+            <h5 className="mb-3 text-xs font-black tracking-widest text-slate-400 uppercase">
+              Response Schema
+            </h5>
+            <CodeBlock
+              language="json"
+              code={`{
+  "sessionToken": "live_sess_a8b1c2d3e4f5...",
+  "challenges": ["WAITING", "TURN_LEFT", "BLINK", "WAITING"],
+  "expiresAt": 1716336300000
+}`}
+            />
+          </div>
+
           {/* Enroll Endpoint */}
           <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm sm:rounded-2xl sm:p-8">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -365,22 +401,20 @@ const CloudUsageContent = () => (
           3. Payload Integrity
         </h3>
         <p className="mb-3 text-sm text-slate-600 sm:mb-4 sm:text-base">
-          To prevent man-in-the-middle attacks, the Cloud API validates the{" "}
-          <code>integrity</code> field using a deterministic hash of the
-          payload.
+          To prevent replay attacks and tampering, the Cloud API validates the{" "}
+          <code>integrity</code> field against the session metadata. The API
+          supports both cryptographic SHA-256 hashing and the standard SDK checksum.
         </p>
         <CodeBlock
           language="javascript"
-          title="Integrity Hash (JS Implementation)"
-          code={`const generateHash = (descriptor, sessionToken, timestamp) => {
-  const data = JSON.stringify(descriptor) + sessionToken + timestamp;
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    hash = (hash << 5) - hash + data.charCodeAt(i);
-    hash |= 0;
-  }
-  return hash.toString(16);
-};`}
+          title="Integrity Hash (SHA-256 / Checksum)"
+          code={`// Cryptographic SHA-256 (Node.js & Backend integrations)
+const crypto = require("crypto");
+const data = JSON.stringify(descriptor) + sessionToken + timestamp;
+const integrity = crypto.createHash("sha256").update(data).digest("hex");
+
+// Or using SDK checksum:
+// const integrity = generateIntegrityHash(descriptor, sessionToken, timestamp);`}
         />
       </div>
     </div>
