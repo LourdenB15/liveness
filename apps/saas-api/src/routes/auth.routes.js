@@ -28,6 +28,13 @@ const resetPasswordLimiter = createRateLimiter({
   message: "Too many attempts, please try again later.",
 });
 
+const changePasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: "Too many password change attempts, please try again later.",
+  keyGenerator: (req) => req.user?.id || req.ip,
+});
+
 router.post("/signup", signupLimiter, authController.signup);
 router.post("/login", loginLimiter, authController.login);
 router.post(
@@ -43,6 +50,7 @@ router.post(
 router.post(
   "/change-password",
   authenticateToken,
+  changePasswordLimiter,
   authController.changePassword,
 );
 router.put("/profile", authenticateToken, authController.updateProfile);

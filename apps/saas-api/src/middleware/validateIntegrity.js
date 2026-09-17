@@ -39,6 +39,10 @@ function safeCompare(a, b) {
 }
 
 export function validateIntegrity(req, res, next) {
+  if (!req.body || typeof req.body !== "object") {
+    return res.status(400).json({ error: "Invalid request payload" });
+  }
+
   const { descriptor, sessionToken, timestamp, integrity } = req.body;
   if (!descriptor || !sessionToken || !timestamp || !integrity) {
     return res.status(400).json({ error: "Missing security metadata" });
