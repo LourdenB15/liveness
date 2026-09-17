@@ -2,18 +2,38 @@ import { z } from "zod";
 import * as authServices from "../services/auth.service.js";
 
 const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z
+    .string()
+    .trim()
+    .min(3, "Username must be at least 3 characters")
+    .max(255, "Username must not exceed 255 characters"),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
     .max(72, "Password must not exceed 72 characters"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(255, "First name must not exceed 255 characters"),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(255, "Last name must not exceed 255 characters"),
+  email: z
+    .string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email must not exceed 255 characters"),
 });
 
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  username: z
+    .string()
+    .trim()
+    .min(3, "Username must be at least 3 characters")
+    .max(255, "Username must not exceed 255 characters"),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -21,7 +41,11 @@ const loginSchema = z.object({
 });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email(),
+  email: z
+    .string()
+    .trim()
+    .email("Invalid email address")
+    .max(255, "Email must not exceed 255 characters"),
 });
 
 const resetPasswordSchema = z.object({
@@ -180,8 +204,16 @@ export async function changePassword(req, res) {
 }
 
 const updateProfileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, "First name is required")
+    .max(255, "First name must not exceed 255 characters"),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, "Last name is required")
+    .max(255, "Last name must not exceed 255 characters"),
 });
 
 export async function updateProfile(req, res) {

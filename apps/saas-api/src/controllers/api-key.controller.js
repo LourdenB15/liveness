@@ -2,7 +2,11 @@ import * as apiKeyServices from "../services/api-key.service.js";
 import { z } from "zod";
 
 const apiKeySchema = z.object({
-  name: z.string().min(1, "Key name is required"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Key name is required")
+    .max(255, "Key name must not exceed 255 characters"),
 });
 
 export async function getApiKeys(req, res) {

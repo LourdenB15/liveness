@@ -3,16 +3,31 @@ import { z } from "zod";
 
 const commonPayload = {
   descriptor: z
-    .array(z.number())
+    .array(z.number().finite("Descriptor values must be finite numbers"))
     .length(128, "Descriptor must be exactly 128 dimensions"),
-  sessionToken: z.string().min(1, "Session token is required"),
+  sessionToken: z
+    .string()
+    .trim()
+    .min(1, "Session token is required")
+    .max(128, "Session token must not exceed 128 characters"),
   timestamp: z.number(),
-  challenges: z.array(z.string()).min(1, "Challenges are required"),
-  integrity: z.string().min(1, "Integrity hash is required"),
+  challenges: z
+    .array(z.string().trim().max(50))
+    .min(1, "Challenges are required")
+    .max(10, "Exceeded maximum allowed challenges"),
+  integrity: z
+    .string()
+    .trim()
+    .min(1, "Integrity hash is required")
+    .max(128, "Integrity hash must not exceed 128 characters"),
 };
 
 const enrollSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(255, "Name must not exceed 255 characters"),
   ...commonPayload,
 });
 
