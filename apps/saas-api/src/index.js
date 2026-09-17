@@ -58,16 +58,48 @@ app.use(express.json({ limit: "1mb" }));
 // Routes
 app.use("/api", routes);
 
-// Health check
+// Health check with coalesced caching to prevent connection pool exhaustion
+let lastHealthCheck = 0;
+let cachedDbStatus = false;
+let pendingHealthQuery = null;
+const HEALTH_CACHE_TTL_MS = 10000;
+
+async function checkDatabaseHealth() {
+  const now = Date.now();
+  if (now - lastHealthCheck < HEALTH_CACHE_TTL_MS) {
+    return cachedDbStatus;
+  }
+  if (pendingHealthQuery) {
+    return pendingHealthQuery;
+  }
+  pendingHealthQuery = pool
+    .query("SELECT 1")
+    .then(() => {
+      cachedDbStatus = true;
+      lastHealthCheck = Date.now();
+      return true;
+    })
+    .catch(() => {
+      cachedDbStatus = false;
+      lastHealthCheck = Date.now();
+      return false;
+    })
+    .finally(() => {
+      pendingHealthQuery = null;
+    });
+
+  return pendingHealthQuery;
+}
+
 app.get("/health", async (req, res) => {
-  try {
-    await pool.query("SELECT 1");
+  const isConnected = await checkDatabaseHealth();
+  if (isConnected) {
     res.json({
       status: "ok",
       database: "connected",
       timestamp: new Date().toISOString(),
     });
-  } catch {
+  } else {
     res.status(503).json({
       status: "error",
       database: "disconnected",
