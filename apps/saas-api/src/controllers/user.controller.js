@@ -1,4 +1,7 @@
 import * as userServices from "../services/user.service.js";
+import { z } from "zod";
+
+const uuidSchema = z.string().uuid("Invalid user ID format");
 
 export async function getUsers(req, res) {
   const adminId = req.user.id;
@@ -12,7 +15,11 @@ export async function getUsers(req, res) {
 }
 
 export async function deleteUser(req, res) {
-  const { id } = req.params;
+  const validation = uuidSchema.safeParse(req.params.id);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+  const id = validation.data;
   const adminId = req.user.id;
   try {
     await userServices.deleteUser(id, adminId);

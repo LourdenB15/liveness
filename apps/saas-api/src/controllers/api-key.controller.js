@@ -40,8 +40,14 @@ export async function createApiKey(req, res) {
   }
 }
 
+const uuidSchema = z.string().uuid("Invalid API key ID format");
+
 export async function deleteApiKey(req, res) {
-  const { id } = req.params;
+  const validation = uuidSchema.safeParse(req.params.id);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+  const id = validation.data;
   const adminId = req.user.id;
   try {
     await apiKeyServices.deleteApiKey(id, adminId);
