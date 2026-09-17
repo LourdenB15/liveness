@@ -1,15 +1,12 @@
 const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 const ADMIN_KEY = "liveness_admin";
-const TOKEN_KEY = "liveness_token";
 
 const request = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  const token = localStorage.getItem(TOKEN_KEY);
 
   const headers = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -36,7 +33,6 @@ const request = async (endpoint, options = {}) => {
       !endpoint.includes("/signup")
     ) {
       localStorage.removeItem(ADMIN_KEY);
-      localStorage.removeItem(TOKEN_KEY);
       window.dispatchEvent(
         new CustomEvent("auth:expired", { detail: { message: errorMessage } }),
       );
@@ -52,7 +48,7 @@ const request = async (endpoint, options = {}) => {
 export const api = {
   auth: {
     signup: async (username, password, firstName, lastName, email) => {
-      const result = await request("/dashboard/signup", {
+      const admin = await request("/dashboard/signup", {
         method: "POST",
         body: JSON.stringify({
           username,
@@ -62,23 +58,15 @@ export const api = {
           email,
         }),
       });
-      if (result?.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
-      const { token: _TOKEN, ...admin } = result || {};
       localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
       window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
     },
     login: async (username, password) => {
-      const result = await request("/dashboard/login", {
+      const admin = await request("/dashboard/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
-      if (result?.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
-      const { token: _TOKEN, ...admin } = result || {};
       localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
       window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
@@ -90,7 +78,6 @@ export const api = {
         console.warn("Logout request failed:", err);
       } finally {
         localStorage.removeItem(ADMIN_KEY);
-        localStorage.removeItem(TOKEN_KEY);
         window.dispatchEvent(new CustomEvent("auth:expired"));
       }
     },
@@ -100,7 +87,6 @@ export const api = {
         return saved ? JSON.parse(saved) : null;
       } catch {
         localStorage.removeItem(ADMIN_KEY);
-        localStorage.removeItem(TOKEN_KEY);
         return null;
       }
     },
