@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
+    "build": "echo 'No build required for API'",
     "init-db": "node src/init-db.js"
   },
   "dependencies": {
