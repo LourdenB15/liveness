@@ -137,6 +137,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal server error" });
 });
 
+async function ensureSchema() {
+  try {
+    await pool.query(`
+      ALTER TABLE admins ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 1;
+    `);
+    console.log("Database schema migrations verified successfully.");
+  } catch (err) {
+    console.warn("Database migration verification warning:", err.message);
+  }
+}
+
 app.listen(PORT, () => {
   console.log(`Liveness Cloud API running on port ${PORT}`);
+  ensureSchema();
 });

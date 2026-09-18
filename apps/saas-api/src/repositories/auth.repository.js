@@ -82,16 +82,55 @@ export async function findAdminById(adminId) {
 }
 
 export async function findAdminTokenVersion(adminId) {
-  const result = await pool.query(
-    "SELECT token_version FROM admins WHERE id = $1",
-    [adminId],
-  );
-  return result.rows[0]?.token_version ?? null;
+  try {
+    const result = await pool.query(
+      "SELECT token_version FROM admins WHERE id = $1",
+      [adminId],
+    );
+    return result.rows[0]?.token_version ?? null;
+  } catch (err) {
+    // Postgres error code 42703: undefined_column (token_version not yet migrated)
+    if (err.code === "42703") {
+      try {
+        await pool.query(
+          "ALTER TABLE admins ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 1;",
+        );
+        const retry = await pool.query(
+          "SELECT token_version FROM admins WHERE id = $1",
+          [adminId],
+        );
+        return retry.rows[0]?.token_version ?? 1;
+      } catch (migrationErr) {
+        console.warn("Auto-migration of token_version failed:", migrationErr.message);
+        // Fall back to version 1 so user authentication is not blocked
+        return 1;
+      }
+    }
+    throw err;
+  }
 }
 
 export async function incrementTokenVersion(adminId) {
-  await pool.query(
-    "UPDATE admins SET token_version = token_version + 1 WHERE id = $1",
-    [adminId],
-  );
+  try {
+    await pool.query(
+      "UPDATE admins SET token_version = token_version + 1 WHERE id = $1",
+      [adminId],
+    );
+  } catch (err) {
+    if (err.code === "42703") {
+      try {
+        await pool.query(
+          "ALTER TABLE admins ADD COLUMN IF NOT EXISTS token_version INT NOT NULL DEFAULT 1;",
+        );
+        await pool.query(
+          "UPDATE admins SET token_version = token_version + 1 WHERE id = $1",
+          [adminId],
+        );
+      } catch (migrationErr) {
+        console.warn("Auto-migration on incrementTokenVersion failed:", migrationErr.message);
+      }
+    } else {
+      throw err;
+    }
+  }
 }
