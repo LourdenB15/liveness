@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { findApiKeyDetails } from "../services/api-key.service.js";
 import { findAdminTokenVersion } from "../repositories/auth.repository.js";
+import { getClearCookieOptions } from "../utils/cookie.js";
 
 const getJwtSecret = () => {
   if (process.env.JWT_SECRET) {
@@ -30,13 +31,8 @@ export const authenticateToken = (req, res, next) => {
   }
 
   jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }, async (err, user) => {
-    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
     if (err) {
-      res.clearCookie("token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: sameSitePolicy,
-      });
+      res.clearCookie("token", getClearCookieOptions());
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
@@ -46,11 +42,7 @@ export const authenticateToken = (req, res, next) => {
         currentVersion === null ||
         (user.tokenVersion !== undefined && user.tokenVersion !== currentVersion)
       ) {
-        res.clearCookie("token", {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: sameSitePolicy,
-        });
+        res.clearCookie("token", getClearCookieOptions());
         return res
           .status(401)
           .json({ error: "Session revoked or expired. Please sign in again." });

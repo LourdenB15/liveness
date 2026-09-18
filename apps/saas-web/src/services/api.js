@@ -150,11 +150,17 @@ export const api = {
   },
 
   system: {
-    getHealth: () => {
-      const healthUrl = API_BASE_URL.endsWith("/api")
-        ? `${API_BASE_URL.slice(0, -4)}/health`
-        : `${API_BASE_URL}/health`;
-      return fetch(healthUrl).then((res) => res.json());
+    getHealth: async () => {
+      try {
+        return await request("/health");
+      } catch {
+        const healthUrl = API_BASE_URL.endsWith("/api")
+          ? `${API_BASE_URL.slice(0, -4)}/health`
+          : `${API_BASE_URL}/health`;
+        const res = await fetch(healthUrl, { credentials: "include" });
+        if (!res.ok) throw new Error("Health check failed");
+        return await res.json();
+      }
     },
   },
 };

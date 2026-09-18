@@ -16,42 +16,61 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(securityHeaders);
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
+const defaultAllowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "https://liveness.cloud",
+  "https://www.liveness.cloud",
+  "https://johnpaulpatigas.github.io",
+];
+
+const envAllowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
       .map((o) => o.trim().replace(/\/+$/, ""))
       .filter(Boolean)
-  : [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:5174",
-    ];
+  : [];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or server-to-server calls)
-      if (!origin) {
-        return callback(null, true);
-      }
-      // Allow localhost origins only during development
-      if (
-        process.env.NODE_ENV !== "production" &&
-        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
-      ) {
-        return callback(null, true);
-      }
-      const normalizedOrigin = origin.replace(/\/+$/, "");
-      if (allowedOrigins.includes(normalizedOrigin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
-  }),
-);
+const allowedOrigins = [
+  ...new Set([...defaultAllowedOrigins, ...envAllowedOrigins]),
+];
+
+function isOriginAllowed(origin) {
+  if (!origin) return true;
+  const normalized = origin.replace(/\/+$/, "");
+  if (allowedOrigins.includes(normalized)) return true;
+  if (
+    process.env.NODE_ENV !== "production" &&
+    /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalized)
+  ) {
+    return true;
+  }
+  // Allow liveness.cloud and any subdomains
+  if (/^https:\/\/([a-zA-Z0-9-]+\.)?liveness\.cloud$/.test(normalized)) {
+    return true;
+  }
+  // Allow github.io pages
+  if (/^https:\/\/([a-zA-Z0-9-]+\.)?github\.io$/.test(normalized)) {
+    return true;
+  }
+  return false;
+}
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 
@@ -91,7 +110,7 @@ async function checkDatabaseHealth() {
   return pendingHealthQuery;
 }
 
-app.get("/health", async (req, res) => {
+app.get(["/health", "/api/health"], async (req, res) => {
   const isConnected = await checkDatabaseHealth();
   if (isConnected) {
     res.json({

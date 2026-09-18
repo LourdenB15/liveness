@@ -1,5 +1,9 @@
 import { z } from "zod";
 import * as authServices from "../services/auth.service.js";
+import {
+  getAuthCookieOptions,
+  getClearCookieOptions,
+} from "../utils/cookie.js";
 
 const passwordComplexitySchema = z
   .string()
@@ -84,15 +88,7 @@ export async function signup(req, res) {
     );
 
     const { token, ...admin } = result;
-    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: sameSitePolicy,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
+    res.cookie("token", token, getAuthCookieOptions());
     res.status(201).json(admin);
   } catch (error) {
     if (error.code === "23505") {
@@ -119,13 +115,7 @@ export async function login(req, res) {
   try {
     const result = await authServices.login(username, password);
     const { token, ...admin } = result;
-    const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: sameSitePolicy,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", token, getAuthCookieOptions());
     res.json(admin);
   } catch (error) {
     console.error("Login error:", error);
@@ -226,12 +216,7 @@ export async function updateProfile(req, res) {
 }
 
 export async function logout(req, res) {
-  const sameSitePolicy = process.env.COOKIE_SAME_SITE || "lax";
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: sameSitePolicy,
-  });
+  res.clearCookie("token", getClearCookieOptions());
   res.status(204).send();
 }
 
