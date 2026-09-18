@@ -15,9 +15,9 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: ALLOWED_ORIGINS
-        sync: false # e.g. https://johnpaulpatigas.github.io
+        sync: false # e.g. https://liveness.cloud
       - key: APP_URL
-        sync: false # e.g. https://johnpaulpatigas.github.io/liveness
+        sync: false # e.g. https://liveness.cloud
       - key: GMAIL_USER
         sync: false
       - key: GMAIL_APP_PASSWORD

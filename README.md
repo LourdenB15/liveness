@@ -2,7 +2,8 @@
 
 JavaScript SDK for browser-based active liveness detection and face verification. It uses MediaPipe Face Mesh and TensorFlow.js (ResNet-34 FaceRecognitionNet) to run verification checks on the client.
 
-> Interactive documentation and API references are at http://localhost:5173/docs.
+> Live platform and console: [https://liveness.cloud](https://liveness.cloud)
+> Local documentation and API references are at `http://localhost:5173/#/docs`.
 
 ## Features
 
