@@ -16,6 +16,7 @@ export function getAuthCookieOptions() {
     sameSite: sameSitePolicy,
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    ...(sameSitePolicy === "none" ? { partitioned: true } : {}),
   };
 }
 
@@ -30,5 +31,6 @@ export function getClearCookieOptions() {
     secure: isSecure,
     sameSite: sameSitePolicy,
     path: "/",
+    ...(sameSitePolicy === "none" ? { partitioned: true } : {}),
   };
 }

@@ -89,7 +89,7 @@ export async function signup(req, res) {
 
     const { token, ...admin } = result;
     res.cookie("token", token, getAuthCookieOptions());
-    res.status(201).json(admin);
+    res.status(201).json({ ...admin, token });
   } catch (error) {
     if (error.code === "23505") {
       if (error.detail.includes("username")) {
@@ -116,7 +116,7 @@ export async function login(req, res) {
     const result = await authServices.login(username, password);
     const { token, ...admin } = result;
     res.cookie("token", token, getAuthCookieOptions());
-    res.json(admin);
+    res.json({ ...admin, token });
   } catch (error) {
     console.error("Login error:", error);
     if (error.status === 401) {

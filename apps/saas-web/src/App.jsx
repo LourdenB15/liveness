@@ -39,11 +39,25 @@ function useCurrentUser() {
 function ProtectedRoute({ children }) {
   const user = useCurrentUser();
   const location = useLocation();
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  useEffect(() => {
+    const handleExpired = () => {
+      setSessionExpired(true);
+    };
+    window.addEventListener("auth:expired", handleExpired);
+    return () => window.removeEventListener("auth:expired", handleExpired);
+  }, []);
+
   if (!user) {
     return (
       <Navigate
         to="/login"
-        state={{ from: location, sessionExpired: true }}
+        state={{
+          from: location,
+          sessionExpired:
+            sessionExpired || Boolean(location.state?.sessionExpired),
+        }}
         replace
       />
     );

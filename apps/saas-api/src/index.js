@@ -50,8 +50,8 @@ function isOriginAllowed(origin) {
   if (/^https:\/\/([a-zA-Z0-9-]+\.)?liveness\.cloud$/.test(normalized)) {
     return true;
   }
-  // Allow github.io pages
-  if (/^https:\/\/([a-zA-Z0-9-]+\.)?github\.io$/.test(normalized)) {
+  // Allow johnpaulpatigas.github.io
+  if (normalized === "https://johnpaulpatigas.github.io") {
     return true;
   }
   return false;
