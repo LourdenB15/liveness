@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Forward to Liveness Cloud API or verify against your database
     const livenessCloudUrl =
-      process.env.LIVENESS_API_URL || "https://api.liveness.dev/api/liveness";
+      process.env.LIVENESS_API_URL || "https://api.liveness.cloud/api/liveness";
     const apiKey = process.env.LIVENESS_API_KEY;
 
     if (apiKey) {

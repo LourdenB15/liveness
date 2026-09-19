@@ -6,7 +6,7 @@ This document provides specifications for the Liveness Cloud REST API.
 
 ## 1. Cloud REST API Specifications
 
-Base URL: `https://<your-domain-or-saas-host>/api/liveness` (e.g. `http://localhost:3000/api/liveness`)
+Base URL: `https://api.liveness.cloud/api/liveness` (production) or `http://localhost:3000/api/liveness` (local dev)
 
 All requests require the `x-api-key` header with a valid API key.
 
