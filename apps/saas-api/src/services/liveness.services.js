@@ -18,7 +18,11 @@ if (sessionPruneInterval.unref) {
   sessionPruneInterval.unref();
 }
 
-export function createSession(adminId, apiKeyId = null, customChallenges = null) {
+export function createSession(
+  adminId,
+  apiKeyId = null,
+  customChallenges = null,
+) {
   const sessionToken = `live_sess_${crypto.randomBytes(24).toString("hex")}`;
   const pool = ["BLINK", "TURN_LEFT", "TURN_RIGHT"];
   const shuffled = [...pool];

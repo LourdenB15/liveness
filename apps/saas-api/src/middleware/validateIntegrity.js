@@ -1,8 +1,5 @@
 import crypto from "crypto";
-import {
-  consumeSession,
-  getSession,
-} from "../services/liveness.services.js";
+import { consumeSession, getSession } from "../services/liveness.services.js";
 
 function generateLegacyHash(descriptor, sessionToken, timestamp) {
   const data = JSON.stringify(descriptor) + sessionToken + timestamp;
@@ -91,7 +88,8 @@ export function validateIntegrity(req, res, next) {
     }
     if (now > serverSession.expiresAt) {
       return res.status(400).json({
-        error: "Verification session has expired. Please request a new session.",
+        error:
+          "Verification session has expired. Please request a new session.",
       });
     }
     if (serverSession.adminId !== req.adminId) {

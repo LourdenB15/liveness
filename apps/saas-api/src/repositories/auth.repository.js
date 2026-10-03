@@ -101,7 +101,10 @@ export async function findAdminTokenVersion(adminId) {
         );
         return retry.rows[0]?.token_version ?? 1;
       } catch (migrationErr) {
-        console.warn("Auto-migration of token_version failed:", migrationErr.message);
+        console.warn(
+          "Auto-migration of token_version failed:",
+          migrationErr.message,
+        );
         // Fall back to version 1 so user authentication is not blocked
         return 1;
       }
@@ -127,7 +130,10 @@ export async function incrementTokenVersion(adminId) {
           [adminId],
         );
       } catch (migrationErr) {
-        console.warn("Auto-migration on incrementTokenVersion failed:", migrationErr.message);
+        console.warn(
+          "Auto-migration on incrementTokenVersion failed:",
+          migrationErr.message,
+        );
       }
     } else {
       throw err;

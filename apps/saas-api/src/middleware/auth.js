@@ -30,33 +30,41 @@ export const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: "Access token required" });
   }
 
-  jwt.verify(token, JWT_SECRET, { algorithms: ["HS256"] }, async (err, user) => {
-    if (err) {
-      res.clearCookie("token", getClearCookieOptions());
-      return res.status(401).json({ error: "Invalid or expired token" });
-    }
-
-    try {
-      const currentVersion = await findAdminTokenVersion(user.id);
-      if (
-        currentVersion === null ||
-        (user.tokenVersion !== undefined && user.tokenVersion !== currentVersion)
-      ) {
+  jwt.verify(
+    token,
+    JWT_SECRET,
+    { algorithms: ["HS256"] },
+    async (err, user) => {
+      if (err) {
         res.clearCookie("token", getClearCookieOptions());
-        return res
-          .status(401)
-          .json({ error: "Session revoked or expired. Please sign in again." });
+        return res.status(401).json({ error: "Invalid or expired token" });
       }
 
-      req.user = user;
-      next();
-    } catch (dbError) {
-      console.error("Token version verification error:", dbError);
-      return res
-        .status(500)
-        .json({ error: "Internal server error during authentication" });
-    }
-  });
+      try {
+        const currentVersion = await findAdminTokenVersion(user.id);
+        if (
+          currentVersion === null ||
+          (user.tokenVersion !== undefined &&
+            user.tokenVersion !== currentVersion)
+        ) {
+          res.clearCookie("token", getClearCookieOptions());
+          return res
+            .status(401)
+            .json({
+              error: "Session revoked or expired. Please sign in again.",
+            });
+        }
+
+        req.user = user;
+        next();
+      } catch (dbError) {
+        console.error("Token version verification error:", dbError);
+        return res
+          .status(500)
+          .json({ error: "Internal server error during authentication" });
+      }
+    },
+  );
 };
 
 export async function authenticateApiKey(req, res, next) {
