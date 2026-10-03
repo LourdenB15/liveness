@@ -71,7 +71,7 @@ export default function Users() {
       {/* Header Banner */}
       <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             User Directory
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
@@ -86,7 +86,7 @@ export default function Users() {
             placeholder="Search identity or ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white py-2 pr-4 pl-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+            className="w-full rounded-[6px] border border-slate-200/80 bg-white py-2 pr-4 pl-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
           />
         </div>
       </div>
@@ -94,7 +94,7 @@ export default function Users() {
       {/* Directory Table */}
       {loading ? (
         <SkeletonTheme baseColor="#e2e8f0" highlightColor="#f8fafc">
-          <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
+          <div className="overflow-hidden rounded-[10px] border border-slate-200/80 bg-white p-4 shadow-xs">
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
@@ -116,11 +116,11 @@ export default function Users() {
           </div>
         </SkeletonTheme>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div className="overflow-hidden rounded-[10px] border border-slate-200/80 bg-white shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[600px] text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                <tr className="border-b border-slate-100 bg-slate-50/60 font-mono text-[10px] font-bold tracking-wider text-slate-500 uppercase">
                   <th className="px-6 py-3.5">Enrolled Subject</th>
                   <th className="px-6 py-3.5">Identity ID</th>
                   <th className="px-6 py-3.5">Origin API Key</th>
@@ -136,14 +136,14 @@ export default function Users() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white shadow-xs">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] bg-[#2f5bf5] text-xs font-bold text-white shadow-2xs">
                           {user.name.charAt(0)}
                         </div>
                         <div className="ml-3.5">
-                          <span className="block text-xs font-bold text-slate-900 transition-colors group-hover:text-blue-600 sm:text-sm">
+                          <span className="block text-xs font-bold text-slate-900 transition-colors group-hover:text-[#2f5bf5] sm:text-sm">
                             {user.name}
                           </span>
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 uppercase">
+                          <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-emerald-600 uppercase">
                             <ShieldCheck className="h-3 w-3" />
                             Verified
                           </span>
@@ -151,7 +151,7 @@ export default function Users() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex w-fit items-center gap-2 rounded-md border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs font-bold text-slate-600">
+                      <div className="flex w-fit items-center gap-2 rounded-[4px] border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs font-bold text-slate-600">
                         <Fingerprint className="h-3.5 w-3.5 text-slate-400" />
                         {user.id}
                       </div>
@@ -194,7 +194,7 @@ export default function Users() {
                           setDeleteTarget(user);
                           setConfirmInput("");
                         }}
-                        className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                        className="cursor-pointer rounded-[4px] p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                         title="Delete identity"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -232,27 +232,27 @@ export default function Users() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="delete-identity-modal-title"
-              className="animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-rose-100 bg-white shadow-2xl duration-200"
+              className="animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-[10px] border border-rose-100 bg-white shadow-2xl duration-200"
             >
               {/* Prominent Red Accent Top Banner */}
-              <div className="h-1.5 w-full bg-linear-to-r from-rose-500 via-red-500 to-rose-600" />
+              <div className="h-1 w-full bg-linear-to-r from-rose-500 via-red-500 to-rose-600" />
 
               <div className="p-6">
                 {/* Modal Header */}
                 <div className="mb-5 flex items-start justify-between">
                   <div className="flex items-center gap-3.5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-rose-200/80 bg-rose-50 text-rose-600 shadow-xs">
-                      <AlertTriangle className="h-6 w-6" />
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[8px] border border-rose-200/80 bg-rose-50 text-rose-600 shadow-xs">
+                      <AlertTriangle className="h-5 w-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <h2
                           id="delete-identity-modal-title"
-                          className="text-base font-black tracking-tight text-slate-900"
+                          className="font-heading text-base font-bold tracking-tight text-slate-900"
                         >
                           Delete Identity Profile
                         </h2>
-                        <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-black text-rose-700 uppercase">
+                        <span className="rounded-[4px] bg-rose-100 px-2 py-0.5 font-mono text-[9px] font-bold text-rose-700 uppercase">
                           Destructive
                         </span>
                       </div>
@@ -264,7 +264,7 @@ export default function Users() {
                   <button
                     type="button"
                     onClick={closeDeleteModal}
-                    className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-xl bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
+                    className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-[6px] bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
                     aria-label="Close modal"
                   >
                     <X className="h-4 w-4" />
@@ -272,10 +272,10 @@ export default function Users() {
                 </div>
 
                 <form onSubmit={confirmDelete} className="flex flex-col gap-4">
-                  <div className="space-y-1.5 rounded-xl border border-rose-200/60 bg-rose-50/70 p-4 text-xs">
-                    <p className="leading-relaxed font-bold text-slate-800">
+                  <div className="space-y-1.5 rounded-[6px] border border-rose-200/60 bg-rose-50/70 p-3.5 text-xs">
+                    <p className="leading-relaxed font-medium text-slate-800">
                       You are about to delete enrolled biometric identity for{" "}
-                      <span className="font-black text-slate-950 underline decoration-rose-400 decoration-2">
+                      <span className="font-bold text-slate-950 underline decoration-rose-400 decoration-2">
                         {deleteTarget.name}
                       </span>
                       .
@@ -283,7 +283,7 @@ export default function Users() {
                     <p className="font-mono text-[11px] text-slate-500">
                       Identity ID: {deleteTarget.id}
                     </p>
-                    <div className="flex items-center gap-1.5 pt-1 text-[11px] font-extrabold text-rose-600">
+                    <div className="flex items-center gap-1.5 pt-1 text-[11px] font-bold text-rose-600">
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                       This action cannot be undone or reverted.
                     </div>
@@ -292,10 +292,10 @@ export default function Users() {
                   <div>
                     <label
                       htmlFor="delete-identity-input"
-                      className="mb-2 block text-xs font-extrabold text-slate-700"
+                      className="mb-2 block text-xs font-semibold text-slate-700"
                     >
                       To confirm, type{" "}
-                      <span className="rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 font-mono font-bold text-slate-900 select-all">
+                      <span className="rounded-[4px] border border-slate-200 bg-slate-100 px-2 py-0.5 font-mono font-bold text-slate-900 select-all">
                         {deleteTarget.name}
                       </span>{" "}
                       below:
@@ -307,7 +307,7 @@ export default function Users() {
                         value={confirmInput}
                         onChange={(e) => setConfirmInput(e.target.value)}
                         placeholder={`Type "${deleteTarget.name}" to verify`}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-rose-500 focus:bg-white focus:ring-4 focus:ring-rose-500/10 focus:outline-none"
+                        className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 font-mono text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-rose-500 focus:bg-white focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                         autoFocus
                       />
                       {confirmInput === deleteTarget.name && (
@@ -320,14 +320,14 @@ export default function Users() {
                     <button
                       type="button"
                       onClick={closeDeleteModal}
-                      className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-extrabold text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
+                      className="cursor-pointer rounded-[6px] border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={confirmInput !== deleteTarget.name}
-                      className={`rounded-xl px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors ${
+                      className={`rounded-[6px] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors ${
                         confirmInput === deleteTarget.name
                           ? "cursor-pointer bg-rose-600 hover:bg-rose-700"
                           : "cursor-not-allowed bg-slate-300 opacity-60 shadow-none"

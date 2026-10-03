@@ -43,21 +43,21 @@ export default function Sidebar({
         className={`flex-1 overflow-y-auto py-5 ${isCollapsed ? "px-2" : "px-4"}`}
       >
         {/* Mobile Header Brand & Close Button (Mobile Drawer Only) */}
-        <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-4 md:hidden">
+        <div className="mb-4 flex items-center justify-between border-b border-slate-200/80 pb-4 md:hidden">
           <Link
             to="/dashboard"
             onClick={() => setMobileMenuOpen(false)}
             className="group flex items-center gap-2"
           >
-            <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600" />
-            <span className="text-lg font-extrabold tracking-tight text-slate-900">
+            <ShieldCheck className="h-6 w-6 shrink-0 text-blue-600" />
+            <span className="font-display text-base font-semibold tracking-tight text-slate-900">
               Liveness
-              <span className="ml-0.5 font-light text-blue-600">Cloud</span>
+              <span className="ml-0.5 text-blue-600">Cloud</span>
             </span>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800"
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -65,18 +65,18 @@ export default function Sidebar({
         </div>
 
         {/* Mobile User Profile Card (Mobile Drawer Only) */}
-        <div className="mb-6 rounded-2xl border border-blue-100 bg-linear-to-r from-blue-50/80 to-indigo-50/50 p-4 shadow-xs md:hidden">
+        <div className="mb-6 rounded-[8px] border border-slate-200/80 bg-[#fafbfc] p-3.5 shadow-2xs md:hidden">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-black text-white shadow-md shadow-blue-500/20">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-blue-600 font-mono text-xs font-bold text-white shadow-xs">
               {initials}
             </div>
             <div className="flex min-w-0 flex-col overflow-hidden text-left">
               <div className="flex items-center gap-2">
-                <span className="truncate text-sm font-extrabold text-slate-900">
+                <span className="truncate text-xs font-bold text-slate-900">
                   {fullName}
                 </span>
               </div>
-              <span className="truncate text-[11px] font-medium text-slate-500">
+              <span className="truncate font-mono text-[10px] font-medium text-slate-500">
                 {user?.email || "admin@liveness.cloud"}
               </span>
             </div>
@@ -94,17 +94,17 @@ export default function Sidebar({
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     title={isCollapsed ? item.label : undefined}
-                    className={`group relative flex cursor-pointer items-center rounded-xl py-2.5 text-xs font-bold transition-colors duration-150 sm:text-sm ${
-                      isCollapsed ? "justify-center px-0" : "px-3.5"
+                    className={`group relative flex cursor-pointer items-center rounded-[6px] py-2 text-xs font-medium transition-colors duration-150 sm:text-xs ${
+                      isCollapsed ? "justify-center px-0" : "px-3"
                     } ${
                       isActive
-                        ? "bg-blue-50/80 font-extrabold text-blue-600"
-                        : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                        ? "border border-blue-200/60 bg-blue-50/70 font-semibold text-blue-700"
+                        : "border border-transparent text-slate-600 hover:border-slate-200/60 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     <item.icon
-                      className={`h-4.5 w-4.5 shrink-0 ${
-                        isCollapsed ? "" : "mr-3"
+                      className={`h-4 w-4 shrink-0 ${
+                        isCollapsed ? "" : "mr-2.5"
                       } ${
                         isActive
                           ? "text-blue-600"
@@ -125,7 +125,7 @@ export default function Sidebar({
 
         {/* Account Management (Mobile Drawer Only) */}
         <div className="md:hidden">
-          <div className="mb-2 px-2 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+          <div className="mb-2 px-2 font-mono text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
             Account Management
           </div>
           <ul className="space-y-1">
@@ -133,22 +133,22 @@ export default function Sidebar({
               <Link
                 to="/settings"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center rounded-xl px-3.5 py-2.5 text-xs font-bold transition-colors duration-150 sm:text-sm ${
+                className={`flex items-center rounded-[6px] px-3 py-2 text-xs font-medium transition-colors duration-150 ${
                   location.pathname === "/settings"
-                    ? "bg-blue-50/80 font-extrabold text-blue-600"
-                    : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                    ? "border border-blue-200/60 bg-blue-50/70 font-semibold text-blue-700"
+                    : "border border-transparent text-slate-600 hover:border-slate-200/60 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
-                <SettingsIcon className="mr-3 h-4.5 w-4.5 shrink-0 text-slate-400" />
+                <SettingsIcon className="mr-2.5 h-4 w-4 shrink-0 text-slate-400" />
                 Account Settings
               </Link>
             </li>
             <li>
               <button
                 onClick={handleLogout}
-                className="flex w-full cursor-pointer items-center rounded-xl px-3.5 py-2.5 text-xs font-bold text-rose-600 transition-colors hover:bg-rose-50 sm:text-sm"
+                className="flex w-full cursor-pointer items-center rounded-[6px] px-3 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
               >
-                <LogOut className="mr-3 h-4.5 w-4.5 shrink-0 text-rose-500" />
+                <LogOut className="mr-2.5 h-4 w-4 shrink-0 text-rose-500" />
                 Sign Out
               </button>
             </li>
@@ -171,7 +171,7 @@ export default function Sidebar({
       {/* Mobile Drawer Panel (Smooth Slide-In) */}
       <aside
         aria-label="Mobile navigation"
-        className={`fixed inset-y-0 right-0 z-50 flex w-72 max-w-[80vw] flex-col justify-between border-l border-slate-100 bg-white shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-72 max-w-[80vw] flex-col justify-between border-l border-slate-200/80 bg-white shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -181,23 +181,23 @@ export default function Sidebar({
       {/* Desktop Sidebar (Smooth Hardware-Accelerated Collapse) */}
       <aside
         aria-label="Sidebar navigation"
-        className={`relative z-10 hidden h-screen shrink-0 flex-col justify-between overflow-hidden border-r border-slate-100 bg-white shadow-[1px_0_10px_rgba(0,0,0,0.02)] transition-[width] duration-300 ease-in-out md:flex ${
-          sidebarCollapsed ? "w-20" : "w-64"
+        className={`relative z-10 hidden h-screen shrink-0 flex-col justify-between overflow-hidden border-r border-slate-200/80 bg-[#fafbfc] transition-[width] duration-300 ease-in-out md:flex ${
+          sidebarCollapsed ? "w-16" : "w-60"
         }`}
       >
         {/* Desktop Sidebar Header */}
         <div
-          className={`flex h-16 shrink-0 items-center border-b border-slate-100 md:h-20 ${sidebarCollapsed ? "justify-center px-2" : "justify-between px-6"}`}
+          className={`flex h-16 shrink-0 items-center border-b border-slate-200/80 md:h-18 ${sidebarCollapsed ? "justify-center px-2" : "justify-between px-5"}`}
         >
           {!sidebarCollapsed && (
             <Link
               to="/dashboard"
               className="group flex items-center gap-2 truncate"
             >
-              <ShieldCheck className="h-7 w-7 shrink-0 text-blue-600" />
-              <span className="truncate text-sm font-extrabold tracking-tight text-slate-900">
+              <ShieldCheck className="h-6 w-6 shrink-0 text-blue-600" />
+              <span className="font-display truncate text-sm font-semibold tracking-tight text-slate-900">
                 Liveness
-                <span className="ml-0.5 font-light text-blue-600">Cloud</span>
+                <span className="ml-0.5 text-blue-600">Cloud</span>
               </span>
             </Link>
           )}
@@ -206,17 +206,17 @@ export default function Sidebar({
             {!sidebarCollapsed && (
               <button
                 onClick={() => setSearchModalOpen(true)}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-blue-600"
                 title="Search Platform (Ctrl+K)"
                 aria-label="Search Platform (Ctrl+K)"
               >
-                <Search className="h-4 w-4" />
+                <Search className="h-3.5 w-3.5" />
               </button>
             )}
 
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-slate-900"
               title={
                 sidebarCollapsed
                   ? "Expand Sidebar (Ctrl+B)"
@@ -230,9 +230,9 @@ export default function Sidebar({
               aria-expanded={!sidebarCollapsed}
             >
               {sidebarCollapsed ? (
-                <PanelLeftOpen className="h-4.5 w-4.5 text-blue-600" />
+                <PanelLeftOpen className="h-4 w-4 text-blue-600" />
               ) : (
-                <PanelLeftClose className="h-4.5 w-4.5 text-slate-400" />
+                <PanelLeftClose className="h-4 w-4 text-slate-400" />
               )}
             </button>
           </div>

@@ -8,7 +8,7 @@ export default function TermsOfService() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-[#fafbfc] font-sans text-slate-900 antialiased selection:bg-[#2f5bf5]/15 selection:text-[#2f5bf5]">
       <Navbar />
 
       <main
@@ -18,30 +18,30 @@ export default function TermsOfService() {
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition-colors hover:text-blue-600 sm:text-sm"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-[#2f5bf5] sm:text-sm"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to home
           </Link>
         </div>
 
-        <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-10 md:p-12">
+        <article className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-10 md:p-12">
           <div className="border-b border-slate-100 pb-6 sm:pb-8">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-blue-100 bg-blue-50/80 px-2.5 py-1 text-xs font-semibold text-blue-700">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-[4px] border border-[#2f5bf5]/20 bg-[#2f5bf5]/10 px-2.5 py-1 text-xs font-semibold text-[#2f5bf5]">
               <FileText className="h-3.5 w-3.5" />
               Legal
             </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
               Terms of service
             </h1>
-            <p className="mt-2 text-xs text-slate-500 sm:text-sm">
+            <p className="mt-2 font-mono text-xs text-slate-500 sm:text-sm">
               Last updated: September 16, 2026
             </p>
           </div>
 
           <div className="mt-8 space-y-8 text-sm leading-relaxed text-slate-600 sm:text-base">
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 1. Agreement to terms
               </h2>
               <p>
@@ -54,7 +54,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 2. Description of service
               </h2>
               <p>
@@ -66,7 +66,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 3. Accounts and credentials
               </h2>
               <p>
@@ -79,7 +79,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 4. Acceptable use
               </h2>
               <p>
@@ -107,7 +107,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 5. User consent and privacy compliance
               </h2>
               <p>
@@ -120,7 +120,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 6. Open-source components and platform ownership
               </h2>
               <p>
@@ -132,7 +132,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 7. Service availability
               </h2>
               <p>
@@ -145,7 +145,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 8. Limitation of liability
               </h2>
               <p>
@@ -158,7 +158,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 9. Termination
               </h2>
               <p>
@@ -170,7 +170,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 10. Changes to terms
               </h2>
               <p>
@@ -182,11 +182,11 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-bold text-slate-900 sm:text-xl">
+              <h2 className="font-heading mb-3 text-lg font-bold text-slate-900 sm:text-xl">
                 11. Contact
               </h2>
               <p>If you have questions about these terms, contact us at:</p>
-              <div className="mt-3 rounded-xl border border-slate-100 bg-slate-50 p-4 font-mono text-xs text-slate-700 sm:text-sm">
+              <div className="mt-3 rounded-[6px] border border-slate-200 bg-[#fafbfc] p-4 font-mono text-xs text-slate-700 sm:text-sm">
                 support@liveness.cloud
               </div>
             </section>

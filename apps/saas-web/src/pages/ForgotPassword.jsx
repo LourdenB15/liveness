@@ -74,13 +74,13 @@ export default function ForgotPassword({ modal = false }) {
       {/* Header */}
       <div className="mb-7 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-md shadow-blue-200">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#2f5bf5] shadow-xs">
             <KeyRound className="h-5 w-5 text-white" />
           </div>
           <div>
             <h2
               id="forgot-modal-title"
-              className="text-xl font-extrabold tracking-tight text-slate-900"
+              className="font-heading text-xl font-bold tracking-tight text-slate-900"
             >
               Forgot Password
             </h2>
@@ -93,7 +93,7 @@ export default function ForgotPassword({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="cursor-pointer rounded-[6px] p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -103,11 +103,11 @@ export default function ForgotPassword({ modal = false }) {
 
       {successMessage ? (
         <div role="status" className="space-y-6 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[10px] bg-emerald-50 text-emerald-600">
             <CheckCircle2 className="h-7 w-7" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="font-heading text-base font-bold text-slate-900">
               Check your inbox
             </h3>
             <p className="text-xs leading-relaxed font-medium text-slate-500">
@@ -117,7 +117,7 @@ export default function ForgotPassword({ modal = false }) {
           <Link
             to="/login"
             state={modal ? location.state : undefined}
-            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-slate-800"
+            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-[#181a20] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#181a20]/90"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Sign In
@@ -129,7 +129,7 @@ export default function ForgotPassword({ modal = false }) {
           {!hasFieldErrors && error && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3.5 text-xs text-red-700 shadow-2xs"
+              className="flex items-start gap-2.5 rounded-[6px] border border-red-200 bg-red-50/80 p-3 text-xs text-red-700"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
               <div>
@@ -144,7 +144,7 @@ export default function ForgotPassword({ modal = false }) {
           <div>
             <label
               htmlFor="email"
-              className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               Email Address
             </label>
@@ -169,10 +169,10 @@ export default function ForgotPassword({ modal = false }) {
                   setEmail(e.target.value);
                   if (fieldErrors.email) setFieldErrors({});
                 }}
-                className={`block w-full rounded-lg border py-2.5 pr-9 pl-9 text-sm font-medium transition-all ${
+                className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                   fieldErrors.email
-                    ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none"
-                    : "border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                    ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
+                    : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
                 }`}
                 placeholder="admin@example.com"
               />
@@ -196,7 +196,7 @@ export default function ForgotPassword({ modal = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
+            className="flex w-full cursor-pointer justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
           >
             {loading ? "Sending link..." : "Send reset link"}
           </button>
@@ -205,7 +205,7 @@ export default function ForgotPassword({ modal = false }) {
             <Link
               to="/login"
               state={modal ? location.state : undefined}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 transition-colors hover:text-slate-800"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition-colors hover:text-slate-800"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Back to Login
@@ -229,7 +229,7 @@ export default function ForgotPassword({ modal = false }) {
           aria-labelledby="forgot-modal-title"
           className="animate-in zoom-in-95 relative w-full max-w-md duration-200"
         >
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl sm:p-7">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl sm:p-7">
             {formContent}
           </div>
         </div>
@@ -239,7 +239,7 @@ export default function ForgotPassword({ modal = false }) {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl shadow-slate-200 sm:p-7">
+      <div className="w-full max-w-md rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
         {formContent}
       </div>
     </AuthLayout>

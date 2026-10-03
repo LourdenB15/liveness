@@ -91,13 +91,13 @@ export default function ResetPassword({ modal = false }) {
       {/* Header */}
       <div className="mb-7 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-200">
-            <Lock className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#2f5bf5] shadow-xs">
+            <Lock className="h-5 w-5 text-white" />
           </div>
           <div>
             <h2
               id="reset-modal-title"
-              className="text-xl font-black tracking-tight text-slate-900"
+              className="font-heading text-xl font-bold tracking-tight text-slate-900"
             >
               Reset Password
             </h2>
@@ -110,7 +110,7 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-xl p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="cursor-pointer rounded-[6px] p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -119,21 +119,21 @@ export default function ResetPassword({ modal = false }) {
       </div>
 
       {/* Expiry notice */}
-      <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
+      <div className="mb-5 flex items-center gap-2.5 rounded-[6px] border border-amber-200/80 bg-amber-50/80 px-4 py-3">
         <Clock className="h-4 w-4 shrink-0 text-amber-500" />
         <p className="text-xs font-semibold text-amber-700">
-          This link expires in <span className="font-black">30 minutes</span>.
+          This link expires in <span className="font-bold">30 minutes</span>.
           Please complete the reset promptly.
         </p>
       </div>
 
       {success ? (
         <div role="status" className="space-y-6 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-            <CheckCircle2 className="h-8 w-8" />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[10px] bg-emerald-50 text-emerald-600">
+            <CheckCircle2 className="h-7 w-7" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="font-heading text-base font-bold text-slate-900">
               Password Reset Complete
             </h3>
             <p className="text-xs leading-relaxed font-medium text-slate-500">
@@ -144,17 +144,17 @@ export default function ResetPassword({ modal = false }) {
           <Link
             to="/login"
             state={modal ? location.state : undefined}
-            className="inline-flex w-full cursor-pointer items-center justify-center rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-black text-white shadow-lg shadow-blue-200 transition-all hover:bg-blue-700"
+            className="inline-flex w-full cursor-pointer items-center justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#204be8]"
           >
             Sign in with New Password
           </Link>
         </div>
       ) : (
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {error && (
             <div
               role="alert"
-              className="animate-shake rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600"
+              className="rounded-[6px] border border-red-200 bg-red-50/80 px-4 py-3 text-xs font-semibold text-red-600"
             >
               {error}
             </div>
@@ -163,12 +163,12 @@ export default function ResetPassword({ modal = false }) {
           <div>
             <label
               htmlFor="newPassword"
-              className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               New Password
             </label>
             <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                 <Lock className="h-4 w-4 text-slate-400" />
               </div>
               <input
@@ -180,7 +180,7 @@ export default function ResetPassword({ modal = false }) {
                 value={newPassword}
                 aria-invalid={Boolean(error)}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                className="block w-full rounded-[6px] border border-slate-200 bg-white py-2 pr-4 pl-9 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
@@ -189,12 +189,12 @@ export default function ResetPassword({ modal = false }) {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               Confirm New Password
             </label>
             <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                 <Lock className="h-4 w-4 text-slate-400" />
               </div>
               <input
@@ -205,7 +205,7 @@ export default function ResetPassword({ modal = false }) {
                 value={confirmPassword}
                 aria-invalid={Boolean(error)}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-3 pr-4 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                className="block w-full rounded-[6px] border border-slate-200 bg-white py-2 pr-4 pl-9 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
@@ -214,7 +214,7 @@ export default function ResetPassword({ modal = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
+            className="flex w-full cursor-pointer justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
           >
             {loading ? "Updating password..." : "Reset password"}
           </button>
@@ -227,7 +227,7 @@ export default function ResetPassword({ modal = false }) {
     return (
       <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center p-4 duration-200">
         <div
-          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs"
           onClick={handleClose}
         />
         <div
@@ -236,7 +236,7 @@ export default function ResetPassword({ modal = false }) {
           aria-labelledby="reset-modal-title"
           className="animate-in zoom-in-95 relative w-full max-w-md duration-200"
         >
-          <div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-2xl">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl sm:p-7">
             {formContent}
           </div>
         </div>
@@ -246,7 +246,7 @@ export default function ResetPassword({ modal = false }) {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-7 shadow-2xl shadow-slate-200">
+      <div className="w-full max-w-md rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
         {formContent}
       </div>
     </AuthLayout>

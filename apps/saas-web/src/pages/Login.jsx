@@ -86,13 +86,13 @@ export default function Login({ modal = false }) {
       {/* Header */}
       <div className="mb-7 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-md shadow-blue-200">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#2f5bf5] shadow-xs">
             <ShieldCheck className="h-5 w-5 text-white" />
           </div>
           <div>
             <h2
               id="login-modal-title"
-              className="text-xl font-extrabold tracking-tight text-slate-900"
+              className="font-heading text-xl font-bold tracking-tight text-slate-900"
             >
               Welcome Back
             </h2>
@@ -105,7 +105,7 @@ export default function Login({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="cursor-pointer rounded-[6px] p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -118,7 +118,7 @@ export default function Login({ modal = false }) {
         {!hasFieldErrors && error && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3.5 text-xs text-red-700 shadow-2xs"
+            className="flex items-start gap-2.5 rounded-[6px] border border-red-200 bg-red-50/80 p-3 text-xs text-red-700"
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div>
@@ -133,7 +133,7 @@ export default function Login({ modal = false }) {
         <div>
           <label
             htmlFor="username"
-            className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+            className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
           >
             Username
           </label>
@@ -161,10 +161,10 @@ export default function Login({ modal = false }) {
                 if (fieldErrors.username)
                   setFieldErrors((prev) => ({ ...prev, username: null }));
               }}
-              className={`block w-full rounded-lg border py-2.5 pr-9 pl-9 text-sm font-medium transition-all ${
+              className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                 fieldErrors.username
-                  ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none"
-                  : "border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                  ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
+                  : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
               }`}
               placeholder="johndoe"
             />
@@ -188,7 +188,7 @@ export default function Login({ modal = false }) {
         <div>
           <label
             htmlFor="password"
-            className="mb-1.5 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+            className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
           >
             Password
           </label>
@@ -215,10 +215,10 @@ export default function Login({ modal = false }) {
                 if (fieldErrors.password)
                   setFieldErrors((prev) => ({ ...prev, password: null }));
               }}
-              className={`block w-full rounded-lg border py-2.5 pr-9 pl-9 text-sm font-medium transition-all ${
+              className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                 fieldErrors.password
-                  ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none"
-                  : "border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                  ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
+                  : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
               }`}
               placeholder="••••••••"
             />
@@ -248,7 +248,7 @@ export default function Login({ modal = false }) {
             <Link
               to="/forgot-password"
               state={modal ? location.state : undefined}
-              className="text-xs font-bold text-blue-600 transition-colors hover:text-blue-700"
+              className="text-xs font-semibold text-[#2f5bf5] transition-colors hover:text-[#204be8]"
             >
               Forgot password?
             </Link>
@@ -258,7 +258,7 @@ export default function Login({ modal = false }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
+          className="flex w-full cursor-pointer justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
@@ -276,7 +276,7 @@ export default function Login({ modal = false }) {
           <Link
             to="/signup"
             state={modal ? location.state : undefined}
-            className="text-sm font-bold text-blue-600 transition-colors hover:text-blue-700"
+            className="text-sm font-semibold text-[#2f5bf5] transition-colors hover:text-[#204be8]"
           >
             Create your account today &rarr;
           </Link>
@@ -300,7 +300,7 @@ export default function Login({ modal = false }) {
           aria-labelledby="login-modal-title"
           className="animate-in zoom-in-95 relative w-full max-w-md duration-200"
         >
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl sm:p-7">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl sm:p-7">
             {formContent}
           </div>
         </div>
@@ -311,7 +311,7 @@ export default function Login({ modal = false }) {
   // Standalone full-page fallback (direct URL access)
   return (
     <AuthLayout>
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl shadow-slate-200 sm:p-7">
+      <div className="w-full max-w-md rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
         {formContent}
       </div>
     </AuthLayout>

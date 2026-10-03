@@ -34,9 +34,9 @@ const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
   <li>
     <button
       onClick={() => onClick(id)}
-      className={`group flex w-full cursor-pointer items-center rounded-xl px-3.5 py-2.5 text-left text-xs font-bold transition-all duration-150 sm:text-sm ${
+      className={`group flex w-full cursor-pointer items-center rounded-[6px] px-3.5 py-2 text-left text-xs font-semibold transition-all duration-150 sm:text-sm ${
         activeId === id
-          ? "bg-blue-50/80 font-extrabold text-blue-600"
+          ? "bg-blue-50/80 font-bold text-[#2f5bf5]"
           : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
       }`}
     >
@@ -44,7 +44,7 @@ const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
         <Icon
           className={`mr-3 h-4.5 w-4.5 shrink-0 ${
             activeId === id
-              ? "text-blue-600"
+              ? "text-[#2f5bf5]"
               : "text-slate-400 group-hover:text-slate-600"
           }`}
         />
@@ -88,9 +88,9 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
   };
 
   return (
-    <div className="relative my-6 overflow-hidden rounded-2xl border border-slate-800/90 bg-[#0c1222] shadow-md shadow-black/20">
+    <div className="relative my-6 overflow-hidden rounded-[10px] border border-slate-800/90 bg-[#181a20] shadow-md shadow-black/20">
       {/* Codeblock Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 bg-[#0f172a]/95 px-4 py-2.5 backdrop-blur-xs">
+      <div className="flex items-center justify-between border-b border-slate-800/80 bg-[#14151b] px-4 py-2.5 backdrop-blur-xs">
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate font-mono text-xs font-semibold text-slate-300">
             {title || language}
@@ -101,7 +101,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
           <button
             type="button"
             onClick={handleCopy}
-            className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
+            className="flex cursor-pointer items-center gap-1.5 rounded-[6px] border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
             title="Copy code to clipboard"
           >
             {copied ? (
@@ -116,7 +116,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
               </>
             )}
           </button>
-          <span className="shrink-0 rounded-md bg-slate-800/80 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+          <span className="shrink-0 rounded-[4px] bg-slate-800/80 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
             {language}
           </span>
         </div>
@@ -126,7 +126,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
       <div className="flex overflow-hidden">
         {showLineNumbers && (
           <div
-            className="select-none py-4 pl-4 pr-3 text-right font-mono text-xs text-slate-600 border-r border-slate-800/60 shrink-0"
+            className="shrink-0 border-r border-slate-800/60 py-4 pr-3 pl-4 text-right font-mono text-xs text-slate-600 select-none"
             aria-hidden="true"
           >
             {lines.map((_, i) => (
@@ -150,23 +150,26 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
 
 const IntroContent = () => (
   <div>
-    <div className="mb-6 inline-flex items-center rounded-md border border-blue-100 bg-blue-50/80 px-2.5 py-1 text-xs font-semibold text-blue-700">
+    <div className="mb-6 inline-flex items-center rounded-[4px] border border-blue-100 bg-blue-50/80 px-2.5 py-1 font-mono text-xs font-semibold text-[#2f5bf5]">
       <Book className="mr-2 h-3.5 w-3.5" /> Documentation v1.0.0
     </div>
-    <h1 className="mb-4 text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
+    <h1 className="font-heading mb-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
       Liveness SDK and cloud platform
     </h1>
     <p className="mb-8 text-base leading-relaxed text-slate-600 sm:text-xl">
-      Client-side active liveness verification and backend biometric identity matching.
+      Client-side active liveness verification and backend biometric identity
+      matching.
     </p>
 
     <div className="mb-10 grid gap-6 md:grid-cols-2">
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8">
-        <h3 className="mb-3 flex items-center text-lg font-bold sm:text-xl text-slate-900">
-          <Terminal className="mr-2 h-5 w-5 text-blue-600" /> Client-side engine
+      <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 sm:p-8">
+        <h3 className="font-heading mb-3 flex items-center text-lg font-bold text-slate-900 sm:text-xl">
+          <Terminal className="mr-2 h-5 w-5 text-[#2f5bf5]" /> Client-side
+          engine
         </h3>
         <p className="mb-6 text-sm leading-relaxed text-slate-600">
-          Runs landmark tracking and vector extraction directly in the browser via WebAssembly and WebGL. Camera frames stay on the user device.
+          Runs landmark tracking and vector extraction directly in the browser
+          via WebAssembly and WebGL. Camera frames stay on the user device.
         </p>
         <ul className="space-y-3 text-sm text-slate-600">
           <li className="flex items-center">
@@ -184,12 +187,14 @@ const IntroContent = () => (
         </ul>
       </div>
 
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8">
-        <h3 className="mb-3 flex items-center text-lg font-bold sm:text-xl text-slate-900">
-          <Cloud className="mr-2 h-5 w-5 text-blue-600" /> Cloud verification API
+      <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 sm:p-8">
+        <h3 className="font-heading mb-3 flex items-center text-lg font-bold text-slate-900 sm:text-xl">
+          <Cloud className="mr-2 h-5 w-5 text-[#2f5bf5]" /> Cloud verification
+          API
         </h3>
         <p className="mb-6 text-sm leading-relaxed text-slate-600">
-          Manages ephemeral sessions, stores identity profiles, matches biometric vectors, and records verification audit events.
+          Manages ephemeral sessions, stores identity profiles, matches
+          biometric vectors, and records verification audit events.
         </p>
         <ul className="space-y-3 text-sm text-slate-600">
           <li className="flex items-center">
@@ -208,37 +213,49 @@ const IntroContent = () => (
       </div>
     </div>
 
-    <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-6 sm:p-8">
-      <h3 className="mb-4 text-base font-bold text-slate-900 sm:text-lg">
+    <div className="rounded-[10px] border border-slate-200/80 bg-slate-50/70 p-6 sm:p-8">
+      <h3 className="font-heading mb-4 text-base font-bold text-slate-900 sm:text-lg">
         Verification workflow
       </h3>
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-xl border border-slate-200/70 bg-white p-4">
-          <span className="text-xs font-black text-blue-600">01</span>
-          <h4 className="mt-1 text-sm font-bold text-slate-900">Session init</h4>
+        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+          <span className="font-mono text-xs font-bold text-[#2f5bf5]">01</span>
+          <h4 className="mt-1 text-sm font-bold text-slate-900">
+            Session init
+          </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Backend requests an ephemeral token and random challenge order from the Cloud API.
+            Backend requests an ephemeral token and random challenge order from
+            the Cloud API.
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/70 bg-white p-4">
-          <span className="text-xs font-black text-blue-600">02</span>
-          <h4 className="mt-1 text-sm font-bold text-slate-900">Active checks</h4>
+        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+          <span className="font-mono text-xs font-bold text-[#2f5bf5]">02</span>
+          <h4 className="mt-1 text-sm font-bold text-slate-900">
+            Active checks
+          </h4>
           <p className="mt-1 text-xs text-slate-500">
-            SDK guides the user through blinks and head turns in front of their webcam.
+            SDK guides the user through blinks and head turns in front of their
+            webcam.
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/70 bg-white p-4">
-          <span className="text-xs font-black text-blue-600">03</span>
-          <h4 className="mt-1 text-sm font-bold text-slate-900">Feature vector</h4>
+        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+          <span className="font-mono text-xs font-bold text-[#2f5bf5]">03</span>
+          <h4 className="mt-1 text-sm font-bold text-slate-900">
+            Feature vector
+          </h4>
           <p className="mt-1 text-xs text-slate-500">
-            ResNet-34 extracts a 128-d numerical descriptor directly in WebAssembly.
+            ResNet-34 extracts a 128-d numerical descriptor directly in
+            WebAssembly.
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/70 bg-white p-4">
-          <span className="text-xs font-black text-blue-600">04</span>
-          <h4 className="mt-1 text-sm font-bold text-slate-900">Verification</h4>
+        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+          <span className="font-mono text-xs font-bold text-[#2f5bf5]">04</span>
+          <h4 className="mt-1 text-sm font-bold text-slate-900">
+            Verification
+          </h4>
           <p className="mt-1 text-xs text-slate-500">
-            Backend submits descriptor and session token to compare against stored records.
+            Backend submits descriptor and session token to compare against
+            stored records.
           </p>
         </div>
       </div>
@@ -252,7 +269,8 @@ const SDKUsageContent = () => (
       Frontend integration
     </h2>
     <p className="mb-8 text-base text-slate-600 sm:text-lg">
-      Install the package, configure static model assets, bind event listeners, and manage camera hardware.
+      Install the package, configure static model assets, bind event listeners,
+      and manage camera hardware.
     </p>
 
     <div className="space-y-10 sm:space-y-12">
@@ -271,14 +289,19 @@ const SDKUsageContent = () => (
           2. Model assets and hosting
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          The SDK loads two sets of binary files into the browser: MediaPipe Face Mesh in <code>face_mesh/</code> and the ResNet-34 neural model in <code>face_recognition/</code>. Run the asset script to copy them to your public directory:
+          The SDK loads two sets of binary files into the browser: MediaPipe
+          Face Mesh in <code>face_mesh/</code> and the ResNet-34 neural model in{" "}
+          <code>face_recognition/</code>. Run the asset script to copy them to
+          your public directory:
         </p>
         <CodeBlock
           language="bash"
           code="node .agents/plugins/liveness-sdk-plugin/skills/liveness-sdk-integration/scripts/copy-liveness-assets.js ./public"
         />
         <p className="mt-3 text-xs text-slate-500">
-          Make sure your web server or CDN serves <code>.wasm</code> files with MIME type <code>application/wasm</code> and <code>.binarypb</code> files as <code>application/octet-stream</code>.
+          Make sure your web server or CDN serves <code>.wasm</code> files with
+          MIME type <code>application/wasm</code> and <code>.binarypb</code>{" "}
+          files as <code>application/octet-stream</code>.
         </p>
       </div>
 
@@ -287,7 +310,11 @@ const SDKUsageContent = () => (
           3. Video and canvas setup
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          The SDK requires a <code>&lt;video&gt;</code> element for the camera feed and an overlay <code>&lt;canvas&gt;</code> for landmark guides. For mobile browsers, especially iOS Safari, set <code>playsinline</code>, <code>autoplay</code>, and <code>muted</code> attributes:
+          The SDK requires a <code>&lt;video&gt;</code> element for the camera
+          feed and an overlay <code>&lt;canvas&gt;</code> for landmark guides.
+          For mobile browsers, especially iOS Safari, set{" "}
+          <code>playsinline</code>, <code>autoplay</code>, and{" "}
+          <code>muted</code> attributes:
         </p>
         <CodeBlock
           language="html"
@@ -316,7 +343,8 @@ const SDKUsageContent = () => (
           4. Initializing the SDK and event flow
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          Create an instance with configuration options, register event listeners, and start the stream:
+          Create an instance with configuration options, register event
+          listeners, and start the stream:
         </p>
         <CodeBlock
           language="javascript"
@@ -376,7 +404,9 @@ await sdk.start(videoElement, canvasElement);`}
           5. Production React hook implementation
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          This is the production React hook from our <code>react-use-liveness-hook.tsx</code> example, managing state, lifecycle, and teardown:
+          This is the production React hook from our{" "}
+          <code>react-use-liveness-hook.tsx</code> example, managing state,
+          lifecycle, and teardown:
         </p>
         <CodeBlock
           language="typescript"
@@ -536,7 +566,8 @@ export function useLiveness({
           6. Production React verification modal
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          This is the verification modal component from our <code>react-liveness-modal.tsx</code> example:
+          This is the verification modal component from our{" "}
+          <code>react-liveness-modal.tsx</code> example:
         </p>
         <CodeBlock
           language="tsx"
@@ -663,7 +694,9 @@ export function LivenessModal({
           7. Releasing camera hardware
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          In <code>LivenessSDK.js</code>, calling <code>sdk.stop(videoElement)</code> halts the detection loop and stops all media stream tracks on <code>videoElement.srcObject</code>:
+          In <code>LivenessSDK.js</code>, calling{" "}
+          <code>sdk.stop(videoElement)</code> halts the detection loop and stops
+          all media stream tracks on <code>videoElement.srcObject</code>:
         </p>
         <CodeBlock
           language="javascript"
@@ -682,7 +715,8 @@ const CloudUsageContent = () => (
       Backend and cloud verification
     </h2>
     <p className="mb-8 text-base text-slate-600 sm:text-lg">
-      Verify biometric descriptors, initialize replay-protected sessions, manage API keys, and evaluate identity matches.
+      Verify biometric descriptors, initialize replay-protected sessions, manage
+      API keys, and evaluate identity matches.
     </p>
 
     <div className="space-y-10 sm:space-y-12">
@@ -691,7 +725,10 @@ const CloudUsageContent = () => (
           <Key className="mr-2 h-5 w-5 text-blue-600" /> API key security
         </h3>
         <p className="text-sm leading-relaxed text-slate-700">
-          Keep your secret API key (<code>x-api-key</code>) on your server backend. Do not include secret keys in frontend code or public client bundles. Your backend creates ephemeral sessions and passes session tokens to the browser.
+          Keep your secret API key (<code>x-api-key</code>) on your server
+          backend. Do not include secret keys in frontend code or public client
+          bundles. Your backend creates ephemeral sessions and passes session
+          tokens to the browser.
         </p>
       </div>
 
@@ -700,7 +737,19 @@ const CloudUsageContent = () => (
           Cloud API endpoints
         </h3>
         <p className="mb-6 text-sm text-slate-600">
-          The production API is hosted at <code className="font-semibold text-blue-600">https://api.liveness.cloud</code>. The web dashboard runs at <code className="font-semibold text-slate-800">https://liveness.cloud</code>. All backend requests require your <code className="font-mono text-xs font-bold text-slate-800">x-api-key</code> header.
+          The production API is hosted at{" "}
+          <code className="font-semibold text-blue-600">
+            https://api.liveness.cloud
+          </code>
+          . The web dashboard runs at{" "}
+          <code className="font-semibold text-slate-800">
+            https://liveness.cloud
+          </code>
+          . All backend requests require your{" "}
+          <code className="font-mono text-xs font-bold text-slate-800">
+            x-api-key
+          </code>{" "}
+          header.
         </p>
 
         <div className="space-y-6">
@@ -710,12 +759,13 @@ const CloudUsageContent = () => (
               <span className="rounded bg-blue-100 px-2.5 py-1 text-xs font-black text-blue-700">
                 POST
               </span>
-              <code className="text-xs font-bold text-slate-900 sm:text-sm md:text-base break-all">
+              <code className="text-xs font-bold break-all text-slate-900 sm:text-sm md:text-base">
                 https://api.liveness.cloud/api/liveness/session
               </code>
             </div>
             <p className="mb-4 text-sm text-slate-600">
-              Initializes a single-use session. Returns a session token and an authoritative challenge sequence to prevent replay attacks.
+              Initializes a single-use session. Returns a session token and an
+              authoritative challenge sequence to prevent replay attacks.
             </p>
             <CodeBlock
               language="json"
@@ -734,12 +784,13 @@ const CloudUsageContent = () => (
               <span className="rounded bg-emerald-100 px-2.5 py-1 text-xs font-black text-emerald-700">
                 POST
               </span>
-              <code className="text-xs font-bold text-slate-900 sm:text-sm md:text-base break-all">
+              <code className="text-xs font-bold break-all text-slate-900 sm:text-sm md:text-base">
                 https://api.liveness.cloud/api/liveness/enroll
               </code>
             </div>
             <p className="mb-4 text-sm text-slate-600">
-              Registers a new user with their 128-dimensional biometric descriptor.
+              Registers a new user with their 128-dimensional biometric
+              descriptor.
             </p>
             <CodeBlock
               language="json"
@@ -761,12 +812,14 @@ const CloudUsageContent = () => (
               <span className="rounded bg-blue-100 px-2.5 py-1 text-xs font-black text-blue-700">
                 POST
               </span>
-              <code className="text-xs font-bold text-slate-900 sm:text-sm md:text-base break-all">
+              <code className="text-xs font-bold break-all text-slate-900 sm:text-sm md:text-base">
                 https://api.liveness.cloud/api/liveness/verify
               </code>
             </div>
             <p className="mb-4 text-sm text-slate-600">
-              Compares a fresh liveness result against all enrolled identities in your workspace. Returns a match when cosine similarity is at least 0.95 and Euclidean distance is within 0.30.
+              Compares a fresh liveness result against all enrolled identities
+              in your workspace. Returns a match when cosine similarity is at
+              least 0.95 and Euclidean distance is within 0.30.
             </p>
             <CodeBlock
               language="json"
@@ -791,12 +844,13 @@ const CloudUsageContent = () => (
               <span className="rounded bg-indigo-100 px-2.5 py-1 text-xs font-black text-indigo-700">
                 POST
               </span>
-              <code className="text-xs font-bold text-slate-900 sm:text-sm md:text-base break-all">
+              <code className="text-xs font-bold break-all text-slate-900 sm:text-sm md:text-base">
                 https://api.liveness.cloud/api/liveness/verify-one
               </code>
             </div>
             <p className="mb-4 text-sm text-slate-600">
-              Runs a direct 1:1 comparison against a specific identity UUID (<code>targetId</code>).
+              Runs a direct 1:1 comparison against a specific identity UUID (
+              <code>targetId</code>).
             </p>
             <CodeBlock
               language="json"
@@ -820,7 +874,8 @@ const CloudUsageContent = () => (
           Payload integrity validation
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          This is the integrity verification logic from our <code>apps/saas-api/src/middleware/validateIntegrity.js</code>:
+          This is the integrity verification logic from our{" "}
+          <code>apps/saas-api/src/middleware/validateIntegrity.js</code>:
         </p>
         <CodeBlock
           language="javascript"
@@ -847,7 +902,8 @@ function safeCompare(a, b) {
           Next.js App Router verification route
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          From our <code>nextjs-api-route.ts</code> example, forwarding verification requests to Liveness Cloud:
+          From our <code>nextjs-api-route.ts</code> example, forwarding
+          verification requests to Liveness Cloud:
         </p>
         <CodeBlock
           language="typescript"
@@ -923,7 +979,8 @@ export async function POST(req: NextRequest) {
           Self-hosted Express verification server
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          From our <code>backend-verification-node.js</code> example, using mathematical utilities from <code>@liveness/engine/utils</code>:
+          From our <code>backend-verification-node.js</code> example, using
+          mathematical utilities from <code>@liveness/engine/utils</code>:
         </p>
         <CodeBlock
           language="javascript"
@@ -1032,16 +1089,23 @@ const AISkillsContent = () => (
       AI assistant skills and rules
     </h2>
     <p className="mb-8 text-base text-slate-600 sm:text-lg">
-      Equip AI assistants such as Antigravity, Cursor, Windsurf, Claude Code, and Copilot with verified SDK rules, runbooks, and implementation templates.
+      Equip AI assistants such as Antigravity, Cursor, Windsurf, Claude Code,
+      and Copilot with verified SDK rules, runbooks, and implementation
+      templates.
     </p>
 
     <div className="space-y-10 sm:space-y-12">
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8">
-        <h3 className="mb-3 flex items-center text-lg font-bold sm:text-xl text-slate-900">
-          <Bot className="mr-2 h-5 w-5 text-blue-600" /> How assistant skills work
+        <h3 className="mb-3 flex items-center text-lg font-bold text-slate-900 sm:text-xl">
+          <Bot className="mr-2 h-5 w-5 text-blue-600" /> How assistant skills
+          work
         </h3>
         <p className="text-sm leading-relaxed text-slate-600">
-          The repository includes a skill plugin in <code>plugins/liveness-sdk-plugin/</code>. When installed in your workspace, coding assistants recognize SDK API signatures, enforce biometric privacy requirements, copy model assets, and generate working integration code without guessing.
+          The repository includes a skill plugin in{" "}
+          <code>plugins/liveness-sdk-plugin/</code>. When installed in your
+          workspace, coding assistants recognize SDK API signatures, enforce
+          biometric privacy requirements, copy model assets, and generate
+          working integration code without guessing.
         </p>
       </div>
 
@@ -1050,7 +1114,8 @@ const AISkillsContent = () => (
           Automated installation script
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          Run the setup script from the root of your project to copy rule files and skill definitions for one or all assistants:
+          Run the setup script from the root of your project to copy rule files
+          and skill definitions for one or all assistants:
         </p>
         <CodeBlock
           language="bash"
@@ -1074,13 +1139,16 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
             <div className="mb-2 flex items-center justify-between">
-              <h4 className="font-bold text-slate-900">Antigravity IDE & CLI</h4>
+              <h4 className="font-bold text-slate-900">
+                Antigravity IDE & CLI
+              </h4>
               <span className="rounded bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold text-blue-700">
                 .agents/plugins
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500">
-              Loads the <code>liveness-sdk-integration</code> skill, runbooks, and reference files directly into the assistant context.
+              Loads the <code>liveness-sdk-integration</code> skill, runbooks,
+              and reference files directly into the assistant context.
             </p>
           </div>
 
@@ -1092,7 +1160,8 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500">
-              Applies rules to Cursor Chat and Composer, ensuring video attributes and unmount cleanup are included in code output.
+              Applies rules to Cursor Chat and Composer, ensuring video
+              attributes and unmount cleanup are included in code output.
             </p>
           </div>
 
@@ -1104,7 +1173,8 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500">
-              Configures Claude Code CLI sessions with project rules, asset locations, and similarity thresholds.
+              Configures Claude Code CLI sessions with project rules, asset
+              locations, and similarity thresholds.
             </p>
           </div>
 
@@ -1116,7 +1186,8 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500">
-              Instructs Windsurf Cascade to follow client-side vector extraction constraints and privacy rules.
+              Instructs Windsurf Cascade to follow client-side vector extraction
+              constraints and privacy rules.
             </p>
           </div>
 
@@ -1128,7 +1199,8 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-slate-500">
-              Supplies repository context and SDK API signatures for Copilot Chat and code completion prompts.
+              Supplies repository context and SDK API signatures for Copilot
+              Chat and code completion prompts.
             </p>
           </div>
         </div>
@@ -1139,25 +1211,52 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
           Architectural rules enforced by the skills
         </h3>
         <p className="mb-4 text-sm text-slate-600">
-          The skill files instruct AI assistants to follow four architectural requirements:
+          The skill files instruct AI assistants to follow four architectural
+          requirements:
         </p>
 
         <div className="space-y-3">
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
-            <span className="font-bold text-slate-900">Client-side privacy:</span>
-            <span className="text-slate-600"> AI assistants are instructed never to write backend code that receives raw video feeds or photos. Only 128-d numerical vectors and checksums may be transmitted.</span>
+            <span className="font-bold text-slate-900">
+              Client-side privacy:
+            </span>
+            <span className="text-slate-600">
+              {" "}
+              AI assistants are instructed never to write backend code that
+              receives raw video feeds or photos. Only 128-d numerical vectors
+              and checksums may be transmitted.
+            </span>
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
-            <span className="font-bold text-slate-900">Video element attributes:</span>
-            <span className="text-slate-600"> All generated video components must include <code>autoPlay</code>, <code>playsInline</code>, and <code>muted</code> for mobile compatibility.</span>
+            <span className="font-bold text-slate-900">
+              Video element attributes:
+            </span>
+            <span className="text-slate-600">
+              {" "}
+              All generated video components must include <code>
+                autoPlay
+              </code>, <code>playsInline</code>, and <code>muted</code> for
+              mobile compatibility.
+            </span>
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
             <span className="font-bold text-slate-900">Hardware cleanup:</span>
-            <span className="text-slate-600"> When a component unmounts, code must invoke <code>sdk.stop(videoElement)</code> to stop detection and stop every media track on the video element.</span>
+            <span className="text-slate-600">
+              {" "}
+              When a component unmounts, code must invoke{" "}
+              <code>sdk.stop(videoElement)</code> to stop detection and stop
+              every media track on the video element.
+            </span>
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
-            <span className="font-bold text-slate-900">Verification thresholds:</span>
-            <span className="text-slate-600"> Matching routines must evaluate Cosine Similarity (threshold &gt;= 0.95) and Euclidean Distance (threshold &lt;= 0.30).</span>
+            <span className="font-bold text-slate-900">
+              Verification thresholds:
+            </span>
+            <span className="text-slate-600">
+              {" "}
+              Matching routines must evaluate Cosine Similarity (threshold &gt;=
+              0.95) and Euclidean Distance (threshold &lt;= 0.30).
+            </span>
           </div>
         </div>
       </div>
@@ -1167,35 +1266,50 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
           Example prompts for your AI assistant
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          Once the skill is active, you can use prompts like these to generate integration code:
+          Once the skill is active, you can use prompts like these to generate
+          integration code:
         </p>
 
         <div className="space-y-3">
           <div className="rounded-xl border border-slate-200/80 bg-white p-4">
-            <div className="text-xs font-bold text-slate-500 uppercase">Prompt 1: React verification modal</div>
+            <div className="text-xs font-bold text-slate-500 uppercase">
+              Prompt 1: React verification modal
+            </div>
             <p className="mt-1 font-mono text-xs text-slate-800">
-              "Add a liveness verification modal to our React registration flow using @liveness/sdk and Tailwind CSS. Ensure camera tracks are stopped when the modal closes."
+              "Add a liveness verification modal to our React registration flow
+              using @liveness/sdk and Tailwind CSS. Ensure camera tracks are
+              stopped when the modal closes."
             </p>
           </div>
 
           <div className="rounded-xl border border-slate-200/80 bg-white p-4">
-            <div className="text-xs font-bold text-slate-500 uppercase">Prompt 2: Next.js verification route</div>
+            <div className="text-xs font-bold text-slate-500 uppercase">
+              Prompt 2: Next.js verification route
+            </div>
             <p className="mt-1 font-mono text-xs text-slate-800">
-              "Create a Next.js App Router API route to verify the biometric descriptor with Liveness Cloud. Check the SHA-256 integrity hash before forwarding the request."
+              "Create a Next.js App Router API route to verify the biometric
+              descriptor with Liveness Cloud. Check the SHA-256 integrity hash
+              before forwarding the request."
             </p>
           </div>
 
           <div className="rounded-xl border border-slate-200/80 bg-white p-4">
-            <div className="text-xs font-bold text-slate-500 uppercase">Prompt 3: Model asset deployment</div>
+            <div className="text-xs font-bold text-slate-500 uppercase">
+              Prompt 3: Model asset deployment
+            </div>
             <p className="mt-1 font-mono text-xs text-slate-800">
-              "Write a script to copy the MediaPipe and ResNet-34 model files to our Vite public directory and configure basePath in the SDK."
+              "Write a script to copy the MediaPipe and ResNet-34 model files to
+              our Vite public directory and configure basePath in the SDK."
             </p>
           </div>
 
           <div className="rounded-xl border border-slate-200/80 bg-white p-4">
-            <div className="text-xs font-bold text-slate-500 uppercase">Prompt 4: Mobile Safari debugging</div>
+            <div className="text-xs font-bold text-slate-500 uppercase">
+              Prompt 4: Mobile Safari debugging
+            </div>
             <p className="mt-1 font-mono text-xs text-slate-800">
-              "Diagnose why the webcam feed freezes on iOS Safari in our verification view and fix the video element attributes."
+              "Diagnose why the webcam feed freezes on iOS Safari in our
+              verification view and fix the video element attributes."
             </p>
           </div>
         </div>
@@ -1210,7 +1324,8 @@ const MethodologyContent = () => (
       Detection methodology
     </h2>
     <p className="mb-8 text-base text-slate-600 sm:text-lg">
-      How the SDK checks live physical presence using 3D facial landmarks, eye aspect ratios, and neural feature vectors.
+      How the SDK checks live physical presence using 3D facial landmarks, eye
+      aspect ratios, and neural feature vectors.
     </p>
 
     <div className="space-y-8 sm:space-y-10">
@@ -1219,32 +1334,39 @@ const MethodologyContent = () => (
           Active challenge state machine
         </h3>
         <p className="mb-6 text-sm leading-relaxed text-slate-600">
-          The verification sequence moves through randomized prompts to confirm responsive human movement:
+          The verification sequence moves through randomized prompts to confirm
+          responsive human movement:
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-xl bg-slate-50 p-5">
             <h4 className="mb-1 text-sm font-bold text-slate-900">WAITING</h4>
             <p className="text-xs leading-relaxed text-slate-600">
-              Frames the user face within the oval guide, checks distance from the camera, and measures lighting across the face region.
+              Frames the user face within the oval guide, checks distance from
+              the camera, and measures lighting across the face region.
             </p>
           </div>
           <div className="rounded-xl bg-slate-50 p-5">
             <h4 className="mb-1 text-sm font-bold text-slate-900">BLINK</h4>
             <p className="text-xs leading-relaxed text-slate-600">
-              Requires an intentional eye closure within the timeout window. Uses the Eye Aspect Ratio to detect eye closing and opening.
+              Requires an intentional eye closure within the timeout window.
+              Uses the Eye Aspect Ratio to detect eye closing and opening.
             </p>
           </div>
           <div className="rounded-xl bg-slate-50 p-5">
             <h4 className="mb-1 text-sm font-bold text-slate-900">TURN_LEFT</h4>
             <p className="text-xs leading-relaxed text-slate-600">
-              Monitors 3D yaw angle as the user turns their head toward the left shoulder.
+              Monitors 3D yaw angle as the user turns their head toward the left
+              shoulder.
             </p>
           </div>
           <div className="rounded-xl bg-slate-50 p-5">
-            <h4 className="mb-1 text-sm font-bold text-slate-900">TURN_RIGHT</h4>
+            <h4 className="mb-1 text-sm font-bold text-slate-900">
+              TURN_RIGHT
+            </h4>
             <p className="text-xs leading-relaxed text-slate-600">
-              Monitors 3D yaw angle as the user turns their head toward the right shoulder.
+              Monitors 3D yaw angle as the user turns their head toward the
+              right shoulder.
             </p>
           </div>
         </div>
@@ -1255,7 +1377,10 @@ const MethodologyContent = () => (
           Eye Aspect Ratio (EAR)
         </h3>
         <p className="mb-3 text-sm leading-relaxed text-slate-600">
-          From <code>packages/engine/src/utils.js</code>: Eye tracking measures six 3D landmark coordinates for each eye. When the ratio of vertical eyelid distance to horizontal eye width drops below 0.25 after starting above 0.30, an intentional blink is recorded:
+          From <code>packages/engine/src/utils.js</code>: Eye tracking measures
+          six 3D landmark coordinates for each eye. When the ratio of vertical
+          eyelid distance to horizontal eye width drops below 0.25 after
+          starting above 0.30, an intentional blink is recorded:
         </p>
         <CodeBlock
           language="javascript"
@@ -1291,7 +1416,9 @@ export function calculateEAR(landmarks, side) {
           3D head pose estimation
         </h3>
         <p className="mb-3 text-sm leading-relaxed text-slate-600">
-          From <code>packages/engine/src/utils.js</code>: Measures relative cheek depth differences compared against face width to estimate physical head yaw in three dimensions:
+          From <code>packages/engine/src/utils.js</code>: Measures relative
+          cheek depth differences compared against face width to estimate
+          physical head yaw in three dimensions:
         </p>
         <CodeBlock
           language="javascript"
@@ -1325,7 +1452,8 @@ export function calculateHeadTurnV2(landmarks) {
             Luminance analysis
           </h3>
           <p className="mb-3 text-sm leading-relaxed text-slate-600">
-            From <code>packages/engine/src/utils.js</code>: Computes mean brightness directly across the tensor:
+            From <code>packages/engine/src/utils.js</code>: Computes mean
+            brightness directly across the tensor:
           </p>
           <CodeBlock
             language="javascript"
@@ -1344,7 +1472,8 @@ export function calculateHeadTurnV2(landmarks) {
             Vector similarity math
           </h3>
           <p className="mb-3 text-sm leading-relaxed text-slate-600">
-            From <code>packages/engine/src/utils.js</code>: Mathematical comparison between two 128-dimensional vectors:
+            From <code>packages/engine/src/utils.js</code>: Mathematical
+            comparison between two 128-dimensional vectors:
           </p>
           <CodeBlock
             language="javascript"
@@ -1375,7 +1504,8 @@ const TroubleshootingContent = () => (
       Troubleshooting and production
     </h2>
     <p className="mb-8 text-base text-slate-600 sm:text-lg">
-      Diagnose camera permissions, mobile Safari quirks, Content Security Policies, and ambient lighting edge cases.
+      Diagnose camera permissions, mobile Safari quirks, Content Security
+      Policies, and ambient lighting edge cases.
     </p>
 
     <div className="space-y-8 sm:space-y-10">
@@ -1384,10 +1514,16 @@ const TroubleshootingContent = () => (
           1. Camera permissions and secure contexts
         </h3>
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
-          The browser media API (<code>navigator.mediaDevices.getUserMedia</code>) requires a secure context (HTTPS) or <code>http://localhost</code>. When accessed over plain HTTP, the browser blocks camera access.
+          The browser media API (
+          <code>navigator.mediaDevices.getUserMedia</code>) requires a secure
+          context (HTTPS) or <code>http://localhost</code>. When accessed over
+          plain HTTP, the browser blocks camera access.
         </p>
         <div className="rounded-xl bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
-          <span className="font-bold text-slate-800">Resolution:</span> If the SDK emits <code>CAMERA_ACCESS_DENIED</code>, explain to the user how to grant camera permissions in their browser address bar or system settings.
+          <span className="font-bold text-slate-800">Resolution:</span> If the
+          SDK emits <code>CAMERA_ACCESS_DENIED</code>, explain to the user how
+          to grant camera permissions in their browser address bar or system
+          settings.
         </div>
       </div>
 
@@ -1396,7 +1532,11 @@ const TroubleshootingContent = () => (
           2. Mobile Safari playback
         </h3>
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
-          iOS Safari blocks video playback unless the video element has <code>playsinline</code>, <code>autoplay</code>, and <code>muted</code> attributes. In strict mobile environments, trigger <code>sdk.start()</code> from a direct user gesture (such as tapping a button).
+          iOS Safari blocks video playback unless the video element has{" "}
+          <code>playsinline</code>, <code>autoplay</code>, and{" "}
+          <code>muted</code> attributes. In strict mobile environments, trigger{" "}
+          <code>sdk.start()</code> from a direct user gesture (such as tapping a
+          button).
         </p>
         <CodeBlock
           language="jsx"
@@ -1410,7 +1550,8 @@ const TroubleshootingContent = () => (
           3. Content Security Policy (CSP)
         </h3>
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
-          Because the SDK executes WebAssembly and WebGL shaders on web worker threads, configure your CSP headers to allow them:
+          Because the SDK executes WebAssembly and WebGL shaders on web worker
+          threads, configure your CSP headers to allow them:
         </p>
         <CodeBlock
           language="http"
@@ -1429,7 +1570,9 @@ const TroubleshootingContent = () => (
           4. Ambient lighting tuning (POOR_LIGHTING)
         </h3>
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
-          The SDK computes normalized mean tensor brightness across the face region (from -1.0 to 1.0). If users operate in dim environments or backlit offices, widen the thresholds during initialization:
+          The SDK computes normalized mean tensor brightness across the face
+          region (from -1.0 to 1.0). If users operate in dim environments or
+          backlit offices, widen the thresholds during initialization:
         </p>
         <CodeBlock
           language="javascript"
@@ -1446,7 +1589,9 @@ const TroubleshootingContent = () => (
           5. Occlusion handling (OCCLUSION_DETECTED)
         </h3>
         <p className="text-sm leading-relaxed text-slate-600">
-          This error triggers when glasses frames, medical masks, or hats cover facial landmarks. Prompt the user to remove face coverings and position their face directly in front of the camera.
+          This error triggers when glasses frames, medical masks, or hats cover
+          facial landmarks. Prompt the user to remove face coverings and
+          position their face directly in front of the camera.
         </p>
       </div>
 
@@ -1455,7 +1600,8 @@ const TroubleshootingContent = () => (
           6. Canvas overlay alignment
         </h3>
         <p className="mb-4 text-sm leading-relaxed text-slate-600">
-          In <code>LivenessSDK.js</code>, canvas pixel dimensions are synchronized directly to the camera stream resolution:
+          In <code>LivenessSDK.js</code>, canvas pixel dimensions are
+          synchronized directly to the camera stream resolution:
         </p>
         <CodeBlock
           language="javascript"
@@ -1559,7 +1705,8 @@ const APIRefContent = () => (
             },
             {
               event: "challenge",
-              payload: "{ type: string, instruction: string, distance: string | null }",
+              payload:
+                "{ type: string, instruction: string, distance: string | null }",
               desc: "Emitted when a new action prompt starts (WAITING, BLINK, TURN_LEFT, TURN_RIGHT).",
             },
             {
@@ -1646,13 +1793,16 @@ const APIRefContent = () => (
               {[
                 {
                   code: "CAMERA_ACCESS_DENIED",
-                  cause: "User denied camera access or origin is not HTTPS/localhost.",
-                  action: "Prompt user to allow camera access in browser site settings.",
+                  cause:
+                    "User denied camera access or origin is not HTTPS/localhost.",
+                  action:
+                    "Prompt user to allow camera access in browser site settings.",
                 },
                 {
                   code: "POOR_LIGHTING",
                   cause: "Face region is underexposed or overexposed.",
-                  action: "Guide user to face a light source or adjust room illumination.",
+                  action:
+                    "Guide user to face a light source or adjust room illumination.",
                 },
                 {
                   code: "OCCLUSION_DETECTED",
@@ -1661,13 +1811,15 @@ const APIRefContent = () => (
                 },
                 {
                   code: "TIMEOUT",
-                  cause: "User did not complete the challenge within the time limit.",
+                  cause:
+                    "User did not complete the challenge within the time limit.",
                   action: "Allow user to restart the verification sequence.",
                 },
                 {
                   code: "NO_FACE_DETECTED",
                   cause: "No face found within the camera frame.",
-                  action: "Instruct user to center their face in the guide oval.",
+                  action:
+                    "Instruct user to center their face in the guide oval.",
                 },
                 {
                   code: "BROWSER_NOT_SUPPORTED",
@@ -1815,14 +1967,14 @@ const Documentation = () => {
       <div className="relative mb-3 w-full lg:hidden">
         <button
           onClick={() => setTopicDropdownOpen((prev) => !prev)}
-          className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-3 px-4 shadow-xs transition-all hover:border-slate-300 active:scale-[0.99]"
+          className="flex w-full cursor-pointer items-center justify-between rounded-[6px] border border-slate-200/90 bg-white p-3 px-4 shadow-xs transition-all hover:border-slate-300 active:scale-[0.99]"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] bg-[#2f5bf5]/10 text-[#2f5bf5]">
               <CurrentIcon className="h-4 w-4" />
             </div>
             <div className="flex min-w-0 flex-col text-left">
-              <span className="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+              <span className="font-mono text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
                 Topic
               </span>
               <span className="truncate text-sm font-bold text-slate-900">
@@ -1832,16 +1984,16 @@ const Documentation = () => {
           </div>
           <ChevronDown
             className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${
-              topicDropdownOpen ? "rotate-180 text-blue-600" : ""
+              topicDropdownOpen ? "rotate-180 text-[#2f5bf5]" : ""
             }`}
           />
         </button>
 
         {topicDropdownOpen && (
-          <div className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-xl duration-150">
+          <div className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-[10px] border border-slate-200/90 bg-white p-2.5 shadow-lg duration-150">
             {menu.map((group, idx) => (
               <div key={idx} className="mb-3 last:mb-0">
-                <div className="mb-2 px-3 text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                <div className="mb-2 px-3 font-mono text-[11px] font-bold tracking-wider text-slate-500 uppercase">
                   {group.title}
                 </div>
                 <div className="space-y-1">
@@ -1855,17 +2007,17 @@ const Documentation = () => {
                           handleTopicChange(item.id);
                           setTopicDropdownOpen(false);
                         }}
-                        className={`group flex w-full cursor-pointer items-center rounded-xl px-3.5 py-2.5 text-left text-xs font-bold transition-all duration-150 sm:text-sm ${
+                        className={`group flex w-full cursor-pointer items-center rounded-[6px] px-3.5 py-2 text-left text-xs font-medium transition-all duration-150 sm:text-sm ${
                           isActive
-                            ? "bg-blue-50/80 font-extrabold text-blue-600"
-                            : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                            ? "bg-[#2f5bf5]/10 font-semibold text-[#2f5bf5]"
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         {ItemIcon && (
                           <ItemIcon
                             className={`mr-3 h-4.5 w-4.5 shrink-0 ${
                               isActive
-                                ? "text-blue-600"
+                                ? "text-[#2f5bf5]"
                                 : "text-slate-400 group-hover:text-slate-600"
                             }`}
                           />
@@ -1882,13 +2034,13 @@ const Documentation = () => {
       </div>
 
       {/* Desktop Sub-navigation Sidebar */}
-      <aside className="sticky top-24 hidden h-fit w-64 shrink-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs lg:block">
+      <aside className="sticky top-24 hidden h-fit w-64 shrink-0 rounded-[10px] border border-slate-200/80 bg-white p-4 shadow-xs lg:block">
         {renderSidebarContent()}
       </aside>
 
       {/* Docs Main Content */}
       <div className="min-w-0 flex-1">
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs sm:p-8 md:p-10">
+        <div className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs sm:p-8 md:p-10">
           {renderContent()}
 
           {/* Inline Pagination Controls */}
@@ -1896,9 +2048,9 @@ const Documentation = () => {
             {prevItem ? (
               <button
                 onClick={() => handleTopicChange(prevItem.id)}
-                className="group inline-flex cursor-pointer items-center gap-2 text-xs font-bold text-slate-600 transition-colors hover:text-blue-600 sm:text-sm"
+                className="group inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-[#2f5bf5] sm:text-sm"
               >
-                <ArrowRight className="h-4 w-4 rotate-180 text-slate-400 transition-transform group-hover:-translate-x-1 group-hover:text-blue-600" />
+                <ArrowRight className="h-4 w-4 rotate-180 text-slate-400 transition-transform group-hover:-translate-x-1 group-hover:text-[#2f5bf5]" />
                 <span>{prevItem.label}</span>
               </button>
             ) : (
@@ -1908,17 +2060,18 @@ const Documentation = () => {
             {nextItem ? (
               <button
                 onClick={() => handleTopicChange(nextItem.id)}
-                className="group ml-auto inline-flex cursor-pointer items-center gap-2 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 sm:text-sm"
+                className="group ml-auto inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-[#2f5bf5] transition-colors hover:text-[#204be8] sm:text-sm"
               >
                 <span>{nextItem.label}</span>
-                <ArrowRight className="h-4 w-4 text-blue-600 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 text-[#2f5bf5] transition-transform group-hover:translate-x-1" />
               </button>
             ) : null}
           </div>
         </div>
 
         <footer className="mt-8 text-center text-xs font-medium text-slate-600">
-          &copy; {new Date().getFullYear()} Liveness Cloud Platform. All rights reserved.
+          &copy; {new Date().getFullYear()} Liveness Cloud Platform. All rights
+          reserved.
         </footer>
       </div>
     </div>
@@ -1927,9 +2080,12 @@ const Documentation = () => {
   return user ? (
     <DashboardLayout>{pageContent}</DashboardLayout>
   ) : (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-[#fafbfc] font-sans text-slate-900 antialiased selection:bg-[#2f5bf5]/15 selection:text-[#2f5bf5]">
       <Navbar />
-      <main id="main-content" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12">
+      <main
+        id="main-content"
+        className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12"
+      >
         {pageContent}
       </main>
     </div>

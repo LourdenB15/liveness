@@ -153,11 +153,11 @@ export default function Signup({ modal = false }) {
 
   const getInputClass = (fieldId) => {
     const base =
-      "block w-full rounded-lg border py-2.5 pr-4 text-sm font-medium transition-all focus:outline-none";
+      "block w-full rounded-[6px] border py-2 pr-4 text-sm font-medium transition-all focus:outline-none";
     if (fieldErrors[fieldId]) {
-      return `${base} border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10`;
+      return `${base} border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10`;
     }
-    return `${base} border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10`;
+    return `${base} border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10`;
   };
 
   const hasFieldErrors = Object.keys(fieldErrors).some(
@@ -169,13 +169,13 @@ export default function Signup({ modal = false }) {
       {/* Header */}
       <div className="mb-7 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-md shadow-blue-200">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#2f5bf5] shadow-xs">
             <ShieldCheck className="h-5 w-5 text-white" />
           </div>
           <div>
             <h2
               id="signup-modal-title"
-              className="text-xl font-extrabold tracking-tight text-slate-900"
+              className="font-heading text-xl font-bold tracking-tight text-slate-900"
             >
               Create an Account
             </h2>
@@ -188,7 +188,7 @@ export default function Signup({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="cursor-pointer rounded-[6px] p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -201,7 +201,7 @@ export default function Signup({ modal = false }) {
         {!hasFieldErrors && error && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 shadow-2xs"
+            className="flex items-start gap-2.5 rounded-[6px] border border-red-200 bg-red-50/80 p-3 text-xs text-red-700"
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div>
@@ -217,7 +217,7 @@ export default function Signup({ modal = false }) {
           <div>
             <label
               htmlFor="firstName"
-              className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               First Name
             </label>
@@ -254,7 +254,7 @@ export default function Signup({ modal = false }) {
           <div>
             <label
               htmlFor="lastName"
-              className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               Last Name
             </label>
@@ -293,7 +293,7 @@ export default function Signup({ modal = false }) {
         <div>
           <label
             htmlFor="username"
-            className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+            className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
           >
             Username
           </label>
@@ -338,7 +338,7 @@ export default function Signup({ modal = false }) {
         <div>
           <label
             htmlFor="email"
-            className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+            className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
           >
             Email Address
           </label>
@@ -382,7 +382,7 @@ export default function Signup({ modal = false }) {
           <div>
             <label
               htmlFor="password"
-              className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               Password
             </label>
@@ -433,7 +433,7 @@ export default function Signup({ modal = false }) {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="mb-1 ml-1 block text-xs font-bold tracking-wider text-slate-500 uppercase"
+              className="mb-1 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
             >
               Confirm
             </label>
@@ -494,7 +494,7 @@ export default function Signup({ modal = false }) {
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 flex w-full cursor-pointer justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:opacity-50"
+          className="mt-2 flex w-full cursor-pointer justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
         >
           {loading ? "Creating account..." : "Create account"}
         </button>
@@ -505,7 +505,7 @@ export default function Signup({ modal = false }) {
             to="/terms"
             target="_blank"
             rel="noreferrer"
-            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-blue-600"
+            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-[#2f5bf5]"
           >
             Terms of Service
           </Link>{" "}
@@ -514,7 +514,7 @@ export default function Signup({ modal = false }) {
             to="/privacy"
             target="_blank"
             rel="noreferrer"
-            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-blue-600"
+            className="text-slate-600 underline underline-offset-2 transition-colors hover:text-[#2f5bf5]"
           >
             Privacy Policy
           </Link>
@@ -528,7 +528,7 @@ export default function Signup({ modal = false }) {
           <Link
             to="/login"
             state={modal ? location.state : undefined}
-            className="font-bold text-blue-600 transition-colors hover:text-blue-700"
+            className="font-semibold text-[#2f5bf5] transition-colors hover:text-[#204be8]"
           >
             Sign in
           </Link>
@@ -552,7 +552,7 @@ export default function Signup({ modal = false }) {
           aria-labelledby="signup-modal-title"
           className="animate-in zoom-in-95 relative w-full max-w-lg duration-200"
         >
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl sm:p-7">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl sm:p-7">
             {formContent}
           </div>
         </div>
@@ -563,7 +563,7 @@ export default function Signup({ modal = false }) {
   // Standalone full-page fallback
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg rounded-2xl border border-slate-100 bg-white p-6 shadow-2xl shadow-slate-200 sm:p-7">
+      <div className="w-full max-w-lg rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-7">
         {formContent}
       </div>
     </AuthLayout>

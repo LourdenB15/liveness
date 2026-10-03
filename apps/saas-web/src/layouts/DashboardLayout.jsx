@@ -111,7 +111,7 @@ export default function DashboardLayout({ children }) {
     (location.pathname === "/settings" ? "Settings" : "Dashboard");
 
   return (
-    <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-slate-50/40 font-sans text-slate-900">
+    <div className="relative flex h-screen min-h-screen w-full overflow-hidden bg-[#fafbfc] font-sans text-slate-900">
       {/* Standalone Sidebar Component */}
       <Sidebar
         sidebarCollapsed={sidebarCollapsed}
@@ -126,27 +126,30 @@ export default function DashboardLayout({ children }) {
       />
 
       {/* Main Content Area */}
-      <main id="main-content" className="relative z-10 min-w-0 flex-1 overflow-y-auto">
+      <main
+        id="main-content"
+        className="relative z-10 min-w-0 flex-1 overflow-y-auto"
+      >
         {/* Header */}
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-100 bg-white/80 px-4 backdrop-blur-md sm:px-6 md:h-20 md:px-8">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-slate-200/80 bg-[#fafbfc]/85 px-4 backdrop-blur-md sm:px-6 md:h-18 md:px-8">
           {/* Left: Mobile Brand Logo & Desktop Breadcrumbs */}
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             {/* Mobile Brand Logo */}
             <div className="flex items-center gap-2 md:hidden">
               <Link to="/dashboard" className="flex items-center gap-1.5">
                 <ShieldCheck className="h-6 w-6 shrink-0 text-blue-600" />
-                <span className="text-base font-extrabold tracking-tight text-slate-900">
+                <span className="font-display text-base font-semibold tracking-tight text-slate-900">
                   Liveness
-                  <span className="ml-0.5 font-light text-blue-600">Cloud</span>
+                  <span className="ml-0.5 text-blue-600">Cloud</span>
                 </span>
               </Link>
             </div>
 
             {/* Desktop Breadcrumb Hierarchy */}
-            <div className="hidden min-w-0 items-center gap-2 text-sm font-semibold text-slate-500 md:flex">
+            <div className="hidden min-w-0 items-center gap-2 text-xs font-medium text-slate-500 md:flex">
               <span className="text-slate-400">Dashboard</span>
               <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-300" />
-              <h2 className="truncate text-lg font-extrabold text-slate-900">
+              <h2 className="font-display truncate text-sm font-semibold text-slate-900">
                 {currentPageLabel}
               </h2>
             </div>
@@ -157,28 +160,28 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Search Button (Beside Hamburger Button) */}
             <button
               onClick={() => setSearchModalOpen(true)}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-2xs transition-colors hover:bg-slate-100 hover:text-slate-800 md:hidden"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-white text-slate-500 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-800 md:hidden"
               aria-label="Search"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3.5 w-3.5" />
             </button>
 
             {/* Profile Dropdown - Hidden on Mobile to avoid redundancy with Mobile Drawer */}
             <div className="relative hidden md:block" ref={dropdownRef}>
               <button
                 onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                className="group flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white p-1.5 pr-3 shadow-xs transition-all hover:border-slate-300"
+                className="group flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border border-slate-200/80 bg-white p-1.5 pr-2.5 shadow-2xs transition-all hover:border-slate-300"
                 aria-label="Profile menu"
                 aria-expanded={profileDropdownOpen}
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-sm">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] bg-blue-600 font-mono text-[11px] font-bold text-white shadow-xs">
                   {initials}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs leading-tight font-bold text-slate-900">
+                  <span className="text-xs leading-tight font-semibold text-slate-900">
                     {fullName}
                   </span>
-                  <span className="text-[10px] font-semibold text-slate-400">
+                  <span className="font-mono text-[10px] text-slate-400">
                     {user?.email || "admin@liveness.cloud"}
                   </span>
                 </div>
@@ -193,12 +196,12 @@ export default function DashboardLayout({ children }) {
 
               {/* Profile Dropdown Menu */}
               {profileDropdownOpen && (
-                <div className="animate-in fade-in zoom-in-95 absolute right-0 z-50 mt-2 w-64 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl duration-150">
-                  <div className="mb-1 border-b border-slate-100 px-3 py-2.5">
-                    <p className="text-xs font-bold text-slate-900">
+                <div className="animate-in fade-in zoom-in-95 absolute right-0 z-50 mt-1.5 w-60 rounded-[8px] border border-slate-200/90 bg-white p-1.5 shadow-lg duration-150">
+                  <div className="mb-1 border-b border-slate-100 px-3 py-2">
+                    <p className="text-xs font-semibold text-slate-900">
                       {fullName}
                     </p>
-                    <p className="truncate text-[11px] font-medium text-slate-400">
+                    <p className="truncate font-mono text-[10px] text-slate-400">
                       {user?.email || "admin@liveness.cloud"}
                     </p>
                   </div>
@@ -206,9 +209,9 @@ export default function DashboardLayout({ children }) {
                   <Link
                     to="/settings"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                    className="flex items-center gap-2 rounded-[6px] px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
                   >
-                    <SettingsIcon className="h-4 w-4 text-slate-400" />
+                    <SettingsIcon className="h-3.5 w-3.5 text-slate-400" />
                     Account Settings
                   </Link>
 
@@ -216,9 +219,9 @@ export default function DashboardLayout({ children }) {
 
                   <button
                     onClick={handleLogout}
-                    className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-[6px] px-2.5 py-1.5 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
                   >
-                    <LogOut className="h-4 w-4 text-rose-500" />
+                    <LogOut className="h-3.5 w-3.5 text-rose-500" />
                     Sign Out
                   </button>
                 </div>
@@ -228,14 +231,14 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Hamburger Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-white p-2 text-slate-600 shadow-2xs transition-colors hover:bg-slate-100 md:hidden"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-white p-1.5 text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-900 md:hidden"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-4 w-4" />
               )}
             </button>
           </div>
@@ -246,25 +249,25 @@ export default function DashboardLayout({ children }) {
         </div>
 
         {/* Mobile Fixed Bottom Navigation Bar */}
-        <nav className="fixed right-0 bottom-0 left-0 z-30 flex h-16 items-center justify-around border-t border-slate-200/80 bg-white/95 px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] backdrop-blur-lg md:hidden">
+        <nav className="fixed right-0 bottom-0 left-0 z-30 flex h-15 items-center justify-around border-t border-slate-200/80 bg-white/95 px-2 shadow-xs backdrop-blur-md md:hidden">
           {mobileBottomNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-colors ${
+                className={`flex flex-col items-center justify-center rounded-[6px] px-3 py-1 transition-colors ${
                   isActive
-                    ? "font-extrabold text-blue-600"
+                    ? "font-semibold text-blue-600"
                     : "font-medium text-slate-500 hover:text-slate-800"
                 }`}
               >
                 <item.icon
-                  className={`h-5 w-5 ${
+                  className={`h-4.5 w-4.5 ${
                     isActive ? "text-blue-600" : "text-slate-400"
                   }`}
                 />
-                <span className="mt-1 text-[10px] tracking-tight">
+                <span className="mt-0.5 text-[10px] tracking-tight">
                   {item.label}
                 </span>
               </Link>
@@ -288,11 +291,11 @@ export default function DashboardLayout({ children }) {
               role="dialog"
               aria-modal="true"
               aria-label="Quick search"
-              className="animate-in zoom-in-95 relative z-10 w-full max-w-xl overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl duration-150"
+              className="animate-in zoom-in-95 relative z-10 w-full max-w-xl overflow-hidden rounded-[10px] border border-slate-200/90 bg-white shadow-xl duration-150"
             >
               {/* Modal Search Header Input */}
-              <div className="flex items-center border-b border-slate-100 px-4 py-3.5">
-                <Search className="mr-3 h-5 w-5 shrink-0 text-blue-600" />
+              <div className="flex items-center border-b border-slate-200/80 px-4 py-3">
+                <Search className="mr-3 h-4 w-4 shrink-0 text-blue-600" />
                 <input
                   type="text"
                   autoFocus
@@ -306,14 +309,14 @@ export default function DashboardLayout({ children }) {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search pages, documentation, or users..."
                   aria-label="Search pages, documentation, or users"
-                  className="w-full text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                  className="w-full text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
                     className="mr-2 p-1 text-slate-400 hover:text-slate-600"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-3.5 w-3.5" />
                   </button>
                 )}
                 <button
@@ -321,7 +324,7 @@ export default function DashboardLayout({ children }) {
                     setSearchModalOpen(false);
                     setSearchQuery("");
                   }}
-                  className="rounded-lg bg-slate-100 px-2 py-1 text-[10px] font-extrabold text-slate-500 hover:bg-slate-200"
+                  className="rounded-[4px] border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-500 hover:bg-slate-200"
                 >
                   ESC
                 </button>
@@ -395,7 +398,7 @@ export default function DashboardLayout({ children }) {
                       {/* Documentation Sections */}
                       {docSections.length > 0 && (
                         <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                          <div className="px-3 py-1 font-mono text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
                             Documentation & Guides
                           </div>
                           {docSections.map((doc) => (
@@ -406,22 +409,22 @@ export default function DashboardLayout({ children }) {
                                 setSearchModalOpen(false);
                                 setSearchQuery("");
                               }}
-                              className="group flex cursor-pointer items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80"
+                              className="group flex cursor-pointer items-center justify-between rounded-[6px] p-2 text-left transition-colors hover:bg-blue-50/70"
                             >
-                              <div className="flex items-center gap-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                  <Book className="h-4 w-4" />
+                              <div className="flex items-center gap-2.5">
+                                <div className="flex h-7 w-7 items-center justify-center rounded-[4px] border border-blue-100 bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                                  <Book className="h-3.5 w-3.5" />
                                 </div>
                                 <div>
-                                  <span className="block text-xs font-bold text-slate-900 group-hover:text-blue-700">
+                                  <span className="block text-xs font-semibold text-slate-900 group-hover:text-blue-700">
                                     {doc.label}
                                   </span>
-                                  <span className="block text-[10px] font-medium text-slate-400">
+                                  <span className="block text-[10px] text-slate-400">
                                     {doc.desc}
                                   </span>
                                 </div>
                               </div>
-                              <span className="text-xs font-bold text-slate-300 group-hover:text-blue-600">
+                              <span className="text-xs font-semibold text-slate-300 group-hover:text-blue-600">
                                 View &rarr;
                               </span>
                             </Link>
@@ -432,7 +435,7 @@ export default function DashboardLayout({ children }) {
                       {/* Platform Navigation */}
                       {pages.length > 0 && (
                         <div className="space-y-1">
-                          <div className="px-3 py-1 text-[10px] font-black tracking-widest text-slate-400 uppercase">
+                          <div className="px-3 py-1 font-mono text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
                             Platform Navigation
                           </div>
                           {pages.map((item) => {
@@ -445,22 +448,22 @@ export default function DashboardLayout({ children }) {
                                   setSearchModalOpen(false);
                                   setSearchQuery("");
                                 }}
-                                className="group flex cursor-pointer items-center justify-between rounded-xl p-2.5 text-left transition-colors hover:bg-blue-50/80"
+                                className="group flex cursor-pointer items-center justify-between rounded-[6px] p-2 text-left transition-colors hover:bg-blue-50/70"
                               >
-                                <div className="flex items-center gap-3">
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover:bg-blue-600 group-hover:text-white">
-                                    <Icon className="h-4 w-4" />
+                                <div className="flex items-center gap-2.5">
+                                  <div className="flex h-7 w-7 items-center justify-center rounded-[4px] border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                                    <Icon className="h-3.5 w-3.5" />
                                   </div>
                                   <div>
-                                    <span className="block text-xs font-bold text-slate-900 group-hover:text-blue-700">
+                                    <span className="block text-xs font-semibold text-slate-900 group-hover:text-blue-700">
                                       {item.label}
                                     </span>
-                                    <span className="block text-[10px] font-medium text-slate-400">
+                                    <span className="block text-[10px] text-slate-400">
                                       Jump to {item.path}
                                     </span>
                                   </div>
                                 </div>
-                                <span className="text-xs font-bold text-slate-300 group-hover:text-blue-600">
+                                <span className="text-xs font-semibold text-slate-300 group-hover:text-blue-600">
                                   Go &rarr;
                                 </span>
                               </Link>

@@ -20,8 +20,8 @@ const Users = lazy(() => import("./pages/Users"));
 
 function PageLoadingFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+    <div className="flex min-h-screen items-center justify-center bg-[#fafbfc]">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#2f5bf5] border-t-transparent" />
     </div>
   );
 }
@@ -86,12 +86,12 @@ function NotFound() {
   return (
     <main
       id="main-content"
-      className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-white px-4 text-center"
+      className="flex min-h-screen flex-col items-center justify-center bg-[#fafbfc] px-4 text-center"
     >
-      <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100">
-        <span className="text-5xl font-black text-slate-300">404</span>
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[10px] border border-slate-200/80 bg-white shadow-xs">
+        <span className="font-mono text-4xl font-bold text-slate-300">404</span>
       </div>
-      <h1 className="text-3xl font-black tracking-tight text-slate-900">
+      <h1 className="font-heading text-3xl font-bold tracking-tight text-slate-900">
         Page not found
       </h1>
       <p className="mt-3 text-sm font-medium text-slate-600">
@@ -99,7 +99,7 @@ function NotFound() {
       </p>
       <Link
         to={user ? "/dashboard" : "/"}
-        className="mt-8 inline-flex items-center rounded-2xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-xl shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0"
+        className="mt-8 inline-flex items-center rounded-[6px] bg-[#2f5bf5] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#204be8] active:translate-y-px"
       >
         {user ? "Go to Dashboard" : "Back to Home"}
       </Link>
@@ -143,7 +143,7 @@ function App() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-xl focus:bg-blue-600 focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-white focus:shadow-xl focus:ring-2 focus:ring-blue-400 focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-[6px] focus:bg-[#2f5bf5] focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-white focus:shadow-xs focus:ring-2 focus:ring-[#2f5bf5]/40 focus:outline-none"
       >
         Skip to main content
       </a>

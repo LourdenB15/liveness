@@ -38,341 +38,258 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-[#fafbfc] font-sans text-slate-900 selection:bg-[#2f5bf5] selection:text-white">
       {/* Navigation Header */}
       <Navbar />
 
       <main id="main-content">
         {/* Hero Section */}
-      <section className="bg-linear-to-b from-slate-50 to-white px-4 py-20 sm:px-6 md:px-12 md:pt-24 md:pb-28">
-        <div className="mx-auto max-w-5xl text-center">
-          <h1 className="mb-6 text-4xl leading-tight font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
-            Secure Face Liveness{" "}
-            <span className="text-blue-600">Verification</span>
-          </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
-            Verify real users and block spoofing attempts with client-side
-            liveness checks and biometric verification.
-          </p>
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button
-              onClick={() => openModal("/signup")}
-              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-xs transition-colors hover:bg-blue-700 sm:w-auto"
-            >
-              <span>Create account</span>
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => openModal("/login")}
-              className="w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-6 py-3 text-center text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 hover:text-slate-900 sm:w-auto"
-            >
-              Sign in
-            </button>
-          </div>
+        <section className="border-b border-slate-200/80 bg-[#fafbfc] px-4 py-16 sm:px-6 md:px-12 md:pt-20 md:pb-24">
+          <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-3xl">
+              <div>
+                <h1 className="font-display mb-5 text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl md:text-5xl">
+                  Biometric face verification{" "}
+                  <span className="text-[#2f5bf5]">built for developers</span>
+                </h1>
+                <p className="mb-8 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                  Verify real users and block spoofing attempts with client-side
+                  liveness checks and biometric verification.
+                </p>
 
-          <div className="mx-auto mt-10 max-w-xs rounded-xl border border-slate-200 bg-slate-950 p-2.5 shadow-md transition-all hover:border-slate-300 sm:max-w-sm md:max-w-md">
-            <div className="flex items-center justify-between font-mono text-xs sm:text-sm">
-              <div className="flex items-center space-x-2 overflow-hidden pl-2 text-slate-400">
-                <span className="font-bold text-blue-500">$</span>
-                <span className="truncate font-medium text-slate-200 select-all">
-                  npm install @liveness/sdk
-                </span>
+                {/* npm install — primary developer CTA */}
+                <div className="mb-6 flex max-w-md items-center gap-3 rounded-[8px] border border-slate-200/80 bg-slate-900 p-2 shadow-xs">
+                  <div className="flex min-w-0 flex-1 items-center gap-2 pl-2 font-mono text-xs">
+                    <span className="shrink-0 font-bold text-[#2f5bf5]">$</span>
+                    <span className="truncate font-medium text-slate-200 select-all">
+                      npm install @liveness/sdk
+                    </span>
+                  </div>
+                  <button
+                    onClick={copyToClipboard}
+                    className="flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-[4px] border border-slate-800 bg-slate-950 px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+                    title="Copy package installation command"
+                    aria-label="Copy package installation command"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-3 w-3 text-emerald-400" />
+                        <span className="text-emerald-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex flex-col items-start gap-3 sm:flex-row">
+                  <button
+                    onClick={() => openModal("/signup")}
+                    className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-[#2f5bf5] px-5 py-2.5 text-center text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] sm:w-auto"
+                  >
+                    <span>Create account</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => openModal("/login")}
+                    className="w-full cursor-pointer rounded-[6px] border border-slate-200/80 bg-white px-5 py-2.5 text-center text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 hover:text-slate-900 sm:w-auto"
+                  >
+                    Sign in
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={copyToClipboard}
-                className="flex w-21 shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-lg border border-slate-800 bg-slate-900 py-1.5 text-xs font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
-                title="Copy package installation command"
-                aria-label="Copy package installation command"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-green-500" />
-                    <span className="text-green-500">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features Section */}
-      <section
-        id="features"
-        className="content-visibility-auto bg-white px-4 py-20 sm:px-6 md:px-12 md:py-24"
-      >
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 text-center md:mb-16">
-            <h2 className="mb-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Core capabilities
-            </h2>
-            <p className="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">
-              Biometric verification running directly in the browser with
-              server-side descriptor matching.
-            </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Bento Card 1: 2 cols wide */}
-            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-6 transition-colors hover:border-slate-300 sm:p-8 md:col-span-2">
-              <div className="mb-4 flex items-center gap-2.5">
-                <Activity className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                  Client-side landmark tracking
-                </h3>
-              </div>
-              <p className="mb-6 text-sm leading-relaxed text-slate-600">
-                Tracks 468 facial landmarks at 60 FPS in WebAssembly and WebGL
-                to detect subtle head movements and micro-actions without
-                sending video streams to a server.
+        {/* Features Section */}
+        <section
+          id="features"
+          className="content-visibility-auto bg-white px-4 py-16 sm:px-6 md:px-12 md:py-20"
+        >
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 md:mb-16">
+              <h2 className="font-display mb-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                What the SDK does
+              </h2>
+              <p className="max-w-2xl text-xs text-slate-600 sm:text-sm">
+                Biometric verification running directly in the browser with
+                server-side descriptor matching.
               </p>
-              <div className="grid gap-3 border-t border-slate-200/60 pt-5 sm:grid-cols-3">
-                <div className="rounded-xl border border-slate-200/60 bg-white p-3">
-                  <div className="font-mono text-xs font-semibold text-slate-900">
-                    468 3D points
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {/* Card 1: full width */}
+              <div className="rounded-[10px] border border-slate-200/80 bg-[#fafbfc] p-6 transition-colors hover:border-slate-300 sm:p-7 md:col-span-3">
+                <div className="mb-3 flex items-center gap-2.5">
+                  <Activity className="h-5 w-5 text-[#2f5bf5]" />
+                  <h3 className="font-display text-base font-bold text-slate-900 sm:text-lg">
+                    Client-side landmark tracking
+                  </h3>
+                </div>
+                <p className="mb-5 text-xs leading-relaxed text-slate-600 sm:text-sm">
+                  Tracks 468 facial landmarks at 60 FPS in WebAssembly and WebGL
+                  to detect subtle head movements and micro-actions without
+                  sending video streams to a server.
+                </p>
+                <div className="grid gap-2.5 border-t border-slate-200/80 pt-4 sm:grid-cols-3">
+                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                    <div className="font-mono text-xs font-semibold text-slate-900">
+                      468 3D points
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      Sub-200ms latency
+                    </div>
                   </div>
-                  <div className="text-[11px] text-slate-500">
-                    Sub-200ms latency
+                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                    <div className="font-mono text-xs font-semibold text-slate-900">
+                      Active challenges
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      Turn left, turn right, blink
+                    </div>
+                  </div>
+                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                    <div className="font-mono text-xs font-semibold text-slate-900">
+                      Zero frame egress
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      100% on-device execution
+                    </div>
                   </div>
                 </div>
-                <div className="rounded-xl border border-slate-200/60 bg-white p-3">
-                  <div className="font-mono text-xs font-semibold text-slate-900">
-                    Active challenges
+              </div>
+
+              {/* Card 3: Full width 3 cols */}
+              <div className="rounded-[10px] border border-slate-200/80 bg-[#fafbfc] p-6 transition-colors hover:border-slate-300 sm:p-7 md:col-span-3">
+                <div className="grid gap-6 md:grid-cols-12 md:items-center">
+                  <div className="md:col-span-7">
+                    <div className="mb-2 flex items-center gap-2.5">
+                      <LineChart className="h-5 w-5 text-[#2f5bf5]" />
+                      <h3 className="font-display text-base font-bold text-slate-900 sm:text-lg">
+                        Vector matching &amp; audit telemetry
+                      </h3>
+                    </div>
+                    <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                      Raw webcam frames are never transmitted. The client
+                      extracts a 128-dimensional numerical vector and sends it
+                      alongside session tokens and cryptographic integrity
+                      hashes for server-side template comparison.
+                    </p>
                   </div>
-                  <div className="text-[11px] text-slate-500">
-                    Turn left, turn right, blink
-                  </div>
-                </div>
-                <div className="rounded-xl border border-slate-200/60 bg-white p-3">
-                  <div className="font-mono text-xs font-semibold text-slate-900">
-                    Zero frame egress
-                  </div>
-                  <div className="text-[11px] text-slate-500">
-                    100% on-device execution
+                  <div className="grid gap-2.5 sm:grid-cols-2 md:col-span-5">
+                    <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                      <div className="text-[10px] font-medium text-slate-500">
+                        Embedding schema
+                      </div>
+                      <div className="mt-0.5 font-mono text-xs font-bold text-slate-900">
+                        128-d Float32 vector
+                      </div>
+                    </div>
+                    <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                      <div className="text-[10px] font-medium text-slate-500">
+                        Verification threshold
+                      </div>
+                      <div className="mt-0.5 font-mono text-xs font-bold text-slate-900">
+                        Cosine similarity &ge; 0.95
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Bento Card 2: 1 col wide */}
-            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-6 transition-colors hover:border-slate-300 sm:p-8 md:col-span-1">
-              <div className="mb-4 flex items-center gap-2.5">
-                <ShieldCheck className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                  Spoof defense
-                </h3>
-              </div>
-              <p className="mb-6 text-sm leading-relaxed text-slate-600">
-                Presentation attack detection stops physical and digital bypass
-                attempts before identity vectors are calculated.
+        {/* How It Works Section: Cobalt Dark Graphite Band */}
+        <section
+          id="how-it-works"
+          className="content-visibility-auto border-y border-slate-800 bg-[#181a20] px-4 py-20 text-slate-100 sm:px-6 md:px-12 md:py-28"
+        >
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-12 text-center md:mb-16">
+              <h2 className="font-display mb-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                How it works
+              </h2>
+              <p className="mx-auto max-w-xl text-xs text-slate-400 sm:text-sm">
+                Integrate liveness verification in three steps.
               </p>
-              <ul className="space-y-2.5 border-t border-slate-200/60 pt-5 text-xs text-slate-600">
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-blue-600" />
-                  <span>Printed photo and paper mask rejection</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-blue-600" />
-                  <span>Digital screen and video replay defense</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 shrink-0 text-blue-600" />
-                  <span>3D silicone mask and deepfake prevention</span>
-                </li>
-              </ul>
             </div>
 
-            {/* Bento Card 3: Full width 3 cols */}
-            <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-6 transition-colors hover:border-slate-300 sm:p-8 md:col-span-3">
-              <div className="grid gap-6 md:grid-cols-12 md:items-center">
-                <div className="md:col-span-7">
-                  <div className="mb-3 flex items-center gap-2.5">
-                    <LineChart className="h-5 w-5 text-blue-600" />
-                    <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                      Vector matching &amp; audit telemetry
-                    </h3>
-                  </div>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    Raw webcam frames are never transmitted. The client extracts
-                    a 128-dimensional numerical vector and sends it alongside
-                    session tokens and cryptographic integrity hashes for
-                    server-side template comparison.
-                  </p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 md:col-span-5">
-                  <div className="rounded-xl border border-slate-200/60 bg-white p-3.5">
-                    <div className="text-[11px] font-medium text-slate-500">
-                      Embedding schema
-                    </div>
-                    <div className="mt-0.5 font-mono text-xs font-bold text-slate-900">
-                      128-d Float32 vector
-                    </div>
-                  </div>
-                  <div className="rounded-xl border border-slate-200/60 bg-white p-3.5">
-                    <div className="text-[11px] font-medium text-slate-500">
-                      Verification threshold
-                    </div>
-                    <div className="mt-0.5 font-mono text-xs font-bold text-slate-900">
-                      Cosine similarity &ge; 0.95
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Interactive Steps + Code Viewer Grid */}
+            <HowItWorksInteractive />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* How It Works Section */}
-      <section
-        id="how-it-works"
-        className="content-visibility-auto border-y border-slate-200/60 bg-slate-50/80 px-4 py-20 sm:px-6 md:px-12 md:py-24"
-      >
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 text-center md:mb-16">
-            <h2 className="mb-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              How it works
-            </h2>
-            <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-              Integrate liveness verification in three steps.
-            </p>
-          </div>
-
-          {/* Interactive Steps + Code Viewer Grid */}
-          <HowItWorksInteractive />
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <FAQSection />
+        {/* FAQ Section */}
+        <FAQSection />
       </main>
 
-      {/* Enterprise Footer */}
-      <footer className="content-visibility-footer border-t border-slate-200/80 bg-slate-50/70 px-4 py-14 sm:py-16 md:px-12">
+      {/* Footer */}
+      <footer className="content-visibility-footer border-t border-slate-200/80 bg-[#f4f6f8] px-4 py-12 sm:py-14 md:px-12">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 grid gap-10 sm:grid-cols-2 md:grid-cols-4 lg:gap-12">
-            {/* Column 1: Brand & Status */}
-            <div className="space-y-4 md:col-span-1">
+          <div className="mb-10 grid gap-10 md:grid-cols-[1fr_auto]">
+            {/* Left: Brand & blurb */}
+            <div className="max-w-sm space-y-3.5">
               <Link
                 to="/"
                 onClick={scrollToTop}
                 className="group flex cursor-pointer items-center gap-2"
               >
-                <ShieldCheck className="h-6 w-6 shrink-0 text-blue-600" />
-                <span className="text-lg font-extrabold tracking-tight text-slate-900">
+                <ShieldCheck className="h-6 w-6 shrink-0 text-[#2f5bf5]" />
+                <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
                   Liveness
-                  <span className="ml-0.5 font-light text-blue-600">Cloud</span>
+                  <span className="ml-0.5 text-[#2f5bf5]">Cloud</span>
                 </span>
               </Link>
               <p className="text-xs leading-relaxed text-slate-500">
                 Facial liveness detection API and SDK for client-side identity
-                verification.
+                verification. Camera feeds stay on the device.
               </p>
-              <div className="space-y-2 pt-1">
-                <a
-                  href="mailto:support@liveness.cloud"
-                  className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-blue-600"
-                >
-                  <Mail className="h-3.5 w-3.5 shrink-0 text-blue-600" />
-                  <span>support@liveness.cloud</span>
-                </a>
-              </div>
+              <a
+                href="mailto:support@liveness.cloud"
+                className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 transition-colors hover:text-[#2f5bf5]"
+              >
+                <Mail className="h-3.5 w-3.5 shrink-0 text-[#2f5bf5]" />
+                <span>support@liveness.cloud</span>
+              </a>
             </div>
 
-            {/* Column 2: Product */}
-            <div>
-              <p className="mb-4 text-xs font-bold tracking-wider text-slate-900 uppercase">
-                Product
-              </p>
-              <ul className="space-y-2.5 text-xs font-medium text-slate-600">
-                <li>
-                  <a
-                    href="#features"
-                    onClick={scrollToSection("features")}
-                    className="cursor-pointer transition-colors hover:text-blue-600"
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#how-it-works"
-                    onClick={scrollToSection("how-it-works")}
-                    className="cursor-pointer transition-colors hover:text-blue-600"
-                  >
-                    How it works
-                  </a>
-                </li>
-                <li>
-                  <button
-                    onClick={() => openModal("/login")}
-                    className="cursor-pointer text-left transition-colors hover:text-blue-600"
-                  >
-                    Console Login
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 3: Developer & Resources */}
-            <div>
-              <p className="mb-4 text-xs font-bold tracking-wider text-slate-900 uppercase">
-                Developers
-              </p>
-              <ul className="space-y-2.5 text-xs font-medium text-slate-600">
-                <li>
-                  <Link
-                    to="/docs?section=introduction"
-                    className="transition-colors hover:text-blue-600"
-                  >
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/docs?section=sdk-usage"
-                    className="transition-colors hover:text-blue-600"
-                  >
-                    Quickstart Guide
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/docs?section=api-ref"
-                    className="transition-colors hover:text-blue-600"
-                  >
-                    API Reference
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="#faq"
-                    onClick={scrollToSection("faq")}
-                    className="cursor-pointer transition-colors hover:text-blue-600"
-                  >
-                    FAQ
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 4: Security & Compliance */}
-            <div>
-              <p className="mb-4 text-xs font-bold tracking-wider text-slate-900 uppercase">
-                Trust & Security
-              </p>
-              <p className="text-xs leading-relaxed text-slate-500">
-                Camera feeds stay on the device. Descriptors are processed in
-                memory and scored without storing raw images.
-              </p>
+            {/* Right: Links as horizontal rows */}
+            <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs font-medium text-slate-600 md:pt-1">
+              <a
+                href="#features"
+                onClick={scrollToSection("features")}
+                className="cursor-pointer transition-colors hover:text-[#2f5bf5]"
+              >
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={scrollToSection("how-it-works")}
+                className="cursor-pointer transition-colors hover:text-[#2f5bf5]"
+              >
+                How it works
+              </a>
+              <a
+                href="#faq"
+                onClick={scrollToSection("faq")}
+                className="cursor-pointer transition-colors hover:text-[#2f5bf5]"
+              >
+                FAQ
+              </a>
+              <Link
+                to="/docs?section=introduction"
+                className="transition-colors hover:text-[#2f5bf5]"
+              >
+                Docs
+              </Link>
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-200/80 pt-8 text-xs font-medium text-slate-600 sm:flex-row">
+          <div className="flex flex-col items-start justify-between gap-4 border-t border-slate-200/80 pt-8 text-xs font-medium text-slate-500 sm:flex-row sm:items-center">
             <p>
               &copy; {new Date().getFullYear()} Liveness Cloud, Inc. All rights
               reserved.
@@ -382,19 +299,13 @@ export default function Landing() {
                 to="/privacy"
                 className="transition-colors hover:text-slate-900"
               >
-                Privacy Policy
+                Privacy
               </Link>
               <Link
                 to="/terms"
                 className="transition-colors hover:text-slate-900"
               >
-                Terms of Service
-              </Link>
-              <Link
-                to="/docs"
-                className="transition-colors hover:text-slate-900"
-              >
-                Documentation
+                Terms
               </Link>
             </div>
           </div>
@@ -442,40 +353,40 @@ const FAQSection = () => {
   return (
     <section
       id="faq"
-      className="content-visibility-auto border-t border-slate-200/60 bg-slate-50/80 px-4 py-20 sm:px-6 md:px-12 md:py-24"
+      className="content-visibility-auto border-t border-slate-200/80 bg-white px-4 py-12 sm:px-6 md:px-12 md:py-16"
     >
       <div className="mx-auto max-w-4xl">
-        <div className="mb-12 text-center md:mb-16">
-          <h2 className="mb-4 text-2xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Frequently Asked Questions
+        <div className="mb-10 md:mb-12">
+          <h2 className="font-display mb-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Common questions
           </h2>
-          <p className="mx-auto max-w-xl text-sm text-slate-600 sm:text-base">
-            Common questions about integrating and deploying Liveness Cloud.
+          <p className="max-w-xl text-xs text-slate-600 sm:text-sm">
+            Integrating and deploying Liveness Cloud.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {FAQ_DATA.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div
                 key={index}
-                className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all"
+                className="overflow-hidden rounded-[8px] border border-slate-200/80 bg-[#fafbfc] transition-all hover:border-slate-300"
               >
                 <button
                   id={`faq-question-${index}`}
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${index}`}
                   onClick={() => toggleFaq(index)}
-                  className="flex w-full cursor-pointer items-center justify-between p-5 text-left font-bold text-slate-900 transition-colors hover:text-blue-600 sm:p-6"
+                  className="flex w-full cursor-pointer items-center justify-between p-4 text-left font-semibold text-slate-900 transition-colors hover:text-[#2f5bf5] sm:p-5"
                 >
-                  <span className="pr-4 text-base sm:text-lg">
+                  <span className="font-display pr-4 text-sm sm:text-base">
                     {faq.question}
                   </span>
                   <ChevronDown
                     aria-hidden="true"
-                    className={`h-5 w-5 shrink-0 text-slate-400 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-blue-600" : ""
+                    className={`h-4 w-4 shrink-0 text-slate-400 transition-transform duration-200 ${
+                      isOpen ? "rotate-180 text-[#2f5bf5]" : ""
                     }`}
                   />
                 </button>
@@ -484,9 +395,9 @@ const FAQSection = () => {
                     id={`faq-answer-${index}`}
                     role="region"
                     aria-labelledby={`faq-question-${index}`}
-                    className="border-t border-slate-100 px-5 pt-0 pb-6 text-sm leading-relaxed text-slate-600 sm:px-6 sm:pb-6 sm:text-base"
+                    className="border-t border-slate-200/60 px-4 pt-3 pb-5 text-xs leading-relaxed text-slate-600 sm:px-5 sm:pb-5 sm:text-sm"
                   >
-                    <p className="pt-4">{faq.answer}</p>
+                    <p>{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -569,7 +480,7 @@ const HowItWorksInteractive = () => {
   return (
     <div className="w-full max-w-full overflow-hidden">
       {/* Mobile Step Selector Tabs (Visible on small screens < 1024px) */}
-      <div className="mb-6 flex items-center justify-between gap-2 rounded-xl bg-slate-200/60 p-1.5 lg:hidden">
+      <div className="mb-6 flex items-center justify-between gap-1.5 rounded-[6px] border border-slate-800 bg-[#101216] p-1.5 lg:hidden">
         {STEPS_DATA.map((step, idx) => (
           <button
             key={step.id}
@@ -577,10 +488,10 @@ const HowItWorksInteractive = () => {
               setActiveStepIndex(idx);
               setStepCopied(false);
             }}
-            className={`flex-1 cursor-pointer rounded-lg px-3 py-2.5 text-center text-xs font-bold transition-all ${
+            className={`flex-1 cursor-pointer rounded-[4px] px-3 py-2 text-center font-mono text-xs font-semibold transition-colors ${
               idx === activeStepIndex
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
+                ? "bg-[#2f5bf5] text-white shadow-xs"
+                : "text-slate-400 hover:text-white"
             }`}
           >
             Step {step.id}
@@ -590,7 +501,7 @@ const HowItWorksInteractive = () => {
 
       <div className="grid items-stretch gap-6 text-left lg:grid-cols-12 lg:gap-8">
         {/* Left Column: Interactive Step Cards (Desktop / Tablet) */}
-        <div className="flex min-w-0 flex-col justify-between space-y-3 sm:space-y-4 lg:col-span-5">
+        <div className="flex min-w-0 flex-col justify-between space-y-3 lg:col-span-5">
           {STEPS_DATA.map((step, idx) => {
             const isActive = idx === activeStepIndex;
             return (
@@ -600,37 +511,37 @@ const HowItWorksInteractive = () => {
                   setActiveStepIndex(idx);
                   setStepCopied(false);
                 }}
-                className={`w-full cursor-pointer rounded-2xl border p-6 text-left transition-all duration-200 sm:p-8 ${
+                className={`w-full cursor-pointer rounded-[8px] border p-5 text-left transition-[border-color,background-color,box-shadow] duration-150 sm:p-6 ${
                   isActive
-                    ? "border-slate-300 bg-white shadow-lg ring-1 shadow-slate-900/5 ring-slate-200"
-                    : "border-slate-200/80 bg-white/60 hover:border-slate-300 hover:bg-white"
+                    ? "border-[#2f5bf5]/60 bg-[#21242d] shadow-sm"
+                    : "border-slate-800/90 bg-[#14161c] hover:border-slate-700 hover:bg-[#191b22]"
                 }`}
               >
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-1">
                   <span
-                    className={`rounded-md px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase sm:text-xs ${
+                    className={`rounded-[4px] px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase sm:text-xs ${
                       isActive
-                        ? "bg-slate-900 text-white"
-                        : "bg-slate-100 text-slate-600"
+                        ? "bg-[#2f5bf5] text-white"
+                        : "bg-slate-800 text-slate-400"
                     }`}
                   >
                     {step.step}
                   </span>
-                  <span className="font-mono text-[10px] font-semibold text-slate-600 sm:text-xs">
+                  <span className="font-mono text-[10px] font-semibold text-slate-400 sm:text-xs">
                     {step.tag}
                   </span>
                 </div>
-                <h3 className="mb-1 flex items-center justify-between text-base font-bold text-slate-900 sm:text-lg">
+                <h3 className="font-display mb-1 flex items-center justify-between text-sm font-bold text-white sm:text-base">
                   <span>{step.title}</span>
                   <ChevronRight
                     className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
                       isActive
-                        ? "translate-x-1 text-slate-900"
-                        : "text-slate-300"
+                        ? "translate-x-1 text-[#6b8af9]"
+                        : "text-slate-600"
                     }`}
                   />
                 </h3>
-                <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                <p className="text-xs leading-relaxed text-slate-400">
                   {step.description}
                 </p>
               </button>
@@ -640,11 +551,11 @@ const HowItWorksInteractive = () => {
 
         {/* Right Column: Code Window Mockup */}
         <div className="flex min-w-0 flex-col lg:col-span-7">
-          <div className="flex h-full max-w-full flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 text-slate-100 shadow-2xl">
+          <div className="flex h-full max-w-full flex-col overflow-hidden rounded-[10px] border border-slate-800 bg-[#101216] text-slate-100 shadow-xl">
             {/* Header Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 bg-slate-900/90 px-3 py-3 sm:px-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 bg-[#14161c] px-3.5 py-2.5 sm:px-4">
               <div className="flex shrink-0 items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-slate-300">
+                <span className="font-mono text-xs font-medium text-slate-300">
                   {activeStepData.fileName}
                 </span>
               </div>
@@ -653,7 +564,7 @@ const HowItWorksInteractive = () => {
               <div
                 role="tablist"
                 aria-label="Integration steps"
-                className="flex items-center space-x-1 rounded-lg border border-slate-800 bg-slate-950 p-1"
+                className="flex items-center space-x-1 rounded-[6px] border border-slate-800 bg-[#101216] p-1"
               >
                 {STEPS_DATA.map((step, idx) => (
                   <button
@@ -664,9 +575,9 @@ const HowItWorksInteractive = () => {
                       setActiveStepIndex(idx);
                       setStepCopied(false);
                     }}
-                    className={`cursor-pointer rounded-md px-2 py-0.5 font-mono text-[10px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[11px] ${
+                    className={`cursor-pointer rounded-[4px] px-2 py-0.5 font-mono text-[10px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[11px] ${
                       idx === activeStepIndex
-                        ? "bg-slate-700 text-white"
+                        ? "bg-[#2f5bf5] text-white"
                         : "text-slate-400 hover:text-slate-200"
                     }`}
                   >
@@ -678,14 +589,14 @@ const HowItWorksInteractive = () => {
               {/* Copy Button */}
               <button
                 onClick={() => handleCopyCode(activeStepData.code)}
-                className="flex w-21 shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-lg border border-slate-800 bg-slate-900 py-1.5 text-xs font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+                className="flex w-20 shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-[6px] border border-slate-700/80 bg-slate-800/90 py-1 text-xs font-medium text-slate-300 transition-[border-color,background-color,color] hover:border-slate-600 hover:bg-slate-700 hover:text-white"
                 title="Copy code snippet"
                 aria-label="Copy code snippet"
               >
                 {stepCopied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 text-green-500" />
-                    <span className="text-green-500">Copied!</span>
+                    <Check className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-emerald-400">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -697,14 +608,14 @@ const HowItWorksInteractive = () => {
             </div>
 
             {/* Code Viewport */}
-            <div className="max-w-full min-w-0 flex-1 overflow-x-auto bg-slate-950 p-3.5 font-mono text-[11px] leading-relaxed text-slate-200 sm:p-6 sm:text-sm">
+            <div className="max-w-full min-w-0 flex-1 overflow-x-auto bg-[#101216] p-4 font-mono text-xs leading-relaxed text-slate-200 sm:p-5">
               <pre className="wrap-break-word whitespace-pre-wrap sm:whitespace-pre">
                 <code>{activeStepData.code}</code>
               </pre>
             </div>
 
             {/* Output State */}
-            <div className="flex items-center justify-between border-t border-slate-800/80 bg-slate-900/60 px-4 py-2 text-xs font-medium text-slate-400">
+            <div className="flex items-center justify-between border-t border-slate-800/80 bg-[#14161c] px-4 py-2.5 text-xs font-medium text-slate-400">
               <span className="font-mono text-[11px] text-emerald-400">
                 {activeStepData.statusMessage}
               </span>

@@ -220,7 +220,7 @@ export default function Dashboard() {
       {/* Header Banner */}
       <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Console Overview
           </h1>
           <p className="mt-1 max-w-2xl text-sm font-medium text-slate-600">
@@ -234,7 +234,7 @@ export default function Dashboard() {
           <div
             role="group"
             aria-label="Time range selector"
-            className="flex items-center rounded-lg border border-slate-200 bg-slate-100/70 p-0.5 text-xs font-semibold text-slate-600"
+            className="flex items-center rounded-[6px] border border-slate-200/80 bg-slate-100/70 p-0.5 text-xs font-semibold text-slate-600"
           >
             {[7, 14, 30].map((days) => (
               <button
@@ -242,7 +242,7 @@ export default function Dashboard() {
                 type="button"
                 aria-pressed={timeRange === days}
                 onClick={() => setTimeRange(days)}
-                className={`cursor-pointer rounded-md px-2.5 py-1 transition-all ${
+                className={`cursor-pointer rounded-[4px] px-2.5 py-1 font-mono text-xs transition-all ${
                   timeRange === days
                     ? "bg-white font-bold text-slate-900 shadow-2xs"
                     : "text-slate-500 hover:text-slate-900"
@@ -255,14 +255,14 @@ export default function Dashboard() {
 
           <Link
             to="/api-keys"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-[6px] border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50"
           >
             <Key className="h-3.5 w-3.5 text-slate-400" />
             <span>API Keys</span>
           </Link>
           <Link
             to="/docs"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-[6px] border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50"
           >
             <span>Docs</span>
             <ArrowUpRight className="h-3.5 w-3.5 text-slate-400" />
@@ -272,7 +272,7 @@ export default function Dashboard() {
 
       {/* Onboarding callout if 0 keys exist */}
       {!loading && apiKeysCount === 0 && (
-        <div className="flex flex-col justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50/60 p-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col justify-between gap-3 rounded-[10px] border border-blue-200 bg-blue-50/60 p-4 sm:flex-row sm:items-center">
           <div>
             <p className="text-xs font-bold text-blue-900">
               Next Step: Create an API Key
@@ -284,7 +284,7 @@ export default function Dashboard() {
           </div>
           <Link
             to="/api-keys"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-blue-700"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-[6px] bg-[#2f5bf5] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8]"
           >
             <span>Create API Key</span>
             <ArrowRight className="h-3.5 w-3.5" />
@@ -299,7 +299,7 @@ export default function Dashboard() {
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs"
+                className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs"
               >
                 <Skeleton height={14} width={100} />
                 <div className="mt-3 space-y-1">
@@ -315,12 +315,12 @@ export default function Dashboard() {
           {cards.map((card) => (
             <div
               key={card.label}
-              className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs transition-colors hover:border-slate-300"
+              className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs transition-colors hover:border-slate-300"
             >
               <p className="text-xs font-semibold text-slate-500">
                 {card.label}
               </p>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <p className="font-heading mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                 {card.value}
               </p>
               <p className="mt-1 text-xs text-slate-500">{card.description}</p>
@@ -332,11 +332,11 @@ export default function Dashboard() {
       {/* Row 2: Verification Activity Chart & Outcome Distribution Breakdown */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left 2 Cols: Verification Activity Histogram */}
-        <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs lg:col-span-2">
+        <div className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs lg:col-span-2">
           <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
-                <BarChart3 className="h-4 w-4 text-blue-600" />
+              <h2 className="font-heading flex items-center gap-2 text-sm font-bold text-slate-900">
+                <BarChart3 className="h-4 w-4 text-[#2f5bf5]" />
                 Verification Activity
               </h2>
               <p className="mt-0.5 text-xs text-slate-500">
@@ -347,7 +347,7 @@ export default function Dashboard() {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center gap-3 text-xs font-medium text-slate-600">
+            <div className="flex items-center gap-3 font-mono text-xs font-medium text-slate-600">
               <div className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
                 <span>Passed</span>
@@ -366,7 +366,7 @@ export default function Dashboard() {
           {/* Interactive Inspection Bar (Strict fixed height to prevent layout shift) */}
           <div className="flex h-9 items-center justify-between border-b border-slate-100 px-1 text-xs">
             {hoveredDay ? (
-              <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
+              <div className="flex items-center gap-3 overflow-hidden font-mono whitespace-nowrap">
                 <span className="font-bold text-slate-900">
                   {hoveredDay.label}
                 </span>
@@ -474,7 +474,7 @@ export default function Dashboard() {
               </div>
 
               {/* Day Labels Underneath */}
-              <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2 text-[10px] font-medium text-slate-400">
+              <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2 font-mono text-[10px] font-medium text-slate-400">
                 {stats.timeline.map((day, idx) => {
                   // In 30D view, only show every 5th label to prevent clutter
                   const shouldShow =
@@ -501,11 +501,11 @@ export default function Dashboard() {
         </div>
 
         {/* Right 1 Col: Verification Performance */}
-        <div className="flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
+        <div className="flex flex-col justify-between rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs">
           <div>
             <div className="mb-4 border-b border-slate-100 pb-3.5">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
-                <ShieldCheck className="h-4 w-4 text-blue-600" />
+              <h2 className="font-heading flex items-center gap-2 text-sm font-bold text-slate-900">
+                <ShieldCheck className="h-4 w-4 text-[#2f5bf5]" />
                 Verification Performance
               </h2>
               <p className="mt-0.5 text-xs text-slate-500">
@@ -515,7 +515,7 @@ export default function Dashboard() {
 
             {/* Verification Pass / Reject Ratio Meter */}
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between text-xs">
+              <div className="flex items-baseline justify-between font-mono text-xs">
                 <span className="font-bold text-emerald-700">
                   {verificationPassRate}% Passed
                 </span>
@@ -541,7 +541,7 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <p className="text-[11px] text-slate-400">
+              <p className="font-mono text-[11px] text-slate-400">
                 {totalVerifications.toLocaleString()} total verification{" "}
                 {totalVerifications === 1 ? "attempt" : "attempts"} evaluated
               </p>
@@ -549,7 +549,7 @@ export default function Dashboard() {
 
             {/* Detailed Row Items */}
             <div className="mt-5 space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3">
+              <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/60 p-3">
                 <div className="flex items-center gap-2.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                   <div>
@@ -565,13 +565,13 @@ export default function Dashboard() {
                   <p className="font-mono text-xs font-bold text-slate-900">
                     {passedCount.toLocaleString()}
                   </p>
-                  <p className="text-[10px] font-semibold text-emerald-700">
+                  <p className="font-mono text-[10px] font-semibold text-emerald-700">
                     {verificationPassRate}%
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3">
+              <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/60 p-3">
                 <div className="flex items-center gap-2.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-rose-500" />
                   <div>
@@ -587,13 +587,13 @@ export default function Dashboard() {
                   <p className="font-mono text-xs font-bold text-slate-900">
                     {failedCount.toLocaleString()}
                   </p>
-                  <p className="text-[10px] font-semibold text-rose-700">
+                  <p className="font-mono text-[10px] font-semibold text-rose-700">
                     {verificationFailRate}%
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 p-3">
+              <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/60 p-3">
                 <div className="flex items-center gap-2.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
                   <div>
@@ -609,7 +609,7 @@ export default function Dashboard() {
                   <p className="font-mono text-xs font-bold text-slate-900">
                     {(stats.totalUsers || 0).toLocaleString()}
                   </p>
-                  <p className="text-[10px] font-semibold text-purple-700">
+                  <p className="font-mono text-[10px] font-semibold text-purple-700">
                     Registered
                   </p>
                 </div>
@@ -623,10 +623,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Left 2 Cols: Recent Verifications Feed */}
         <div className="space-y-6 lg:col-span-2">
-          <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+          <div className="overflow-hidden rounded-[10px] border border-slate-200/80 bg-white shadow-xs">
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
               <div>
-                <h2 className="text-sm font-bold text-slate-900">
+                <h2 className="font-heading text-sm font-bold text-slate-900">
                   Recent Verifications
                 </h2>
                 <p className="text-xs text-slate-500">
@@ -635,7 +635,7 @@ export default function Dashboard() {
               </div>
               <Link
                 to="/logs"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#2f5bf5] transition-colors hover:text-[#204be8]"
               >
                 <span>View all logs</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -650,7 +650,7 @@ export default function Dashboard() {
                       key={i}
                       className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0"
                     >
-                      <Skeleton height={20} width={80} borderRadius={6} />
+                      <Skeleton height={20} width={80} borderRadius={4} />
                       <Skeleton height={14} width={120} />
                       <Skeleton height={14} width={60} />
                       <Skeleton height={14} width={70} />
@@ -670,7 +670,7 @@ export default function Dashboard() {
                 <div className="mt-4 flex items-center gap-3">
                   <Link
                     to="/docs"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#2f5bf5] hover:text-[#204be8]"
                   >
                     <span>Read SDK Setup Guide</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -681,7 +681,7 @@ export default function Dashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/60 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                    <tr className="border-b border-slate-100 bg-slate-50/60 font-mono text-[10px] font-bold tracking-wider text-slate-500 uppercase">
                       <th className="px-5 py-3">Result</th>
                       <th className="px-5 py-3">Subject</th>
                       <th className="px-5 py-3">API Key</th>
@@ -697,7 +697,7 @@ export default function Dashboard() {
                       >
                         <td className="px-5 py-3.5">
                           <span
-                            className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase ${
+                            className={`inline-flex items-center gap-1 rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
                               log.status === "SUCCESS"
                                 ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                                 : log.status === "ENROLLED"
@@ -721,7 +721,7 @@ export default function Dashboard() {
                         </td>
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-2">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-slate-200/60 bg-slate-50 text-slate-500">
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] border border-slate-200/60 bg-slate-50 text-slate-500">
                               <User className="h-3 w-3" />
                             </div>
                             <span className="truncate text-xs font-semibold text-slate-800">
@@ -761,8 +761,8 @@ export default function Dashboard() {
         {/* Right 1 Col: Quick Actions & System Status */}
         <div className="space-y-6 lg:col-span-1">
           {/* Console Shortcuts */}
-          <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
-            <h2 className="mb-3.5 text-sm font-bold text-slate-900">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs">
+            <h2 className="font-heading mb-3.5 text-sm font-bold text-slate-900">
               Console Shortcuts
             </h2>
             <div className="divide-y divide-slate-100">
@@ -770,14 +770,14 @@ export default function Dashboard() {
                 <Link
                   key={action.title}
                   to={action.to}
-                  className="group flex items-center justify-between py-2.5 transition-colors first:pt-0 last:pb-0 hover:text-blue-600"
+                  className="group flex items-center justify-between py-2.5 transition-colors first:pt-0 last:pb-0 hover:text-[#2f5bf5]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/70 bg-slate-50 text-slate-500 transition-colors group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-slate-200/70 bg-slate-50 text-slate-500 transition-colors group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-[#2f5bf5]">
                       <action.icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-800 transition-colors group-hover:text-blue-600">
+                      <p className="text-xs font-semibold text-slate-800 transition-colors group-hover:text-[#2f5bf5]">
                         {action.title}
                       </p>
                       <p className="text-[11px] text-slate-500">
@@ -785,17 +785,17 @@ export default function Dashboard() {
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-600" />
+                  <ArrowRight className="h-3.5 w-3.5 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-[#2f5bf5]" />
                 </Link>
               ))}
             </div>
           </div>
 
           {/* System Status */}
-          <div className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-5 shadow-xs">
             <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-slate-900">
-                <Server className="h-4 w-4 text-blue-600" />
+              <h2 className="font-heading flex items-center gap-2 text-sm font-bold text-slate-900">
+                <Server className="h-4 w-4 text-[#2f5bf5]" />
                 System Status
               </h2>
               <span className="font-mono text-[11px] font-semibold text-slate-500">
@@ -804,7 +804,7 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 p-3">
+              <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3">
                 <div className="flex items-center gap-2.5">
                   <div
                     className={`h-2 w-2 rounded-full ${
@@ -823,7 +823,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span
-                  className={`rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
                     systemStatus.api === "Operational"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                       : "border-rose-200 bg-rose-50 text-rose-700"
@@ -833,7 +833,7 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 p-3">
+              <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3">
                 <div className="flex items-center gap-2.5">
                   <div
                     className={`h-2 w-2 rounded-full ${
@@ -850,7 +850,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span
-                  className={`rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
                     systemStatus.database === "Connected"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                       : "border-rose-200 bg-rose-50 text-rose-700"

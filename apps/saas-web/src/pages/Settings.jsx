@@ -166,7 +166,7 @@ export default function Settings() {
       {/* Header Banner */}
       <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Account & Security Settings
           </h1>
           <p className="mt-1 text-sm font-medium text-slate-600">
@@ -180,20 +180,20 @@ export default function Settings() {
       <div
         role="tablist"
         aria-label="Settings categories"
-        className="inline-flex items-center gap-0.5 rounded-xl border border-slate-200/60 bg-slate-100/80 p-1"
+        className="inline-flex items-center gap-0.5 rounded-[6px] border border-slate-200/80 bg-slate-100/80 p-0.5"
       >
         <button
           role="tab"
           aria-selected={activeTab === "general"}
           onClick={() => setActiveTab("general")}
-          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 ${
+          className={`flex cursor-pointer items-center gap-2 rounded-[4px] border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
             activeTab === "general"
-              ? "border-slate-200/80 bg-white text-slate-900 shadow-sm"
+              ? "border-slate-200/80 bg-white font-bold text-slate-900 shadow-2xs"
               : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           <User
-            className={`h-4 w-4 shrink-0 ${activeTab === "general" ? "text-blue-600" : "text-slate-400"}`}
+            className={`h-4 w-4 shrink-0 ${activeTab === "general" ? "text-[#2f5bf5]" : "text-slate-400"}`}
           />
           <span>General Profile</span>
         </button>
@@ -202,14 +202,14 @@ export default function Settings() {
           role="tab"
           aria-selected={activeTab === "security"}
           onClick={() => setActiveTab("security")}
-          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 text-xs font-extrabold transition-colors duration-150 ${
+          className={`flex cursor-pointer items-center gap-2 rounded-[4px] border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
             activeTab === "security"
-              ? "border-slate-200/80 bg-white text-slate-900 shadow-sm"
+              ? "border-slate-200/80 bg-white font-bold text-slate-900 shadow-2xs"
               : "border-transparent text-slate-500 hover:text-slate-700"
           }`}
         >
           <Lock
-            className={`h-4 w-4 shrink-0 ${activeTab === "security" ? "text-blue-600" : "text-slate-400"}`}
+            className={`h-4 w-4 shrink-0 ${activeTab === "security" ? "text-[#2f5bf5]" : "text-slate-400"}`}
           />
           <span>Security & Credentials</span>
         </button>
@@ -220,19 +220,19 @@ export default function Settings() {
         <div className="grid items-start gap-6 lg:grid-cols-12">
           {/* User Profile Card */}
           <div className="lg:col-span-4">
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
+            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-blue-700 text-lg font-black text-white shadow-md shadow-blue-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[8px] bg-[#2f5bf5] text-base font-bold text-white shadow-xs">
                   {`${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase() ||
                     "AD"}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-base font-extrabold text-slate-900">
+                  <p className="font-heading truncate text-base font-bold text-slate-900">
                     {user
                       ? `${user.firstName} ${user.lastName}`
                       : "Administrator"}
                   </p>
-                  <p className="truncate font-mono text-xs font-semibold text-slate-500">
+                  <p className="truncate font-mono text-xs font-medium text-slate-500">
                     @{user?.username || "admin"}
                   </p>
                 </div>
@@ -240,20 +240,20 @@ export default function Settings() {
 
               <div className="mt-6 space-y-3.5 border-t border-slate-100 pt-6 text-xs">
                 <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-2 font-bold text-slate-500">
+                  <span className="flex items-center gap-2 font-medium text-slate-500">
                     <User className="h-4 w-4 text-slate-400" />
                     Email Address
                   </span>
-                  <span className="max-w-37.5 truncate font-mono font-bold text-slate-900">
+                  <span className="max-w-37.5 truncate font-mono text-xs font-semibold text-slate-900">
                     {user?.email || "N/A"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-2 font-bold text-slate-500">
+                  <span className="flex items-center gap-2 font-medium text-slate-500">
                     <Shield className="h-4 w-4 text-slate-400" />
                     Access Role
                   </span>
-                  <span className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-[10px] font-extrabold tracking-wider text-blue-700 uppercase">
+                  <span className="inline-flex items-center rounded-[4px] border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#2f5bf5] uppercase">
                     Super Admin
                   </span>
                 </div>
@@ -263,13 +263,13 @@ export default function Settings() {
 
           {/* Profile Form */}
           <div className="lg:col-span-8">
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
+            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-2xs">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
+                  <h2 className="font-heading text-base font-bold text-slate-900">
                     Personal Profile Details
                   </h2>
                   <p className="text-xs font-medium text-slate-500">
@@ -281,7 +281,7 @@ export default function Settings() {
               {profileSuccess && (
                 <div
                   role="status"
-                  className="animate-in fade-in mb-4 flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 duration-200"
+                  className="animate-in fade-in mb-4 flex items-center gap-2.5 rounded-[6px] border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
                 >
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                   <span>{profileSuccess}</span>
@@ -296,7 +296,7 @@ export default function Settings() {
                   <div>
                     <label
                       htmlFor="firstName"
-                      className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                      className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                     >
                       First Name
                     </label>
@@ -305,7 +305,7 @@ export default function Settings() {
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="Admin"
                     />
                   </div>
@@ -313,7 +313,7 @@ export default function Settings() {
                   <div>
                     <label
                       htmlFor="lastName"
-                      className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                      className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                     >
                       Last Name
                     </label>
@@ -322,7 +322,7 @@ export default function Settings() {
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="User"
                     />
                   </div>
@@ -332,11 +332,11 @@ export default function Settings() {
                   <div className="mb-1.5 flex items-center justify-between">
                     <label
                       htmlFor="email"
-                      className="block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                      className="block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                     >
                       Email Address (Primary Identity)
                     </label>
-                    <span className="flex items-center gap-1 text-[10px] font-extrabold text-slate-400 uppercase">
+                    <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-slate-400 uppercase">
                       <Lock className="h-3 w-3" /> Managed by Auth Provider
                     </span>
                   </div>
@@ -345,7 +345,7 @@ export default function Settings() {
                     type="email"
                     disabled
                     value={email}
-                    className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100/70 px-4 py-2.5 text-xs font-bold text-slate-500 shadow-2xs select-none"
+                    className="w-full cursor-not-allowed rounded-[6px] border border-slate-200 bg-slate-100/70 px-3.5 py-2 font-mono text-xs font-medium text-slate-500 shadow-2xs select-none"
                   />
                   <p className="mt-1.5 text-[11px] font-medium text-slate-400">
                     Your email address is your primary account identifier.
@@ -364,7 +364,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={profileLoading || !isProfileDirty}
-                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-[6px] bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {profileLoading
                       ? "Saving Profile..."
@@ -382,17 +382,17 @@ export default function Settings() {
         <div className="grid items-start gap-6 lg:grid-cols-12">
           {/* Security Status Card */}
           <div className="space-y-6 lg:col-span-4">
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
-              <p className="mb-4 flex items-center gap-2 text-xs font-extrabold tracking-wider text-slate-600 uppercase">
-                <ShieldCheck className="h-4 w-4 text-blue-600" />
+            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
+              <p className="mb-4 flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-600 uppercase">
+                <ShieldCheck className="h-4 w-4 text-[#2f5bf5]" />
                 Security Overview
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs">
+                <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
                     <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                    <span className="font-bold text-slate-800">
+                    <span className="font-semibold text-slate-800">
                       Active Session
                     </span>
                   </div>
@@ -401,10 +401,12 @@ export default function Settings() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-3 text-xs">
+                <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
-                    <KeyRound className="h-4 w-4 text-blue-600" />
-                    <span className="font-bold text-slate-800">API Scope</span>
+                    <KeyRound className="h-4 w-4 text-[#2f5bf5]" />
+                    <span className="font-semibold text-slate-800">
+                      API Scope
+                    </span>
                   </div>
                   <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
                     Full Read/Write
@@ -416,13 +418,13 @@ export default function Settings() {
 
           {/* Change Password Form */}
           <div className="lg:col-span-8">
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs">
+            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600 shadow-2xs">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
                   <Lock className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
+                  <h2 className="font-heading text-base font-bold text-slate-900">
                     Authentication Credentials
                   </h2>
                   <p className="text-xs font-medium text-slate-500">
@@ -439,7 +441,7 @@ export default function Settings() {
                 {error && (
                   <div
                     role="alert"
-                    className="animate-in fade-in flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-bold text-rose-700 duration-200"
+                    className="animate-in fade-in flex items-center gap-2.5 rounded-[6px] border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700 duration-200"
                   >
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
@@ -449,7 +451,7 @@ export default function Settings() {
                 {success && (
                   <div
                     role="status"
-                    className="animate-in fade-in flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-bold text-emerald-700 duration-200"
+                    className="animate-in fade-in flex items-center gap-2.5 rounded-[6px] border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
                   >
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>{success}</span>
@@ -460,7 +462,7 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="currentPassword"
-                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                    className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                   >
                     Current Password <span className="text-rose-500">*</span>
                   </label>
@@ -471,7 +473,7 @@ export default function Settings() {
                       required
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -493,7 +495,7 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="newPassword"
-                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                    className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                   >
                     New Password <span className="text-rose-500">*</span>
                   </label>
@@ -504,7 +506,7 @@ export default function Settings() {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -522,9 +524,9 @@ export default function Settings() {
                   </div>
 
                   {newPassword && (
-                    <div className="mt-2 text-[11px] font-bold">
+                    <div className="mt-2 text-[11px] font-semibold">
                       {newPassword.length < 6 ? (
-                        <span className="text-red-800">
+                        <span className="text-rose-700">
                           Too short (min 6 chars)
                         </span>
                       ) : (
@@ -538,7 +540,7 @@ export default function Settings() {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="mb-1.5 block text-xs font-extrabold tracking-wider text-slate-700 uppercase"
+                    className="mb-1.5 block text-xs font-semibold tracking-wider text-slate-700 uppercase"
                   >
                     Confirm New Password{" "}
                     <span className="text-rose-500">*</span>
@@ -550,7 +552,7 @@ export default function Settings() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 pr-10 text-xs font-bold text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:outline-none"
+                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -577,7 +579,7 @@ export default function Settings() {
                       !newPassword ||
                       !confirmPassword
                     }
-                    className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-[6px] bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? "Updating Credentials..." : "Update Password"}
                   </button>
