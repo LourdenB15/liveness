@@ -1,6 +1,8 @@
 import {
   Activity,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Code2,
   Cpu,
@@ -26,6 +28,9 @@ export default function Logs() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedLog, setSelectedLog] = useState(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+
+  const [pageSize, setPageSize] = useState(10); // 10, 20, or "all"
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filterOptions = [
     { id: "ALL", label: "All Statuses", color: "bg-slate-400" },
@@ -53,6 +58,22 @@ export default function Logs() {
     }
   };
 
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setCurrentPage(1);
+  };
+
+  const handleStatusFilterChange = (status) => {
+    setStatusFilter(status);
+    setCurrentPage(1);
+    setStatusDropdownOpen(false);
+  };
+
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
   const filteredLogs = logs.filter((log) => {
     const term = searchTerm.toLowerCase();
     const matchesSearch =
@@ -62,6 +83,22 @@ export default function Logs() {
     const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const totalFiltered = filteredLogs.length;
+  const isAll = pageSize === "all";
+  const effectivePageSize = isAll ? Math.max(totalFiltered, 1) : pageSize;
+  const totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalFiltered / effectivePageSize));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const paginatedLogs = isAll
+    ? filteredLogs
+    : filteredLogs.slice(
+        (safeCurrentPage - 1) * effectivePageSize,
+        safeCurrentPage * effectivePageSize,
+      );
+
+  const startRecord = totalFiltered === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1;
+  const endRecord = isAll ? totalFiltered : Math.min(safeCurrentPage * effectivePageSize, totalFiltered);
 
   const totalCount = logs.length;
   const successCount = logs.filter(
@@ -99,7 +136,7 @@ export default function Logs() {
               type="text"
               placeholder="Search subject..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full rounded-md border border-slate-200/80 bg-white py-2 pr-4 pl-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
             />
           </div>
@@ -130,10 +167,7 @@ export default function Logs() {
                   {filterOptions.map((opt) => (
                     <button
                       key={opt.id}
-                      onClick={() => {
-                        setStatusFilter(opt.id);
-                        setStatusDropdownOpen(false);
-                      }}
+                      onClick={() => handleStatusFilterChange(opt.id)}
                       className={`flex w-full cursor-pointer items-center justify-between rounded-[6px] px-3 py-2 text-xs font-medium transition-all ${
                         statusFilter === opt.id
                           ? "bg-blue-50 font-bold text-[#2f5bf5]"
@@ -254,7 +288,7 @@ export default function Logs() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredLogs.map((log) => (
+                {paginatedLogs.map((log) => (
                   <tr
                     key={log.id}
                     onClick={() => setSelectedLog(log)}
@@ -348,6 +382,108 @@ export default function Logs() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {filteredLogs.length > 0 && (
+            <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5 sm:flex-row">
+              {/* Left: Rows per page selector */}
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
+                <span className="font-mono text-[11px] text-slate-500 uppercase">
+                  Show:
+                </span>
+                <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5 shadow-2xs">
+                  {[10, 20, "all"].map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => handlePageSizeChange(size)}
+                      className={`cursor-pointer rounded px-2.5 py-1 font-mono text-xs font-semibold transition-colors ${
+                        pageSize === size
+                          ? "bg-[#2f5bf5] text-white"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      }`}
+                    >
+                      {size === "all" ? "All" : size}
+                    </button>
+                  ))}
+                </div>
+                <span className="hidden font-mono text-[11px] text-slate-400 sm:inline">
+                  entries
+                </span>
+              </div>
+
+              {/* Center: Showing X to Y of Z */}
+              <div className="font-mono text-xs text-slate-500">
+                Showing <strong className="font-bold text-slate-800">{startRecord}</strong>–
+                <strong className="font-bold text-slate-800">{endRecord}</strong> of{" "}
+                <strong className="font-bold text-slate-800">{totalFiltered}</strong>
+              </div>
+
+              {/* Right: Page navigation buttons */}
+              {!isAll && totalPages > 1 && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={safeCurrentPage <= 1}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    title="Previous page"
+                    aria-label="Previous page"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((page) => {
+                        return (
+                          page === 1 ||
+                          page === totalPages ||
+                          Math.abs(page - safeCurrentPage) <= 1
+                        );
+                      })
+                      .map((page, idx, arr) => {
+                        const prev = arr[idx - 1];
+                        const showEllipsis = prev && page - prev > 1;
+                        return (
+                          <div key={page} className="flex items-center">
+                            {showEllipsis && (
+                              <span className="px-1.5 font-mono text-xs text-slate-400">
+                                …
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setCurrentPage(page)}
+                              className={`h-8 min-w-8 cursor-pointer rounded-md px-2 font-mono text-xs font-semibold transition-colors ${
+                                safeCurrentPage === page
+                                  ? "bg-[#2f5bf5] text-white shadow-2xs"
+                                  : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={safeCurrentPage >= totalPages}
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    title="Next page"
+                    aria-label="Next page"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

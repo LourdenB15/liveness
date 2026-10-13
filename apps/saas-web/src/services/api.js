@@ -144,7 +144,8 @@ export const api = {
   },
 
   logs: {
-    list: () => request("/dashboard/logs"),
+    list: (limit) =>
+      request(`/dashboard/logs${limit ? `?limit=${limit}` : ""}`),
   },
 
   apiKeys: {
