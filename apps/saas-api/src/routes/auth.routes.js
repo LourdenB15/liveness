@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ipKeyGenerator } from "express-rate-limit";
 import * as authController from "../controllers/auth.controller.js";
 import { authenticateToken } from "../middleware/auth.js";
 import { createRateLimiter } from "../middleware/rateLimiter.js";
@@ -32,7 +33,7 @@ const changePasswordLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many password change attempts, please try again later.",
-  keyGenerator: (req) => req.user?.id || req.ip,
+  keyGenerator: (req) => req.user?.id || ipKeyGenerator(req.ip),
 });
 
 router.post("/signup", signupLimiter, authController.signup);

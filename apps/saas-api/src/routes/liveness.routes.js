@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ipKeyGenerator } from "express-rate-limit";
 import { authenticateApiKey } from "../middleware/auth.js";
 import { createRateLimiter } from "../middleware/rateLimiter.js";
 import { validateIntegrity } from "../middleware/validateIntegrity.js";
@@ -10,7 +11,7 @@ const livenessLimiter = createRateLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 60, // 60 requests per minute
   message: "Too many biometric verification requests, please try again later.",
-  keyGenerator: (req) => req.apiKeyId || req.ip,
+  keyGenerator: (req) => req.apiKeyId || ipKeyGenerator(req.ip),
 });
 
 router.post(
