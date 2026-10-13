@@ -180,7 +180,7 @@ export default function Settings() {
       <div
         role="tablist"
         aria-label="Settings categories"
-        className="inline-flex items-center gap-0.5 rounded-[6px] border border-slate-200/80 bg-slate-100/80 p-0.5"
+        className="inline-flex items-center gap-0.5 rounded-md border border-slate-200/80 bg-slate-100/80 p-0.5"
       >
         <button
           role="tab"
@@ -222,7 +222,7 @@ export default function Settings() {
           <div className="lg:col-span-4">
             <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[8px] bg-[#2f5bf5] text-base font-bold text-white shadow-xs">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2f5bf5] text-base font-bold text-white shadow-xs">
                   {`${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase() ||
                     "AD"}
                 </div>
@@ -253,7 +253,7 @@ export default function Settings() {
                     <Shield className="h-4 w-4 text-slate-400" />
                     Access Role
                   </span>
-                  <span className="inline-flex items-center rounded-[4px] border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#2f5bf5] uppercase">
+                  <span className="inline-flex items-center rounded-sm border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#2f5bf5] uppercase">
                     Super Admin
                   </span>
                 </div>
@@ -265,7 +265,7 @@ export default function Settings() {
           <div className="lg:col-span-8">
             <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
@@ -281,7 +281,7 @@ export default function Settings() {
               {profileSuccess && (
                 <div
                   role="status"
-                  className="animate-in fade-in mb-4 flex items-center gap-2.5 rounded-[6px] border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
+                  className="animate-in fade-in mb-4 flex items-center gap-2.5 rounded-md border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
                 >
                   <CheckCircle2 className="h-4 w-4 shrink-0" />
                   <span>{profileSuccess}</span>
@@ -305,7 +305,7 @@ export default function Settings() {
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="Admin"
                     />
                   </div>
@@ -322,7 +322,7 @@ export default function Settings() {
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="User"
                     />
                   </div>
@@ -345,7 +345,7 @@ export default function Settings() {
                     type="email"
                     disabled
                     value={email}
-                    className="w-full cursor-not-allowed rounded-[6px] border border-slate-200 bg-slate-100/70 px-3.5 py-2 font-mono text-xs font-medium text-slate-500 shadow-2xs select-none"
+                    className="w-full cursor-not-allowed rounded-md border border-slate-200 bg-slate-100/70 px-3.5 py-2 font-mono text-xs font-medium text-slate-500 shadow-2xs select-none"
                   />
                   <p className="mt-1.5 text-[11px] font-medium text-slate-400">
                     Your email address is your primary account identifier.
@@ -364,7 +364,7 @@ export default function Settings() {
                   <button
                     type="submit"
                     disabled={profileLoading || !isProfileDirty}
-                    className="cursor-pointer rounded-[6px] bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-md bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {profileLoading
                       ? "Saving Profile..."
@@ -389,7 +389,7 @@ export default function Settings() {
               </p>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3 text-xs">
+                <div className="flex items-center justify-between rounded-md border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
                     <div className="h-2 w-2 rounded-full bg-emerald-500" />
                     <span className="font-semibold text-slate-800">
@@ -401,7 +401,7 @@ export default function Settings() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-[6px] border border-slate-100 bg-slate-50/70 p-3 text-xs">
+                <div className="flex items-center justify-between rounded-md border border-slate-100 bg-slate-50/70 p-3 text-xs">
                   <div className="flex items-center gap-2.5">
                     <KeyRound className="h-4 w-4 text-[#2f5bf5]" />
                     <span className="font-semibold text-slate-800">
@@ -420,7 +420,7 @@ export default function Settings() {
           <div className="lg:col-span-8">
             <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
                   <Lock className="h-5 w-5" />
                 </div>
                 <div>
@@ -441,7 +441,7 @@ export default function Settings() {
                 {error && (
                   <div
                     role="alert"
-                    className="animate-in fade-in flex items-center gap-2.5 rounded-[6px] border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700 duration-200"
+                    className="animate-in fade-in flex items-center gap-2.5 rounded-md border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-700 duration-200"
                   >
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{error}</span>
@@ -451,7 +451,7 @@ export default function Settings() {
                 {success && (
                   <div
                     role="status"
-                    className="animate-in fade-in flex items-center gap-2.5 rounded-[6px] border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
+                    className="animate-in fade-in flex items-center gap-2.5 rounded-md border border-emerald-200 bg-emerald-50 p-3.5 text-xs font-semibold text-emerald-700 duration-200"
                   >
                     <CheckCircle2 className="h-4 w-4 shrink-0" />
                     <span>{success}</span>
@@ -473,7 +473,7 @@ export default function Settings() {
                       required
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -506,7 +506,7 @@ export default function Settings() {
                       required
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -552,7 +552,7 @@ export default function Settings() {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 pr-10 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                       placeholder="••••••••"
                     />
                     <button
@@ -579,7 +579,7 @@ export default function Settings() {
                       !newPassword ||
                       !confirmPassword
                     }
-                    className="cursor-pointer rounded-[6px] bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-md bg-[#2f5bf5] px-4 py-2 text-xs font-semibold text-white shadow-2xs transition-colors hover:bg-[#204be8] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {loading ? "Updating Credentials..." : "Update Password"}
                   </button>

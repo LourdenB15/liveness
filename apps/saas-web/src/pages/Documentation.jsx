@@ -101,7 +101,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
           <button
             type="button"
             onClick={handleCopy}
-            className="flex cursor-pointer items-center gap-1.5 rounded-[6px] border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
+            className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
             title="Copy code to clipboard"
           >
             {copied ? (
@@ -116,7 +116,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
               </>
             )}
           </button>
-          <span className="shrink-0 rounded-[4px] bg-slate-800/80 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+          <span className="shrink-0 rounded-sm bg-slate-800/80 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
             {language}
           </span>
         </div>
@@ -150,7 +150,7 @@ const CodeBlock = ({ code, language = "javascript", title }) => {
 
 const IntroContent = () => (
   <div>
-    <div className="mb-6 inline-flex items-center rounded-[4px] border border-blue-100 bg-blue-50/80 px-2.5 py-1 font-mono text-xs font-semibold text-[#2f5bf5]">
+    <div className="mb-6 inline-flex items-center rounded-sm border border-blue-100 bg-blue-50/80 px-2.5 py-1 font-mono text-xs font-semibold text-[#2f5bf5]">
       <Book className="mr-2 h-3.5 w-3.5" /> Documentation v1.0.0
     </div>
     <h1 className="font-heading mb-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
@@ -218,7 +218,7 @@ const IntroContent = () => (
         Verification workflow
       </h3>
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+        <div className="rounded-md border border-slate-200/70 bg-white p-4">
           <span className="font-mono text-xs font-bold text-[#2f5bf5]">01</span>
           <h4 className="mt-1 text-sm font-bold text-slate-900">
             Session init
@@ -228,7 +228,7 @@ const IntroContent = () => (
             the Cloud API.
           </p>
         </div>
-        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+        <div className="rounded-md border border-slate-200/70 bg-white p-4">
           <span className="font-mono text-xs font-bold text-[#2f5bf5]">02</span>
           <h4 className="mt-1 text-sm font-bold text-slate-900">
             Active checks
@@ -238,7 +238,7 @@ const IntroContent = () => (
             webcam.
           </p>
         </div>
-        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+        <div className="rounded-md border border-slate-200/70 bg-white p-4">
           <span className="font-mono text-xs font-bold text-[#2f5bf5]">03</span>
           <h4 className="mt-1 text-sm font-bold text-slate-900">
             Feature vector
@@ -248,7 +248,7 @@ const IntroContent = () => (
             WebAssembly.
           </p>
         </div>
-        <div className="rounded-[6px] border border-slate-200/70 bg-white p-4">
+        <div className="rounded-md border border-slate-200/70 bg-white p-4">
           <span className="font-mono text-xs font-bold text-[#2f5bf5]">04</span>
           <h4 className="mt-1 text-sm font-bold text-slate-900">
             Verification
@@ -1967,10 +1967,10 @@ const Documentation = () => {
       <div className="relative mb-3 w-full lg:hidden">
         <button
           onClick={() => setTopicDropdownOpen((prev) => !prev)}
-          className="flex w-full cursor-pointer items-center justify-between rounded-[6px] border border-slate-200/90 bg-white p-3 px-4 shadow-xs transition-all hover:border-slate-300 active:scale-[0.99]"
+          className="flex w-full cursor-pointer items-center justify-between rounded-md border border-slate-200/90 bg-white p-3 px-4 shadow-xs transition-all hover:border-slate-300 active:scale-[0.99]"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[4px] bg-[#2f5bf5]/10 text-[#2f5bf5]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[#2f5bf5]/10 text-[#2f5bf5]">
               <CurrentIcon className="h-4 w-4" />
             </div>
             <div className="flex min-w-0 flex-col text-left">

@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
 
         <article className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-xs sm:p-10 md:p-12">
           <div className="border-b border-slate-100 pb-6 sm:pb-8">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-[4px] border border-[#2f5bf5]/20 bg-[#2f5bf5]/10 px-2.5 py-1 text-xs font-semibold text-[#2f5bf5]">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-sm border border-[#2f5bf5]/20 bg-[#2f5bf5]/10 px-2.5 py-1 text-xs font-semibold text-[#2f5bf5]">
               <ShieldCheck className="h-3.5 w-3.5" />
               Privacy Policy
             </div>
@@ -177,7 +177,7 @@ export default function PrivacyPolicy() {
                 If you have questions about this privacy policy or how data is
                 handled, please contact us at:
               </p>
-              <div className="mt-3 rounded-[6px] border border-slate-200 bg-[#fafbfc] p-4 font-mono text-xs text-slate-700 sm:text-sm">
+              <div className="mt-3 rounded-md border border-slate-200 bg-[#fafbfc] p-4 font-mono text-xs text-slate-700 sm:text-sm">
                 support@liveness.cloud
               </div>
             </section>

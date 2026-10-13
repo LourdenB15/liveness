@@ -57,7 +57,7 @@ export default function Sidebar({
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -65,9 +65,9 @@ export default function Sidebar({
         </div>
 
         {/* Mobile User Profile Card (Mobile Drawer Only) */}
-        <div className="mb-6 rounded-[8px] border border-slate-200/80 bg-[#fafbfc] p-3.5 shadow-2xs md:hidden">
+        <div className="mb-6 rounded-lg border border-slate-200/80 bg-[#fafbfc] p-3.5 shadow-2xs md:hidden">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-blue-600 font-mono text-xs font-bold text-white shadow-xs">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-blue-600 font-mono text-xs font-bold text-white shadow-xs">
               {initials}
             </div>
             <div className="flex min-w-0 flex-col overflow-hidden text-left">
@@ -146,7 +146,7 @@ export default function Sidebar({
             <li>
               <button
                 onClick={handleLogout}
-                className="flex w-full cursor-pointer items-center rounded-[6px] px-3 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                className="flex w-full cursor-pointer items-center rounded-md px-3 py-2 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
               >
                 <LogOut className="mr-2.5 h-4 w-4 shrink-0 text-rose-500" />
                 Sign Out
@@ -206,7 +206,7 @@ export default function Sidebar({
             {!sidebarCollapsed && (
               <button
                 onClick={() => setSearchModalOpen(true)}
-                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-blue-600"
+                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-blue-600"
                 title="Search Platform (Ctrl+K)"
                 aria-label="Search Platform (Ctrl+K)"
               >
@@ -216,7 +216,7 @@ export default function Sidebar({
 
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-slate-900"
+              className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-slate-200/80 text-slate-500 transition-colors hover:border-slate-300 hover:bg-white hover:text-slate-900"
               title={
                 sidebarCollapsed
                   ? "Expand Sidebar (Ctrl+B)"

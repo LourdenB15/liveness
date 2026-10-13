@@ -113,13 +113,13 @@ const Navbar = () => {
         <div className="hidden items-center space-x-3 md:flex">
           <button
             onClick={() => openModal("/login")}
-            className="cursor-pointer rounded-[6px] border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+            className="cursor-pointer rounded-md border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
           >
             Log in
           </button>
           <button
             onClick={() => openModal("/signup")}
-            className="cursor-pointer rounded-[6px] bg-[#2f5bf5] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8]"
+            className="cursor-pointer rounded-md bg-[#2f5bf5] px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8]"
           >
             Get Started
           </button>
@@ -128,7 +128,7 @@ const Navbar = () => {
         {/* Mobile Menu Button Trigger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="cursor-pointer rounded-[6px] border border-slate-200/80 p-2 text-slate-600 hover:bg-slate-50 md:hidden"
+          className="cursor-pointer rounded-md border border-slate-200/80 p-2 text-slate-600 hover:bg-slate-50 md:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={mobileMenuOpen}
         >
@@ -201,7 +201,7 @@ const Navbar = () => {
                 setMobileMenuOpen(false);
                 openModal("/signup");
               }}
-              className="cursor-pointer rounded-[6px] bg-[#2f5bf5] py-2.5 text-center text-xs font-semibold text-white transition-colors hover:bg-[#204be8]"
+              className="cursor-pointer rounded-md bg-[#2f5bf5] py-2.5 text-center text-xs font-semibold text-white transition-colors hover:bg-[#204be8]"
             >
               Get Started
             </button>

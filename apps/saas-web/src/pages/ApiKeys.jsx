@@ -132,7 +132,7 @@ export default function ApiKeys() {
               closeCreateModal();
               setIsCreating(true);
             }}
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-[#2f5bf5] px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8]"
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#2f5bf5] px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8]"
           >
             <Plus className="h-4 w-4" />
             Issue New Key
@@ -157,7 +157,7 @@ export default function ApiKeys() {
               {/* Modal Header & Close Button */}
               <div className="mb-5 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[8px] border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
                     <Key className="h-5 w-5" />
                   </div>
                   <div>
@@ -175,7 +175,7 @@ export default function ApiKeys() {
                 <button
                   type="button"
                   onClick={closeCreateModal}
-                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
                   aria-label="Close modal"
                 >
                   <X className="h-4 w-4" />
@@ -186,7 +186,7 @@ export default function ApiKeys() {
                 {error && (
                   <div
                     role="alert"
-                    className="flex items-center gap-2 rounded-[6px] border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700"
+                    className="flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 p-3 text-xs font-semibold text-rose-700"
                   >
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     {error}
@@ -208,7 +208,7 @@ export default function ApiKeys() {
                     placeholder="e.g. Production iOS Mobile App"
                     value={newKeyName}
                     onChange={(e) => setNewKeyName(e.target.value)}
-                    className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+                    className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-400 focus:border-[#2f5bf5] focus:bg-white focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
                     autoFocus
                   />
                   <p className="mt-1.5 text-[11px] font-medium text-slate-400">
@@ -220,14 +220,14 @@ export default function ApiKeys() {
                   <button
                     type="button"
                     onClick={closeCreateModal}
-                    className="cursor-pointer rounded-[6px] border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer rounded-md border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`rounded-[6px] px-4 py-2 text-xs font-semibold text-white transition-colors ${
+                    className={`rounded-md px-4 py-2 text-xs font-semibold text-white transition-colors ${
                       isSubmitting
                         ? "cursor-not-allowed bg-blue-400 opacity-75"
                         : "cursor-pointer bg-[#2f5bf5] shadow-xs hover:bg-[#204be8]"
@@ -290,7 +290,7 @@ export default function ApiKeys() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="inline-flex w-fit max-w-xs items-center gap-2 rounded-[4px] border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-600">
+                      <div className="inline-flex w-fit max-w-xs items-center gap-2 rounded-sm border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-600">
                         <code className="truncate font-bold text-slate-600">
                           {key.key}
                         </code>
@@ -309,7 +309,7 @@ export default function ApiKeys() {
                           setDeleteTarget(key);
                           setConfirmInput("");
                         }}
-                        className="cursor-pointer rounded-[4px] p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                        className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                         title="Revoke access"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -321,7 +321,7 @@ export default function ApiKeys() {
                   <tr>
                     <td colSpan="4" className="px-6 py-14 text-center">
                       <div className="flex flex-col items-center">
-                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[6px] border border-slate-200/60 bg-slate-50">
+                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md border border-slate-200/60 bg-slate-50">
                           <Key className="h-5 w-5 text-slate-300" />
                         </div>
                         <p className="text-xs font-extrabold tracking-widest text-slate-500 uppercase">
@@ -348,7 +348,7 @@ export default function ApiKeys() {
 
       {/* Security Warning Box */}
       <div className="flex flex-col items-start gap-3.5 rounded-[10px] border border-amber-200 bg-amber-50/80 p-4 sm:flex-row">
-        <div className="shrink-0 rounded-[6px] bg-amber-100 p-2 text-amber-700">
+        <div className="shrink-0 rounded-md bg-amber-100 p-2 text-amber-700">
           <AlertCircle className="h-4 w-4" />
         </div>
         <div>
@@ -377,7 +377,7 @@ export default function ApiKeys() {
               aria-labelledby="key-generated-modal-title"
               className="animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl duration-200"
             >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[8px] bg-blue-50 text-[#2f5bf5]">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-[#2f5bf5]">
                 <Key className="h-5 w-5" />
               </div>
 
@@ -393,11 +393,11 @@ export default function ApiKeys() {
                 is ready.
               </p>
 
-              <div className="mt-4 flex items-center justify-between gap-3 rounded-[6px] border border-slate-200/80 bg-slate-50 p-3 font-mono text-xs font-bold text-slate-800">
+              <div className="mt-4 flex items-center justify-between gap-3 rounded-md border border-slate-200/80 bg-slate-50 p-3 font-mono text-xs font-bold text-slate-800">
                 <span className="truncate select-all">{showKeyModal.key}</span>
                 <button
                   onClick={() => copyToClipboard(showKeyModal.key, "modal")}
-                  className={`flex shrink-0 cursor-pointer items-center justify-center rounded-[4px] px-3 py-1 text-xs font-semibold transition-all ${
+                  className={`rounded-4px flex shrink-0 cursor-pointer items-center justify-center px-3 py-1 text-xs font-semibold transition-all ${
                     copiedId === "modal"
                       ? "bg-emerald-100 text-emerald-700"
                       : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -417,7 +417,7 @@ export default function ApiKeys() {
                 </button>
               </div>
 
-              <div className="mt-4 flex items-start gap-2.5 rounded-[6px] border border-amber-200 bg-amber-50 p-3.5">
+              <div className="mt-4 flex items-start gap-2.5 rounded-md border border-amber-200 bg-amber-50 p-3.5">
                 <AlertCircle className="h-4 w-4 shrink-0 text-amber-700" />
                 <p className="text-xs leading-relaxed font-semibold text-amber-800">
                   Save this key now. It will not be shown again.
@@ -426,7 +426,7 @@ export default function ApiKeys() {
 
               <button
                 onClick={() => setShowKeyModal(null)}
-                className="mt-5 w-full cursor-pointer rounded-[6px] bg-slate-900 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800"
+                className="mt-5 w-full cursor-pointer rounded-md bg-slate-900 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800"
               >
                 I have saved this key
               </button>
@@ -452,7 +452,7 @@ export default function ApiKeys() {
               {/* Modal Header */}
               <div className="mb-5 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[8px] border border-rose-100 bg-rose-50 text-rose-600 shadow-2xs">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-rose-600 shadow-2xs">
                     <AlertTriangle className="h-5 w-5" />
                   </div>
                   <div>
@@ -470,7 +470,7 @@ export default function ApiKeys() {
                 <button
                   type="button"
                   onClick={closeDeleteModal}
-                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
                   aria-label="Close modal"
                 >
                   <X className="h-4 w-4" />
@@ -478,7 +478,7 @@ export default function ApiKeys() {
               </div>
 
               <form onSubmit={confirmDeleteKey} className="flex flex-col gap-4">
-                <div className="rounded-[6px] border border-rose-100 bg-rose-50/60 p-3.5 text-xs">
+                <div className="rounded-md border border-rose-100 bg-rose-50/60 p-3.5 text-xs">
                   <p className="leading-relaxed font-medium text-slate-700">
                     This will permanently revoke API access key{" "}
                     <strong className="font-bold text-slate-900">
@@ -514,7 +514,7 @@ export default function ApiKeys() {
                       value={confirmInput}
                       onChange={(e) => setConfirmInput(e.target.value)}
                       placeholder={deleteTarget.name}
-                      className="w-full rounded-[6px] border border-slate-200 bg-slate-50/50 px-3.5 py-2 font-mono text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-300 focus:border-rose-500 focus:bg-white focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 font-mono text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-300 focus:border-rose-500 focus:bg-white focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                       autoFocus
                     />
                     {confirmInput === deleteTarget.name && (
@@ -527,7 +527,7 @@ export default function ApiKeys() {
                   <button
                     type="button"
                     onClick={closeDeleteModal}
-                    className="cursor-pointer rounded-[6px] border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer rounded-md border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
                   >
                     Cancel
                   </button>
@@ -536,7 +536,7 @@ export default function ApiKeys() {
                     disabled={
                       confirmInput !== deleteTarget.name || isDeletingKey
                     }
-                    className={`rounded-[6px] px-4 py-2 text-xs font-semibold text-white transition-colors ${
+                    className={`rounded-md px-4 py-2 text-xs font-semibold text-white transition-colors ${
                       confirmInput === deleteTarget.name && !isDeletingKey
                         ? "cursor-pointer bg-rose-600 shadow-xs hover:bg-rose-700"
                         : "cursor-not-allowed bg-slate-300 opacity-60"

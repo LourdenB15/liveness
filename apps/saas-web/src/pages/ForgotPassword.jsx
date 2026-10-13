@@ -74,7 +74,7 @@ export default function ForgotPassword({ modal = false }) {
       {/* Header */}
       <div className="mb-7 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#2f5bf5] shadow-xs">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#2f5bf5] shadow-xs">
             <KeyRound className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -93,7 +93,7 @@ export default function ForgotPassword({ modal = false }) {
           <button
             type="button"
             onClick={handleClose}
-            className="cursor-pointer rounded-[6px] p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="cursor-pointer rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -117,7 +117,7 @@ export default function ForgotPassword({ modal = false }) {
           <Link
             to="/login"
             state={modal ? location.state : undefined}
-            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-[#181a20] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#181a20]/90"
+            className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[#181a20] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#181a20]/90"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Sign In
@@ -129,7 +129,7 @@ export default function ForgotPassword({ modal = false }) {
           {!hasFieldErrors && error && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[6px] border border-red-200 bg-red-50/80 p-3 text-xs text-red-700"
+              className="flex items-start gap-2.5 rounded-md border border-red-200 bg-red-50/80 p-3 text-xs text-red-700"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
               <div>
@@ -196,7 +196,7 @@ export default function ForgotPassword({ modal = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full cursor-pointer justify-center rounded-[6px] bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
+            className="flex w-full cursor-pointer justify-center rounded-md bg-[#2f5bf5] px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none disabled:opacity-50"
           >
             {loading ? "Sending link..." : "Send reset link"}
           </button>

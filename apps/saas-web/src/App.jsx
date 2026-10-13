@@ -99,7 +99,7 @@ function NotFound() {
       </p>
       <Link
         to={user ? "/dashboard" : "/"}
-        className="mt-8 inline-flex items-center rounded-[6px] bg-[#2f5bf5] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#204be8] active:translate-y-px"
+        className="mt-8 inline-flex items-center rounded-md bg-[#2f5bf5] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-[#204be8] active:translate-y-px"
       >
         {user ? "Go to Dashboard" : "Back to Home"}
       </Link>
@@ -143,7 +143,7 @@ function App() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-[6px] focus:bg-[#2f5bf5] focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-white focus:shadow-xs focus:ring-2 focus:ring-[#2f5bf5]/40 focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[#2f5bf5] focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-white focus:shadow-xs focus:ring-2 focus:ring-[#2f5bf5]/40 focus:outline-none"
       >
         Skip to main content
       </a>

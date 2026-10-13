@@ -58,7 +58,7 @@ export default function Landing() {
                 </p>
 
                 {/* npm install — primary developer CTA */}
-                <div className="mb-6 flex max-w-md items-center gap-3 rounded-[8px] border border-slate-200/80 bg-slate-900 p-2 shadow-xs">
+                <div className="mb-6 flex max-w-md items-center gap-3 rounded-lg border border-slate-200/80 bg-slate-900 p-2 shadow-xs">
                   <div className="flex min-w-0 flex-1 items-center gap-2 pl-2 font-mono text-xs">
                     <span className="shrink-0 font-bold text-[#2f5bf5]">$</span>
                     <span className="truncate font-medium text-slate-200 select-all">
@@ -67,7 +67,7 @@ export default function Landing() {
                   </div>
                   <button
                     onClick={copyToClipboard}
-                    className="flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-[4px] border border-slate-800 bg-slate-950 px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+                    className="flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-sm border border-slate-800 bg-slate-950 px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-400 transition-all hover:border-slate-700 hover:bg-slate-800 hover:text-white"
                     title="Copy package installation command"
                     aria-label="Copy package installation command"
                   >
@@ -88,14 +88,14 @@ export default function Landing() {
                 <div className="flex flex-col items-start gap-3 sm:flex-row">
                   <button
                     onClick={() => openModal("/signup")}
-                    className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[6px] bg-[#2f5bf5] px-5 py-2.5 text-center text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] sm:w-auto"
+                    className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-[#2f5bf5] px-5 py-2.5 text-center text-xs font-semibold text-white shadow-xs transition-colors hover:bg-[#204be8] sm:w-auto"
                   >
                     <span>Create account</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => openModal("/login")}
-                    className="w-full cursor-pointer rounded-[6px] border border-slate-200/80 bg-white px-5 py-2.5 text-center text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 hover:text-slate-900 sm:w-auto"
+                    className="w-full cursor-pointer rounded-md border border-slate-200/80 bg-white px-5 py-2.5 text-center text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 hover:text-slate-900 sm:w-auto"
                   >
                     Sign in
                   </button>
@@ -135,7 +135,7 @@ export default function Landing() {
                   sending video streams to a server.
                 </p>
                 <div className="grid gap-2.5 border-t border-slate-200/80 pt-4 sm:grid-cols-3">
-                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                  <div className="rounded-md border border-slate-200/80 bg-white p-3">
                     <div className="font-mono text-xs font-semibold text-slate-900">
                       468 3D points
                     </div>
@@ -143,7 +143,7 @@ export default function Landing() {
                       Sub-200ms latency
                     </div>
                   </div>
-                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                  <div className="rounded-md border border-slate-200/80 bg-white p-3">
                     <div className="font-mono text-xs font-semibold text-slate-900">
                       Active challenges
                     </div>
@@ -151,7 +151,7 @@ export default function Landing() {
                       Turn left, turn right, blink
                     </div>
                   </div>
-                  <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                  <div className="rounded-md border border-slate-200/80 bg-white p-3">
                     <div className="font-mono text-xs font-semibold text-slate-900">
                       Zero frame egress
                     </div>
@@ -180,7 +180,7 @@ export default function Landing() {
                     </p>
                   </div>
                   <div className="grid gap-2.5 sm:grid-cols-2 md:col-span-5">
-                    <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                    <div className="rounded-md border border-slate-200/80 bg-white p-3">
                       <div className="text-[10px] font-medium text-slate-500">
                         Embedding schema
                       </div>
@@ -188,7 +188,7 @@ export default function Landing() {
                         128-d Float32 vector
                       </div>
                     </div>
-                    <div className="rounded-[6px] border border-slate-200/80 bg-white p-3">
+                    <div className="rounded-md border border-slate-200/80 bg-white p-3">
                       <div className="text-[10px] font-medium text-slate-500">
                         Verification threshold
                       </div>
@@ -371,7 +371,7 @@ const FAQSection = () => {
             return (
               <div
                 key={index}
-                className="overflow-hidden rounded-[8px] border border-slate-200/80 bg-[#fafbfc] transition-all hover:border-slate-300"
+                className="overflow-hidden rounded-lg border border-slate-200/80 bg-[#fafbfc] transition-all hover:border-slate-300"
               >
                 <button
                   id={`faq-question-${index}`}
@@ -480,7 +480,7 @@ const HowItWorksInteractive = () => {
   return (
     <div className="w-full max-w-full overflow-hidden">
       {/* Mobile Step Selector Tabs (Visible on small screens < 1024px) */}
-      <div className="mb-6 flex items-center justify-between gap-1.5 rounded-[6px] border border-slate-800 bg-[#101216] p-1.5 lg:hidden">
+      <div className="mb-6 flex items-center justify-between gap-1.5 rounded-md border border-slate-800 bg-[#101216] p-1.5 lg:hidden">
         {STEPS_DATA.map((step, idx) => (
           <button
             key={step.id}
@@ -564,7 +564,7 @@ const HowItWorksInteractive = () => {
               <div
                 role="tablist"
                 aria-label="Integration steps"
-                className="flex items-center space-x-1 rounded-[6px] border border-slate-800 bg-[#101216] p-1"
+                className="flex items-center space-x-1 rounded-md border border-slate-800 bg-[#101216] p-1"
               >
                 {STEPS_DATA.map((step, idx) => (
                   <button
@@ -589,7 +589,7 @@ const HowItWorksInteractive = () => {
               {/* Copy Button */}
               <button
                 onClick={() => handleCopyCode(activeStepData.code)}
-                className="flex w-20 shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-[6px] border border-slate-700/80 bg-slate-800/90 py-1 text-xs font-medium text-slate-300 transition-[border-color,background-color,color] hover:border-slate-600 hover:bg-slate-700 hover:text-white"
+                className="flex w-20 shrink-0 cursor-pointer items-center justify-center space-x-1.5 rounded-md border border-slate-700/80 bg-slate-800/90 py-1 text-xs font-medium text-slate-300 transition-[border-color,background-color,color] hover:border-slate-600 hover:bg-slate-700 hover:text-white"
                 title="Copy code snippet"
                 aria-label="Copy code snippet"
               >

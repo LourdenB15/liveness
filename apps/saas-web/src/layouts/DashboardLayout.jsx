@@ -160,7 +160,7 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Search Button (Beside Hamburger Button) */}
             <button
               onClick={() => setSearchModalOpen(true)}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-white text-slate-500 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-800 md:hidden"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200/80 bg-white text-slate-500 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-800 md:hidden"
               aria-label="Search"
             >
               <Search className="h-3.5 w-3.5" />
@@ -170,11 +170,11 @@ export default function DashboardLayout({ children }) {
             <div className="relative hidden md:block" ref={dropdownRef}>
               <button
                 onClick={() => setProfileDropdownOpen((prev) => !prev)}
-                className="group flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border border-slate-200/80 bg-white p-1.5 pr-2.5 shadow-2xs transition-all hover:border-slate-300"
+                className="group flex cursor-pointer items-center justify-center gap-2 rounded-md border border-slate-200/80 bg-white p-1.5 pr-2.5 shadow-2xs transition-all hover:border-slate-300"
                 aria-label="Profile menu"
                 aria-expanded={profileDropdownOpen}
               >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] bg-blue-600 font-mono text-[11px] font-bold text-white shadow-xs">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-blue-600 font-mono text-[11px] font-bold text-white shadow-xs">
                   {initials}
                 </div>
                 <div className="flex flex-col text-left">
@@ -196,7 +196,7 @@ export default function DashboardLayout({ children }) {
 
               {/* Profile Dropdown Menu */}
               {profileDropdownOpen && (
-                <div className="animate-in fade-in zoom-in-95 absolute right-0 z-50 mt-1.5 w-60 rounded-[8px] border border-slate-200/90 bg-white p-1.5 shadow-lg duration-150">
+                <div className="animate-in fade-in zoom-in-95 absolute right-0 z-50 mt-1.5 w-60 rounded-lg border border-slate-200/90 bg-white p-1.5 shadow-lg duration-150">
                   <div className="mb-1 border-b border-slate-100 px-3 py-2">
                     <p className="text-xs font-semibold text-slate-900">
                       {fullName}
@@ -209,7 +209,7 @@ export default function DashboardLayout({ children }) {
                   <Link
                     to="/settings"
                     onClick={() => setProfileDropdownOpen(false)}
-                    className="flex items-center gap-2 rounded-[6px] px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                    className="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
                   >
                     <SettingsIcon className="h-3.5 w-3.5 text-slate-400" />
                     Account Settings
@@ -219,7 +219,7 @@ export default function DashboardLayout({ children }) {
 
                   <button
                     onClick={handleLogout}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-[6px] px-2.5 py-1.5 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50"
                   >
                     <LogOut className="h-3.5 w-3.5 text-rose-500" />
                     Sign Out
@@ -231,7 +231,7 @@ export default function DashboardLayout({ children }) {
             {/* Mobile Hamburger Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-[6px] border border-slate-200/80 bg-white p-1.5 text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-900 md:hidden"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200/80 bg-white p-1.5 text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:text-slate-900 md:hidden"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -324,7 +324,7 @@ export default function DashboardLayout({ children }) {
                     setSearchModalOpen(false);
                     setSearchQuery("");
                   }}
-                  className="rounded-[4px] border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-500 hover:bg-slate-200"
+                  className="rounded-sm border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-slate-500 hover:bg-slate-200"
                 >
                   ESC
                 </button>
@@ -409,10 +409,10 @@ export default function DashboardLayout({ children }) {
                                 setSearchModalOpen(false);
                                 setSearchQuery("");
                               }}
-                              className="group flex cursor-pointer items-center justify-between rounded-[6px] p-2 text-left transition-colors hover:bg-blue-50/70"
+                              className="group flex cursor-pointer items-center justify-between rounded-md p-2 text-left transition-colors hover:bg-blue-50/70"
                             >
                               <div className="flex items-center gap-2.5">
-                                <div className="flex h-7 w-7 items-center justify-center rounded-[4px] border border-blue-100 bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+                                <div className="flex h-7 w-7 items-center justify-center rounded-sm border border-blue-100 bg-blue-50 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
                                   <Book className="h-3.5 w-3.5" />
                                 </div>
                                 <div>
@@ -448,10 +448,10 @@ export default function DashboardLayout({ children }) {
                                   setSearchModalOpen(false);
                                   setSearchQuery("");
                                 }}
-                                className="group flex cursor-pointer items-center justify-between rounded-[6px] p-2 text-left transition-colors hover:bg-blue-50/70"
+                                className="group flex cursor-pointer items-center justify-between rounded-md p-2 text-left transition-colors hover:bg-blue-50/70"
                               >
                                 <div className="flex items-center gap-2.5">
-                                  <div className="flex h-7 w-7 items-center justify-center rounded-[4px] border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                                  <div className="flex h-7 w-7 items-center justify-center rounded-sm border border-slate-200/80 bg-slate-50 text-slate-500 transition-colors group-hover:border-blue-600 group-hover:bg-blue-600 group-hover:text-white">
                                     <Icon className="h-3.5 w-3.5" />
                                   </div>
                                   <div>

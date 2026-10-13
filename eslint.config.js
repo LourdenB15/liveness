@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import tailwindCanonicalClasses from "eslint-plugin-tailwind-canonical-classes";
 import globals from "globals";
 
 export default [
@@ -24,6 +25,7 @@ export default [
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      "tailwind-canonical-classes": tailwindCanonicalClasses,
     },
     languageOptions: {
       ecmaVersion: 2020,
@@ -43,6 +45,12 @@ export default [
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
+      ],
+      "tailwind-canonical-classes/tailwind-canonical-classes": [
+        "warn",
+        {
+          cssPath: "apps/saas-web/src/index.css",
+        },
       ],
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
     },
