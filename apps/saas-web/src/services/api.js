@@ -154,6 +154,10 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ name }),
       }),
+    revoke: (id) =>
+      request(`/dashboard/api-keys/${id}/revoke`, {
+        method: "PATCH",
+      }),
     delete: (id) =>
       request(`/dashboard/api-keys/${id}`, {
         method: "DELETE",

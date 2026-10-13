@@ -42,6 +42,27 @@ export async function createApiKey(req, res) {
 
 const uuidSchema = z.string().uuid("Invalid API key ID format");
 
+export async function revokeApiKey(req, res) {
+  const validation = uuidSchema.safeParse(req.params.id);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+  const id = validation.data;
+  const adminId = req.user.id;
+  try {
+    const revokedKey = await apiKeyServices.revokeApiKey(id, adminId);
+    if (!revokedKey) {
+      return res
+        .status(404)
+        .json({ error: "API key not found or already revoked." });
+    }
+    res.json(revokedKey);
+  } catch (error) {
+    console.error("API key revoke error:", error);
+    res.status(500).json({ error: "Failed to revoke API key." });
+  }
+}
+
 export async function deleteApiKey(req, res) {
   const validation = uuidSchema.safeParse(req.params.id);
   if (!validation.success) {

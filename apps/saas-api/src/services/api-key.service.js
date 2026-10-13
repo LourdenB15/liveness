@@ -21,6 +21,11 @@ export async function createApiKey(name, adminId) {
   return { ...newKeyRecord, key: rawKey, isNew: true };
 }
 
+export async function revokeApiKey(id, adminId) {
+  const revokedRecord = await apiKeyRepositories.revokeApiKey(id, adminId);
+  return revokedRecord;
+}
+
 export async function deleteApiKey(id, adminId) {
   const deleteCount = await apiKeyRepositories.deleteApiKey(id, adminId);
   return deleteCount;
@@ -36,6 +41,12 @@ export async function findApiKeyDetails(apiKey) {
   }
 
   const key = apiKeys[0];
+  if (key.revokedAt) {
+    const error = new Error("API key has been revoked");
+    error.status = 401;
+    throw error;
+  }
+
   return {
     adminId: key.adminId,
     apiKeyId: key.id,

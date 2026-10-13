@@ -36,8 +36,12 @@ CREATE TABLE IF NOT EXISTS api_keys (
     name VARCHAR(255) NOT NULL,
     key_hash VARCHAR(255) NOT NULL UNIQUE,
     masked_key VARCHAR(255) NOT NULL,
+    revoked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Ensure revoked_at column exists if migrating existing schema
+ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS revoked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL;
 
 -- Users table with face descriptor vector
 CREATE TABLE IF NOT EXISTS users (

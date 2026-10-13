@@ -1,6 +1,7 @@
 import {
   AlertCircle,
   AlertTriangle,
+  Ban,
   Check,
   CheckCircle2,
   Copy,
@@ -31,9 +32,11 @@ export default function ApiKeys() {
   const [isCreating, setIsCreating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeletingKey, setIsDeletingKey] = useState(false);
+  const [isRevokingKey, setIsRevokingKey] = useState(false);
   const [error, setError] = useState("");
   const [copiedId, setCopiedId] = useState(null);
   const [showKeyModal, setShowKeyModal] = useState(null);
+  const [revokeTarget, setRevokeTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [confirmInput, setConfirmInput] = useState("");
 
@@ -58,6 +61,12 @@ export default function ApiKeys() {
     setIsSubmitting(false);
     setNewKeyName("");
     setError("");
+  };
+
+  const closeRevokeModal = () => {
+    setRevokeTarget(null);
+    setIsRevokingKey(false);
+    setConfirmInput("");
   };
 
   const closeDeleteModal = () => {
@@ -87,6 +96,22 @@ export default function ApiKeys() {
       setError(err.message);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const confirmRevokeKey = async (e) => {
+    e.preventDefault();
+    if (!revokeTarget || confirmInput !== revokeTarget.name || isRevokingKey)
+      return;
+    setIsRevokingKey(true);
+    try {
+      await api.apiKeys.revoke(revokeTarget.id);
+      closeRevokeModal();
+      fetchKeys();
+    } catch (err) {
+      console.error("Failed to revoke key", err);
+    } finally {
+      setIsRevokingKey(false);
     }
   };
 
@@ -270,56 +295,95 @@ export default function ApiKeys() {
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/60 font-mono text-[10px] font-bold tracking-wider text-slate-500 uppercase">
                   <th className="px-6 py-3.5">Key Identifier</th>
+                  <th className="px-6 py-3.5">Status</th>
                   <th className="px-6 py-3.5">Cryptographic Key</th>
                   <th className="px-6 py-3.5">Issued Date</th>
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {keys.map((key) => (
-                  <tr
-                    key={key.id}
-                    className="group transition-colors hover:bg-slate-50/70"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-2 w-2 shrink-0 rounded-full bg-[#2f5bf5]" />
-                        <span className="text-xs font-bold text-slate-900 sm:text-sm">
-                          {key.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="inline-flex w-fit max-w-xs items-center gap-2 rounded-sm border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-600">
-                        <code className="truncate font-bold text-slate-600">
-                          {key.key}
-                        </code>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-500">
-                      {new Date(key.createdAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => {
-                          setDeleteTarget(key);
-                          setConfirmInput("");
-                        }}
-                        className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
-                        title="Revoke access"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {keys.map((key) => {
+                  const isRevoked = Boolean(key.revokedAt);
+                  return (
+                    <tr
+                      key={key.id}
+                      className="group transition-colors hover:bg-slate-50/70"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className={`h-2 w-2 shrink-0 rounded-full ${
+                              isRevoked ? "bg-slate-300" : "bg-[#2f5bf5]"
+                            }`}
+                          />
+                          <span
+                            className={`text-xs font-bold sm:text-sm ${
+                              isRevoked
+                                ? "text-slate-500 line-through"
+                                : "text-slate-900"
+                            }`}
+                          >
+                            {key.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {isRevoked ? (
+                          <span className="inline-flex items-center gap-1 rounded-sm border border-slate-200 bg-slate-100 px-2 py-0.5 font-mono text-[10px] font-bold text-slate-600 uppercase">
+                            Revoked
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-sm border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700 uppercase">
+                            Active
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="inline-flex w-fit max-w-xs items-center gap-2 rounded-sm border border-slate-200/60 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-600">
+                          <code className="truncate font-bold text-slate-600">
+                            {key.key}
+                          </code>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-xs font-medium text-slate-500">
+                        {new Date(key.createdAt).toLocaleDateString(undefined, {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {!isRevoked && (
+                            <button
+                              onClick={() => {
+                                setRevokeTarget(key);
+                                setConfirmInput("");
+                              }}
+                              className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
+                              title="Revoke API key"
+                            >
+                              <Ban className="h-4 w-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              setDeleteTarget(key);
+                              setConfirmInput("");
+                            }}
+                            className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
+                            title="Delete API key"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
                 {keys.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="px-6 py-14 text-center">
+                    <td colSpan="5" className="px-6 py-14 text-center">
                       <div className="flex flex-col items-center">
                         <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md border border-slate-200/60 bg-slate-50">
                           <Key className="h-5 w-5 text-slate-300" />
@@ -435,13 +499,13 @@ export default function ApiKeys() {
           document.body,
         )}
 
-      {/* GitHub-Style Revoke Key Confirmation Modal (React Portal) */}
-      {deleteTarget &&
+      {/* Revoke API Key Modal (Soft Revocation) */}
+      {revokeTarget &&
         createPortal(
           <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm duration-200">
             <div
               className="fixed inset-0 cursor-pointer"
-              onClick={closeDeleteModal}
+              onClick={closeRevokeModal}
             />
             <div
               role="dialog"
@@ -452,8 +516,8 @@ export default function ApiKeys() {
               {/* Modal Header */}
               <div className="mb-5 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-rose-600 shadow-2xs">
-                    <AlertTriangle className="h-5 w-5" />
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-600 shadow-2xs">
+                    <Ban className="h-5 w-5" />
                   </div>
                   <div>
                     <h2
@@ -463,7 +527,123 @@ export default function ApiKeys() {
                       Revoke API Key
                     </h2>
                     <p className="text-xs font-medium text-slate-500">
-                      This action requires typed verification
+                      Deactivate key without deleting historical logs
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeRevokeModal}
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-slate-100 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
+                  aria-label="Close modal"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <form onSubmit={confirmRevokeKey} className="flex flex-col gap-4">
+                <div className="rounded-md border border-amber-200/80 bg-amber-50/70 p-3.5 text-xs">
+                  <p className="leading-relaxed font-medium text-slate-700">
+                    Are you sure you want to revoke API key{" "}
+                    <strong className="font-bold text-slate-900">
+                      {revokeTarget.name}
+                    </strong>{" "}
+                    (
+                    <code className="font-mono font-bold text-slate-700">
+                      {revokeTarget.key}
+                    </code>
+                    )?
+                  </p>
+                  <p className="mt-2 font-bold text-amber-800">
+                    Client applications using this key will be denied access
+                    immediately. Past audit logs and user records remain intact.
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="revoke-confirm-input"
+                    className="mb-2 block text-xs font-semibold text-slate-600"
+                  >
+                    To confirm, type{" "}
+                    <strong className="font-mono font-bold text-slate-900 select-all">
+                      {revokeTarget.name}
+                    </strong>{" "}
+                    below:
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="revoke-confirm-input"
+                      type="text"
+                      value={confirmInput}
+                      onChange={(e) => setConfirmInput(e.target.value)}
+                      placeholder={revokeTarget.name}
+                      className="w-full rounded-md border border-slate-200 bg-slate-50/50 px-3.5 py-2 font-mono text-xs font-medium text-slate-900 shadow-2xs transition-all placeholder:text-slate-300 focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
+                      autoFocus
+                    />
+                    {confirmInput === revokeTarget.name && (
+                      <CheckCircle2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-emerald-500" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-2 flex items-center justify-end gap-2.5 border-t border-slate-100 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeRevokeModal}
+                    className="cursor-pointer rounded-md border border-slate-200 bg-white px-3.5 py-2 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={
+                      confirmInput !== revokeTarget.name || isRevokingKey
+                    }
+                    className={`rounded-md px-4 py-2 text-xs font-semibold text-white transition-colors ${
+                      confirmInput === revokeTarget.name && !isRevokingKey
+                        ? "cursor-pointer bg-amber-600 shadow-xs hover:bg-amber-700"
+                        : "cursor-not-allowed bg-slate-300 opacity-60"
+                    }`}
+                  >
+                    {isRevokingKey ? "Revoking..." : "Revoke Key"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      {/* GitHub-Style Delete Key Confirmation Modal (React Portal) */}
+      {deleteTarget &&
+        createPortal(
+          <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm duration-200">
+            <div
+              className="fixed inset-0 cursor-pointer"
+              onClick={closeDeleteModal}
+            />
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-key-modal-title"
+              className="animate-in zoom-in-95 relative z-10 w-full max-w-md overflow-hidden rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl duration-200"
+            >
+              {/* Modal Header */}
+              <div className="mb-5 flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-rose-600 shadow-2xs">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2
+                      id="delete-key-modal-title"
+                      className="font-heading text-base font-bold text-slate-900"
+                    >
+                      Delete API Key
+                    </h2>
+                    <p className="text-xs font-medium text-slate-500">
+                      Permanently remove this API key record
                     </p>
                   </div>
                 </div>
@@ -480,7 +660,7 @@ export default function ApiKeys() {
               <form onSubmit={confirmDeleteKey} className="flex flex-col gap-4">
                 <div className="rounded-md border border-rose-100 bg-rose-50/60 p-3.5 text-xs">
                   <p className="leading-relaxed font-medium text-slate-700">
-                    This will permanently revoke API access key{" "}
+                    This will permanently delete API access key{" "}
                     <strong className="font-bold text-slate-900">
                       {deleteTarget.name}
                     </strong>{" "}
@@ -491,14 +671,14 @@ export default function ApiKeys() {
                     ).
                   </p>
                   <p className="mt-2 font-bold text-rose-600">
-                    Applications utilizing this key will lose access
-                    immediately.
+                    This action cannot be undone. Associated historical logs
+                    will retain unlinked key records.
                   </p>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="revoke-confirm-input"
+                    htmlFor="delete-confirm-input"
                     className="mb-2 block text-xs font-semibold text-slate-600"
                   >
                     To confirm, type{" "}
@@ -509,7 +689,7 @@ export default function ApiKeys() {
                   </label>
                   <div className="relative">
                     <input
-                      id="revoke-confirm-input"
+                      id="delete-confirm-input"
                       type="text"
                       value={confirmInput}
                       onChange={(e) => setConfirmInput(e.target.value)}
@@ -542,7 +722,7 @@ export default function ApiKeys() {
                         : "cursor-not-allowed bg-slate-300 opacity-60"
                     }`}
                   >
-                    {isDeletingKey ? "Revoking..." : "Revoke Key"}
+                    {isDeletingKey ? "Deleting..." : "Delete Key"}
                   </button>
                 </div>
               </form>

@@ -108,7 +108,11 @@ export default function Dashboard() {
         });
 
         setRecentLogs(Array.isArray(logsData) ? logsData.slice(0, 6) : []);
-        setApiKeysCount(Array.isArray(keysData) ? keysData.length : 0);
+        setApiKeysCount(
+          Array.isArray(keysData)
+            ? keysData.filter((k) => !k.revokedAt).length
+            : 0,
+        );
       } finally {
         if (isMounted) setLoading(false);
       }
