@@ -1,5 +1,8 @@
 import {
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
   Calendar,
   CheckCircle2,
   ChevronLeft,
@@ -26,6 +29,8 @@ export default function Users() {
   const [confirmInput, setConfirmInput] = useState("");
   const [pageSize, setPageSize] = useState(10); // 10, 20, or "all"
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState("enrolledAt"); // "name", "apiKey", "enrolledAt"
+  const [sortOrder, setSortOrder] = useState("desc"); // "asc", "desc"
 
   useEffect(() => {
     fetchUsers();
@@ -70,6 +75,16 @@ export default function Users() {
     setCurrentPage(1);
   };
 
+  const handleSortToggle = (field) => {
+    if (sortField === field) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+    setCurrentPage(1);
+  };
+
   const filteredUsers = users.filter((user) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -80,7 +95,23 @@ export default function Users() {
     );
   });
 
-  const totalFiltered = filteredUsers.length;
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    let comparison = 0;
+    if (sortField === "name") {
+      comparison = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+    } else if (sortField === "apiKey") {
+      const keyA = a.apiKeyName || "";
+      const keyB = b.apiKeyName || "";
+      comparison = keyA.localeCompare(keyB, undefined, { sensitivity: "base" });
+    } else if (sortField === "enrolledAt") {
+      const dateA = new Date(a.enrolledAt).getTime() || 0;
+      const dateB = new Date(b.enrolledAt).getTime() || 0;
+      comparison = dateA - dateB;
+    }
+    return sortOrder === "asc" ? comparison : -comparison;
+  });
+
+  const totalFiltered = sortedUsers.length;
   const isAll = pageSize === "all";
   const effectivePageSize = isAll ? Math.max(totalFiltered, 1) : pageSize;
   const totalPages = isAll
@@ -89,8 +120,8 @@ export default function Users() {
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
 
   const paginatedUsers = isAll
-    ? filteredUsers
-    : filteredUsers.slice(
+    ? sortedUsers
+    : sortedUsers.slice(
         (safeCurrentPage - 1) * effectivePageSize,
         safeCurrentPage * effectivePageSize,
       );
@@ -156,10 +187,61 @@ export default function Users() {
             <table className="w-full min-w-150 text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/60 font-mono text-[10px] font-bold tracking-wider text-slate-500 uppercase">
-                  <th className="px-6 py-3.5">Enrolled Subject</th>
+                  <th className="px-6 py-3.5">
+                    <button
+                      type="button"
+                      onClick={() => handleSortToggle("name")}
+                      className="group/sort flex cursor-pointer items-center gap-1.5 transition-colors hover:text-slate-900"
+                    >
+                      <span>Enrolled Subject</span>
+                      {sortField === "name" ? (
+                        sortOrder === "asc" ? (
+                          <ArrowUp className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        ) : (
+                          <ArrowDown className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-3 w-3 text-slate-300 transition-colors group-hover/sort:text-slate-500" />
+                      )}
+                    </button>
+                  </th>
                   <th className="px-6 py-3.5">Identity ID</th>
-                  <th className="px-6 py-3.5">Origin API Key</th>
-                  <th className="px-6 py-3.5">Enrolled Date</th>
+                  <th className="px-6 py-3.5">
+                    <button
+                      type="button"
+                      onClick={() => handleSortToggle("apiKey")}
+                      className="group/sort flex cursor-pointer items-center gap-1.5 transition-colors hover:text-slate-900"
+                    >
+                      <span>Origin API Key</span>
+                      {sortField === "apiKey" ? (
+                        sortOrder === "asc" ? (
+                          <ArrowUp className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        ) : (
+                          <ArrowDown className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-3 w-3 text-slate-300 transition-colors group-hover/sort:text-slate-500" />
+                      )}
+                    </button>
+                  </th>
+                  <th className="px-6 py-3.5">
+                    <button
+                      type="button"
+                      onClick={() => handleSortToggle("enrolledAt")}
+                      className="group/sort flex cursor-pointer items-center gap-1.5 transition-colors hover:text-slate-900"
+                    >
+                      <span>Enrolled Date</span>
+                      {sortField === "enrolledAt" ? (
+                        sortOrder === "asc" ? (
+                          <ArrowUp className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        ) : (
+                          <ArrowDown className="h-3.5 w-3.5 text-[#2f5bf5]" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-3 w-3 text-slate-300 transition-colors group-hover/sort:text-slate-500" />
+                      )}
+                    </button>
+                  </th>
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
