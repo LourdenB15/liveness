@@ -21,6 +21,8 @@ export default function ApiKeys() {
     isDeletingKey,
     isRevokingKey,
     error,
+    revokeError,
+    deleteError,
     copiedId,
     showKeyModal,
     setShowKeyModal,
@@ -267,6 +269,7 @@ export default function ApiKeys() {
         onSubmit={confirmRevokeKey}
         onClose={closeRevokeModal}
         isLoading={isRevokingKey}
+        error={revokeError}
       />
 
       {/* Delete Key Modal */}
@@ -277,6 +280,7 @@ export default function ApiKeys() {
         onSubmit={confirmDeleteKey}
         onClose={closeDeleteModal}
         isLoading={isDeletingKey}
+        error={deleteError}
       />
     </div>
   );

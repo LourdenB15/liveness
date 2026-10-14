@@ -11,6 +11,8 @@ export function useApiKeys() {
   const [isDeletingKey, setIsDeletingKey] = useState(false);
   const [isRevokingKey, setIsRevokingKey] = useState(false);
   const [error, setError] = useState("");
+  const [revokeError, setRevokeError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [copiedId, setCopiedId] = useState(null);
   const [showKeyModal, setShowKeyModal] = useState(null);
   const [revokeTarget, setRevokeTarget] = useState(null);
@@ -46,12 +48,14 @@ export function useApiKeys() {
     setRevokeTarget(null);
     setIsRevokingKey(false);
     setConfirmInput("");
+    setRevokeError("");
   };
 
   const closeDeleteModal = () => {
     setDeleteTarget(null);
     setIsDeletingKey(false);
     setConfirmInput("");
+    setDeleteError("");
   };
 
   const handleCreateKey = async (e) => {
@@ -83,12 +87,14 @@ export function useApiKeys() {
     if (!revokeTarget || confirmInput !== revokeTarget.name || isRevokingKey)
       return;
     setIsRevokingKey(true);
+    setRevokeError("");
     try {
       await api.apiKeys.revoke(revokeTarget.id);
       closeRevokeModal();
       fetchKeys();
     } catch (err) {
       console.error("Failed to revoke key", err);
+      setRevokeError(err.message || "Failed to revoke API key");
     } finally {
       setIsRevokingKey(false);
     }
@@ -99,12 +105,14 @@ export function useApiKeys() {
     if (!deleteTarget || confirmInput !== deleteTarget.name || isDeletingKey)
       return;
     setIsDeletingKey(true);
+    setDeleteError("");
     try {
       await api.apiKeys.delete(deleteTarget.id);
       closeDeleteModal();
       fetchKeys();
     } catch (err) {
       console.error("Failed to delete key", err);
+      setDeleteError(err.message || "Failed to delete API key");
     } finally {
       setIsDeletingKey(false);
     }
@@ -148,6 +156,8 @@ export function useApiKeys() {
     isDeletingKey,
     isRevokingKey,
     error,
+    revokeError,
+    deleteError,
     copiedId,
     showKeyModal,
     setShowKeyModal,

@@ -8,6 +8,7 @@ export function DeleteKeyModal({
   onSubmit,
   onClose,
   isLoading,
+  error,
 }) {
   if (!target) return null;
 
@@ -93,6 +94,12 @@ export function DeleteKeyModal({
               )}
             </div>
           </div>
+
+          {error && (
+            <div className="rounded-md border border-rose-200 bg-rose-50 p-2.5 text-xs font-semibold text-rose-700">
+              {error}
+            </div>
+          )}
 
           <div className="mt-2 flex items-center justify-end gap-2.5 border-t border-slate-100 pt-4">
             <button
