@@ -77,10 +77,23 @@ export function useDashboard(timeRange) {
 
     loadDashboardData();
 
-    const interval = setInterval(loadDashboardData, 5000);
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        loadDashboardData();
+      }
+    }, 5000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        loadDashboardData();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       isMounted = false;
       clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [timeRange]);
 

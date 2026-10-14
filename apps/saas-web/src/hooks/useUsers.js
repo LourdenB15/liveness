@@ -43,11 +43,23 @@ export function useUsers() {
     };
 
     loadData(true);
-    const interval = setInterval(() => loadData(false), 5000);
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        loadData(false);
+      }
+    }, 5000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        loadData(false);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       isMounted = false;
       clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
