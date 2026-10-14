@@ -1,15 +1,23 @@
 const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
-const ADMIN_KEY = "liveness_admin";
-const TOKEN_KEY = "liveness_token";
+
+let inMemoryUser = null;
+let isInitialized = false;
+let initPromise = null;
+
+// Clean up any legacy tokens from localStorage to prevent persistence
+try {
+  localStorage.removeItem("liveness_token");
+  localStorage.removeItem("liveness_admin");
+} catch {
+  // Ignore environments without localStorage access
+}
 
 const request = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  const token = localStorage.getItem(TOKEN_KEY);
 
   const headers = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -35,8 +43,7 @@ const request = async (endpoint, options = {}) => {
       !endpoint.includes("/login") &&
       !endpoint.includes("/signup")
     ) {
-      localStorage.removeItem(ADMIN_KEY);
-      localStorage.removeItem(TOKEN_KEY);
+      inMemoryUser = null;
       window.dispatchEvent(
         new CustomEvent("auth:expired", { detail: { message: errorMessage } }),
       );
@@ -51,6 +58,25 @@ const request = async (endpoint, options = {}) => {
 
 export const api = {
   auth: {
+    init: async () => {
+      if (isInitialized) return inMemoryUser;
+      if (initPromise) return initPromise;
+      initPromise = (async () => {
+        try {
+          const user = await request("/dashboard/me");
+          inMemoryUser = user || null;
+        } catch {
+          inMemoryUser = null;
+        } finally {
+          isInitialized = true;
+          initPromise = null;
+        }
+        return inMemoryUser;
+      })();
+      return initPromise;
+    },
+    isInitialized: () => isInitialized,
+    getCurrentUser: () => inMemoryUser,
     signup: async (username, password, firstName, lastName, email) => {
       const result = await request("/dashboard/signup", {
         method: "POST",
@@ -62,11 +88,9 @@ export const api = {
           email,
         }),
       });
-      if (result?.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
       const { token: _token, ...admin } = result || {};
-      localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
+      inMemoryUser = admin;
+      isInitialized = true;
       window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
     },
@@ -75,11 +99,9 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
-      if (result?.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
       const { token: _token, ...admin } = result || {};
-      localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
+      inMemoryUser = admin;
+      isInitialized = true;
       window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
     },
@@ -89,23 +111,17 @@ export const api = {
       } catch (err) {
         console.warn("Logout request failed:", err);
       } finally {
-        localStorage.removeItem(ADMIN_KEY);
-        localStorage.removeItem(TOKEN_KEY);
+        inMemoryUser = null;
+        isInitialized = true;
         window.dispatchEvent(new CustomEvent("auth:logout"));
       }
     },
-    getCurrentUser: () => {
-      try {
-        const saved = localStorage.getItem(ADMIN_KEY);
-        return saved ? JSON.parse(saved) : null;
-      } catch {
-        localStorage.removeItem(ADMIN_KEY);
-        localStorage.removeItem(TOKEN_KEY);
-        return null;
-      }
+    me: async () => {
+      const user = await request("/dashboard/me");
+      inMemoryUser = user || null;
+      isInitialized = true;
+      return inMemoryUser;
     },
-    getToken: () => localStorage.getItem(TOKEN_KEY),
-    me: () => request("/dashboard/me"),
     forgotPassword: (email) =>
       request("/dashboard/forgot-password", {
         method: "POST",
@@ -126,10 +142,11 @@ export const api = {
         method: "PUT",
         body: JSON.stringify({ firstName, lastName }),
       });
-      const saved = api.auth.getCurrentUser() || {};
-      const mergedUser = { ...saved, ...updatedUser };
-      localStorage.setItem(ADMIN_KEY, JSON.stringify(mergedUser));
-      return mergedUser;
+      inMemoryUser = { ...(inMemoryUser || {}), ...updatedUser };
+      window.dispatchEvent(
+        new CustomEvent("auth:login", { detail: inMemoryUser }),
+      );
+      return inMemoryUser;
     },
   },
 
