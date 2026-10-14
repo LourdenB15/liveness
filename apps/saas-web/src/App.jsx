@@ -26,30 +26,39 @@ function PageLoadingFallback() {
   );
 }
 
-function useCurrentUser() {
+export function useCurrentUser() {
   const [user, setUser] = useState(() => api.auth.getCurrentUser());
+  const [loading, setLoading] = useState(() => !api.auth.isInitialized());
 
   useEffect(() => {
+    let mounted = true;
+    api.auth.init().then((currentUser) => {
+      if (mounted) {
+        setUser(currentUser);
+        setLoading(false);
+      }
+    });
+
     const handleAuthChange = () => {
       setUser(api.auth.getCurrentUser());
+      setLoading(false);
     };
     window.addEventListener("auth:expired", handleAuthChange);
     window.addEventListener("auth:logout", handleAuthChange);
     window.addEventListener("auth:login", handleAuthChange);
-    window.addEventListener("storage", handleAuthChange);
     return () => {
+      mounted = false;
       window.removeEventListener("auth:expired", handleAuthChange);
       window.removeEventListener("auth:logout", handleAuthChange);
       window.removeEventListener("auth:login", handleAuthChange);
-      window.removeEventListener("storage", handleAuthChange);
     };
   }, []);
 
-  return user;
+  return { user, loading };
 }
 
 function ProtectedRoute({ children }) {
-  const user = useCurrentUser();
+  const { user, loading } = useCurrentUser();
   const location = useLocation();
   const [sessionExpired, setSessionExpired] = useState(false);
 
@@ -60,6 +69,10 @@ function ProtectedRoute({ children }) {
     window.addEventListener("auth:expired", handleExpired);
     return () => window.removeEventListener("auth:expired", handleExpired);
   }, []);
+
+  if (loading) {
+    return <PageLoadingFallback />;
+  }
 
   if (!user) {
     return (
@@ -78,13 +91,14 @@ function ProtectedRoute({ children }) {
 }
 
 function PublicOnlyRoute({ children }) {
-  const user = useCurrentUser();
+  const { user, loading } = useCurrentUser();
+  if (loading) return <PageLoadingFallback />;
   if (user) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
 function NotFound() {
-  const user = useCurrentUser();
+  const { user } = useCurrentUser();
   return (
     <main
       id="main-content"
@@ -126,7 +140,7 @@ const ROUTE_TITLES = {
 };
 
 function App() {
-  const user = useCurrentUser();
+  const { user, loading } = useCurrentUser();
   const location = useLocation();
 
   // If we navigated to /login or /signup with a background location,
@@ -153,7 +167,15 @@ function App() {
         <Routes location={backgroundLocation || location}>
           <Route
             path="/"
-            element={user ? <Navigate to="/dashboard" replace /> : <Landing />}
+            element={
+              loading ? (
+                <PageLoadingFallback />
+              ) : user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Landing />
+              )
+            }
           />
 
           {/* These still work as standalone full-page routes when accessed directly via URL */}
