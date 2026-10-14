@@ -18,6 +18,7 @@ import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { api } from "../services/api";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 
 export default function DashboardLayout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,22 +29,7 @@ export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
-  const [user, setUser] = useState(() => api.auth.getCurrentUser());
-
-  // Listen for auth updates
-  useEffect(() => {
-    const handleAuthChange = () => {
-      setUser(api.auth.getCurrentUser());
-    };
-    window.addEventListener("auth:login", handleAuthChange);
-    window.addEventListener("auth:logout", handleAuthChange);
-    window.addEventListener("auth:expired", handleAuthChange);
-    return () => {
-      window.removeEventListener("auth:login", handleAuthChange);
-      window.removeEventListener("auth:logout", handleAuthChange);
-      window.removeEventListener("auth:expired", handleAuthChange);
-    };
-  }, []);
+  const { user } = useCurrentUser();
 
   // Handle Escape key to close modal and Cmd+K / Ctrl+K shortcut
   useEffect(() => {
