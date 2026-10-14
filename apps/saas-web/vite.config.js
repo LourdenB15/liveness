@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: process.env.VITE_BASE_PATH || "./",
   build: {
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV !== "production",
     rollupOptions: {
       output: {
         manualChunks(id) {
