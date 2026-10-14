@@ -37,12 +37,13 @@ const request = async (endpoint, options = {}) => {
       // response wasn't JSON
     }
 
-    // Auto-handle expired or unauthorized session (except login/signup where 401 indicates invalid credentials)
+    // Auto-handle expired or unauthorized session (except endpoints where 401 indicates invalid credentials or inputs)
     if (
       (response.status === 401 || response.status === 403) &&
       !endpoint.includes("/login") &&
       !endpoint.includes("/signup") &&
-      !endpoint.includes("/me")
+      !endpoint.includes("/me") &&
+      !endpoint.includes("/change-password")
     ) {
       inMemoryUser = null;
       window.dispatchEvent(
