@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, X } from "lucide-react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 export function DeleteIdentityModal({
@@ -10,6 +11,15 @@ export function DeleteIdentityModal({
   isLoading,
   error,
 }) {
+  useEffect(() => {
+    if (!target) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [target, onClose]);
+
   if (!target) return null;
 
   return createPortal(

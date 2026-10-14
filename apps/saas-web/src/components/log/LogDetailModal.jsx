@@ -7,9 +7,19 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 export function LogDetailModal({ log, onClose }) {
+  useEffect(() => {
+    if (!log) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [log, onClose]);
+
   if (!log) return null;
 
   return createPortal(

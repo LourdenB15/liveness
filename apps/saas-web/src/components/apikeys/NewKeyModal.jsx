@@ -1,7 +1,17 @@
 import { AlertCircle, Check, Copy, Key } from "lucide-react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 export function NewKeyModal({ apiKey, copiedId, onCopy, onClose }) {
+  useEffect(() => {
+    if (!apiKey) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [apiKey, onClose]);
+
   if (!apiKey) return null;
 
   return createPortal(
