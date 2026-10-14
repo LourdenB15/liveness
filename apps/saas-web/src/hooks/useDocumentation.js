@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { api } from "../services/api";
+import { useCurrentUser } from "./useCurrentUser";
 
 export const DOCS_MENU = [
   {
@@ -43,22 +43,9 @@ const VALID_SECTIONS = [
 
 export function useDocumentation() {
   const [activePage, setActivePage] = useState("introduction");
-  const [user, setUser] = useState(() => api.auth.getCurrentUser());
+  const { user } = useCurrentUser();
   const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    api.auth.init().then((u) => setUser(u));
-    const handleAuth = () => setUser(api.auth.getCurrentUser());
-    window.addEventListener("auth:login", handleAuth);
-    window.addEventListener("auth:logout", handleAuth);
-    window.addEventListener("auth:expired", handleAuth);
-    return () => {
-      window.removeEventListener("auth:login", handleAuth);
-      window.removeEventListener("auth:logout", handleAuth);
-      window.removeEventListener("auth:expired", handleAuth);
-    };
-  }, []);
 
   useEffect(() => {
     const hash = location.hash.replace("#", "");
