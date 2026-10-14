@@ -34,6 +34,7 @@ export default function TablePagination({
             <button
               key={size}
               type="button"
+              aria-pressed={pageSize === size}
               onClick={() => onPageSizeChange(size)}
               className={`cursor-pointer rounded px-2.5 py-1 font-mono text-xs font-semibold transition-colors ${
                 pageSize === size
@@ -93,6 +94,7 @@ export default function TablePagination({
                     )}
                     <button
                       type="button"
+                      aria-current={safeCurrentPage === page ? "page" : undefined}
                       onClick={() => onPageChange(page)}
                       className={`h-8 min-w-8 cursor-pointer rounded-md px-2 font-mono text-xs font-semibold transition-colors ${
                         safeCurrentPage === page
