@@ -3,10 +3,7 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  KeyRound,
   Lock,
-  Shield,
-  ShieldCheck,
   User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -270,15 +267,6 @@ export default function Settings() {
                     {user?.email || "N/A"}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-2 font-medium text-slate-500">
-                    <Shield className="h-4 w-4 text-slate-400" />
-                    Access Role
-                  </span>
-                  <span className="inline-flex items-center rounded-sm border border-blue-200 bg-blue-50 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#2f5bf5] uppercase">
-                    Super Admin
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -401,45 +389,9 @@ export default function Settings() {
 
       {/* Tab 2: Security & Credentials */}
       {activeTab === "security" && (
-        <div className="grid items-start gap-6 lg:grid-cols-12">
-          {/* Security Status Card */}
-          <div className="space-y-6 lg:col-span-4">
-            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
-              <p className="mb-4 flex items-center gap-2 font-mono text-xs font-bold tracking-wider text-slate-600 uppercase">
-                <ShieldCheck className="h-4 w-4 text-[#2f5bf5]" />
-                Security Overview
-              </p>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-md border border-slate-100 bg-slate-50/70 p-3 text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                    <span className="font-semibold text-slate-800">
-                      Active Session
-                    </span>
-                  </div>
-                  <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
-                    HTTPS Verified
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between rounded-md border border-slate-100 bg-slate-50/70 p-3 text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <KeyRound className="h-4 w-4 text-[#2f5bf5]" />
-                    <span className="font-semibold text-slate-800">
-                      API Scope
-                    </span>
-                  </div>
-                  <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
-                    Full Read/Write
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <div className="max-w-3xl">
           {/* Change Password Form */}
-          <div className="lg:col-span-8">
+          <div>
             <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
               <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
