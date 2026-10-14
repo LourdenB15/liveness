@@ -225,8 +225,17 @@ export default function Logs() {
                 {paginatedLogs.map((log) => (
                   <tr
                     key={log.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`View audit telemetry detail for ${log.userName || "session"}`}
                     onClick={() => setSelectedLog(log)}
-                    className="group cursor-pointer transition-colors hover:bg-slate-50/80"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedLog(log);
+                      }
+                    }}
+                    className="group cursor-pointer transition-colors hover:bg-slate-50/80 focus:bg-slate-50/90 focus:outline-none"
                   >
                     <td className="px-6 py-4">
                       <span
