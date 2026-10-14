@@ -236,56 +236,43 @@ export default function Settings() {
 
       {/* Tab 1: General Profile */}
       {activeTab === "general" && (
-        <div className="grid items-start gap-6 lg:grid-cols-12">
-          {/* User Profile Card */}
-          <div className="lg:col-span-4">
-            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
+        <div className="max-w-3xl">
+          <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs sm:p-7">
+            {/* Header with Avatar & User Info */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2f5bf5] text-base font-bold text-white shadow-xs">
+                <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-xl bg-[#2f5bf5] text-base font-bold text-white shadow-xs">
                   {`${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`.toUpperCase() ||
                     "AD"}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-heading truncate text-base font-bold text-slate-900">
+                <div className="min-w-0">
+                  <h2 className="font-heading truncate text-lg font-bold text-slate-900">
                     {user
                       ? `${user.firstName} ${user.lastName}`
                       : "Administrator"}
-                  </p>
-                  <p className="truncate font-mono text-xs font-medium text-slate-500">
-                    @{user?.username || "admin"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-3.5 border-t border-slate-100 pt-6 text-xs">
-                <div className="flex items-center justify-between text-slate-600">
-                  <span className="flex items-center gap-2 font-medium text-slate-500">
-                    <User className="h-4 w-4 text-slate-400" />
-                    Email Address
-                  </span>
-                  <span className="max-w-37.5 truncate font-mono text-xs font-semibold text-slate-900">
-                    {user?.email || "N/A"}
-                  </span>
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs text-slate-500">
+                    <span className="font-mono font-medium text-slate-600">
+                      @{user?.username || "admin"}
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="font-mono text-slate-600">
+                      {user?.email || "N/A"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Profile Form */}
-          <div className="lg:col-span-8">
-            <div className="rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xs">
-              <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-[#2f5bf5] shadow-2xs">
-                  <User className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="font-heading text-base font-bold text-slate-900">
-                    Personal Profile Details
-                  </h2>
-                  <p className="text-xs font-medium text-slate-500">
-                    Update your display name and contact email address.
-                  </p>
-                </div>
+            {/* Profile Form */}
+            <div className="pt-6">
+              <div className="mb-5">
+                <h3 className="font-heading text-sm font-bold text-slate-900">
+                  Personal Details
+                </h3>
+                <p className="text-xs font-medium text-slate-500">
+                  Update your display name and view your primary account email.
+                </p>
               </div>
 
               {profileSuccess && (
@@ -300,7 +287,7 @@ export default function Settings() {
 
               <form
                 onSubmit={handleProfileUpdate}
-                className="max-w-lg space-y-4"
+                className="max-w-xl space-y-4"
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
