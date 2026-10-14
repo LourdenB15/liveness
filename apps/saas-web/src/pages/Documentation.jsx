@@ -1782,6 +1782,9 @@ const Documentation = () => {
       {/* Mobile Topic Selector */}
       <div className="relative mb-3 w-full lg:hidden">
         <button
+          aria-haspopup="menu"
+          aria-expanded={topicDropdownOpen}
+          aria-label="Select documentation topic"
           onClick={() => setTopicDropdownOpen((prev) => !prev)}
           className="flex w-full cursor-pointer items-center justify-between rounded-md border border-slate-200/90 bg-white p-3 px-4 shadow-xs transition-all hover:border-slate-300 active:scale-[0.99]"
         >
@@ -1811,7 +1814,11 @@ const Documentation = () => {
               className="fixed inset-0 z-30"
               onClick={() => setTopicDropdownOpen(false)}
             />
-            <div className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-[10px] border border-slate-200/90 bg-white p-2.5 shadow-lg duration-150">
+            <div
+              role="menu"
+              aria-label="Documentation topics menu"
+              className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-[10px] border border-slate-200/90 bg-white p-2.5 shadow-lg duration-150"
+            >
             {menu.map((group, idx) => (
               <div key={idx} className="mb-3 last:mb-0">
                 <div className="mb-2 px-3 font-mono text-[11px] font-bold tracking-wider text-slate-500 uppercase">

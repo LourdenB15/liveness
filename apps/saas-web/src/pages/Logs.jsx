@@ -72,6 +72,9 @@ export default function Logs() {
           <div className="relative w-full sm:w-52">
             <button
               type="button"
+              aria-haspopup="listbox"
+              aria-expanded={statusDropdownOpen}
+              aria-label="Filter logs by status"
               onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
               className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-md border border-slate-200/80 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none"
             >
@@ -90,7 +93,11 @@ export default function Logs() {
                   className="fixed inset-0 z-20"
                   onClick={() => setStatusDropdownOpen(false)}
                 />
-                <div className="animate-in zoom-in-95 absolute right-0 z-30 mt-1.5 w-full rounded-[10px] border border-slate-200/80 bg-white p-1.5 shadow-xl duration-150">
+                <div
+                  role="listbox"
+                  aria-label="Status filter options"
+                  className="animate-in zoom-in-95 absolute right-0 z-30 mt-1.5 w-full rounded-[10px] border border-slate-200/80 bg-white p-1.5 shadow-xl duration-150"
+                >
                   {filterOptions.map((opt) => (
                     <button
                       key={opt.id}
