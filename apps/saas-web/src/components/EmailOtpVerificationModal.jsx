@@ -128,12 +128,17 @@ export default function EmailOtpVerificationModal({
 
     try {
       await api.auth.resendOtp();
-      setResendStatus("A new verification code has been dispatched to your email.");
+      setResendStatus(
+        "A new verification code has been dispatched to your email.",
+      );
       setResendCooldown(60);
       setDigits(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
     } catch (err) {
-      setError(err.message || "Failed to resend verification code. Please try again later.");
+      setError(
+        err.message ||
+          "Failed to resend verification code. Please try again later.",
+      );
     } finally {
       setResending(false);
     }
@@ -151,7 +156,7 @@ export default function EmailOtpVerificationModal({
         aria-labelledby="otp-modal-title"
         className="animate-in zoom-in-95 relative w-full max-w-md duration-200"
       >
-        <div className="rounded-[12px] border border-slate-200/90 bg-white p-6 shadow-2xl sm:p-8">
+        <div className="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xl sm:p-8">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-[#2f5bf5] shadow-xs">
               <Mail className="h-6 w-6" />

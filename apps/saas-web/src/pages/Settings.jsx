@@ -205,7 +205,7 @@ export default function Settings() {
           role="tab"
           aria-selected={activeTab === "general"}
           onClick={() => setActiveTab("general")}
-          className={`flex cursor-pointer items-center gap-2 rounded-[4px] border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+          className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
             activeTab === "general"
               ? "border-slate-200/80 bg-white font-bold text-slate-900 shadow-2xs"
               : "border-transparent text-slate-500 hover:text-slate-700"
@@ -221,7 +221,7 @@ export default function Settings() {
           role="tab"
           aria-selected={activeTab === "security"}
           onClick={() => setActiveTab("security")}
-          className={`flex cursor-pointer items-center gap-2 rounded-[4px] border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
+          className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
             activeTab === "security"
               ? "border-slate-200/80 bg-white font-bold text-slate-900 shadow-2xs"
               : "border-transparent text-slate-500 hover:text-slate-700"

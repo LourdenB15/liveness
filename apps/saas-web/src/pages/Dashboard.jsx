@@ -246,7 +246,7 @@ export default function Dashboard() {
                 type="button"
                 aria-pressed={timeRange === days}
                 onClick={() => setTimeRange(days)}
-                className={`cursor-pointer rounded-[4px] px-2.5 py-1 font-mono text-xs transition-all ${
+                className={`cursor-pointer rounded-sm px-2.5 py-1 font-mono text-xs transition-all ${
                   timeRange === days
                     ? "bg-white font-bold text-slate-900 shadow-2xs"
                     : "text-slate-500 hover:text-slate-900"
@@ -701,7 +701,7 @@ export default function Dashboard() {
                       >
                         <td className="px-5 py-3.5">
                           <span
-                            className={`inline-flex items-center gap-1 rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
+                            className={`inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
                               log.status === "SUCCESS"
                                 ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                                 : log.status === "ENROLLED"
@@ -827,7 +827,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span
-                  className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
+                  className={`rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
                     systemStatus.api === "Operational"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                       : "border-rose-200 bg-rose-50 text-rose-700"
@@ -854,7 +854,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span
-                  className={`rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
+                  className={`rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold uppercase ${
                     systemStatus.database === "Connected"
                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                       : "border-rose-200 bg-rose-50 text-rose-700"

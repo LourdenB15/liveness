@@ -258,7 +258,7 @@ export default function DashboardLayout({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center rounded-[6px] px-3 py-1 transition-colors ${
+                className={`flex flex-col items-center justify-center rounded-md px-3 py-1 transition-colors ${
                   isActive
                     ? "font-semibold text-blue-600"
                     : "font-medium text-slate-500 hover:text-slate-800"

@@ -161,7 +161,7 @@ export default function Login({ modal = false }) {
                 if (fieldErrors.username)
                   setFieldErrors((prev) => ({ ...prev, username: null }));
               }}
-              className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
+              className={`block w-full rounded-md border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                 fieldErrors.username
                   ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
                   : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
@@ -215,7 +215,7 @@ export default function Login({ modal = false }) {
                 if (fieldErrors.password)
                   setFieldErrors((prev) => ({ ...prev, password: null }));
               }}
-              className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
+              className={`block w-full rounded-md border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                 fieldErrors.password
                   ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
                   : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"

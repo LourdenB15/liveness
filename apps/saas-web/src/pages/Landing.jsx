@@ -58,7 +58,7 @@ export default function Landing() {
                 </p>
 
                 {/* npm install — primary developer CTA */}
-                <div className="mb-6 flex max-w-md items-center gap-3 rounded-lg border border-slate-200/80 bg-slate-900 p-2 shadow-xs">
+                <div className="mb-6 flex w-full items-center gap-3 rounded-lg border border-slate-200/80 bg-slate-900 p-2 shadow-xs sm:max-w-sm">
                   <div className="flex min-w-0 flex-1 items-center gap-2 pl-2 font-mono text-xs">
                     <span className="shrink-0 font-bold text-[#2f5bf5]">$</span>
                     <span className="truncate font-medium text-slate-200 select-all">
@@ -488,7 +488,7 @@ const HowItWorksInteractive = () => {
               setActiveStepIndex(idx);
               setStepCopied(false);
             }}
-            className={`flex-1 cursor-pointer rounded-[4px] px-3 py-2 text-center font-mono text-xs font-semibold transition-colors ${
+            className={`flex-1 cursor-pointer rounded-sm px-3 py-2 text-center font-mono text-xs font-semibold transition-colors ${
               idx === activeStepIndex
                 ? "bg-[#2f5bf5] text-white shadow-xs"
                 : "text-slate-400 hover:text-white"
@@ -511,7 +511,7 @@ const HowItWorksInteractive = () => {
                   setActiveStepIndex(idx);
                   setStepCopied(false);
                 }}
-                className={`w-full cursor-pointer rounded-[8px] border p-5 text-left transition-[border-color,background-color,box-shadow] duration-150 sm:p-6 ${
+                className={`w-full cursor-pointer rounded-lg border p-5 text-left transition-[border-color,background-color,box-shadow] duration-150 sm:p-6 ${
                   isActive
                     ? "border-[#2f5bf5]/60 bg-[#21242d] shadow-sm"
                     : "border-slate-800/90 bg-[#14161c] hover:border-slate-700 hover:bg-[#191b22]"
@@ -519,7 +519,7 @@ const HowItWorksInteractive = () => {
               >
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-1">
                   <span
-                    className={`rounded-[4px] px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase sm:text-xs ${
+                    className={`rounded-sm px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider uppercase sm:text-xs ${
                       isActive
                         ? "bg-[#2f5bf5] text-white"
                         : "bg-slate-800 text-slate-400"
@@ -575,7 +575,7 @@ const HowItWorksInteractive = () => {
                       setActiveStepIndex(idx);
                       setStepCopied(false);
                     }}
-                    className={`cursor-pointer rounded-[4px] px-2 py-0.5 font-mono text-[10px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[11px] ${
+                    className={`cursor-pointer rounded-sm px-2 py-0.5 font-mono text-[10px] font-medium transition-colors sm:px-2.5 sm:py-1 sm:text-[11px] ${
                       idx === activeStepIndex
                         ? "bg-[#2f5bf5] text-white"
                         : "text-slate-400 hover:text-slate-200"

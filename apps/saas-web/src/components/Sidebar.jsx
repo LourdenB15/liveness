@@ -1,5 +1,3 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
   Book,
@@ -14,6 +12,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar({
   sidebarCollapsed,
@@ -94,7 +93,7 @@ export default function Sidebar({
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     title={isCollapsed ? item.label : undefined}
-                    className={`group relative flex cursor-pointer items-center rounded-[6px] py-2 text-xs font-medium transition-colors duration-150 sm:text-xs ${
+                    className={`group relative flex cursor-pointer items-center rounded-md py-2 text-xs font-medium transition-colors duration-150 sm:text-xs ${
                       isCollapsed ? "justify-center px-0" : "px-3"
                     } ${
                       isActive
@@ -133,7 +132,7 @@ export default function Sidebar({
               <Link
                 to="/settings"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center rounded-[6px] px-3 py-2 text-xs font-medium transition-colors duration-150 ${
+                className={`flex items-center rounded-md px-3 py-2 text-xs font-medium transition-colors duration-150 ${
                   location.pathname === "/settings"
                     ? "border border-blue-200/60 bg-blue-50/70 font-semibold text-blue-700"
                     : "border border-transparent text-slate-600 hover:border-slate-200/60 hover:bg-slate-50 hover:text-slate-900"

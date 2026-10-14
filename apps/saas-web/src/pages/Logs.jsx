@@ -87,7 +87,9 @@ export default function Logs() {
   const totalFiltered = filteredLogs.length;
   const isAll = pageSize === "all";
   const effectivePageSize = isAll ? Math.max(totalFiltered, 1) : pageSize;
-  const totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalFiltered / effectivePageSize));
+  const totalPages = isAll
+    ? 1
+    : Math.max(1, Math.ceil(totalFiltered / effectivePageSize));
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
 
   const paginatedLogs = isAll
@@ -97,8 +99,11 @@ export default function Logs() {
         safeCurrentPage * effectivePageSize,
       );
 
-  const startRecord = totalFiltered === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1;
-  const endRecord = isAll ? totalFiltered : Math.min(safeCurrentPage * effectivePageSize, totalFiltered);
+  const startRecord =
+    totalFiltered === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1;
+  const endRecord = isAll
+    ? totalFiltered
+    : Math.min(safeCurrentPage * effectivePageSize, totalFiltered);
 
   const totalCount = logs.length;
   const successCount = logs.filter(
@@ -168,7 +173,7 @@ export default function Logs() {
                     <button
                       key={opt.id}
                       onClick={() => handleStatusFilterChange(opt.id)}
-                      className={`flex w-full cursor-pointer items-center justify-between rounded-[6px] px-3 py-2 text-xs font-medium transition-all ${
+                      className={`flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-2 text-xs font-medium transition-all ${
                         statusFilter === opt.id
                           ? "bg-blue-50 font-bold text-[#2f5bf5]"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -296,7 +301,7 @@ export default function Logs() {
                   >
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
+                        className={`inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
                           log.status === "SUCCESS"
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                             : log.status === "ENROLLED"
@@ -414,9 +419,18 @@ export default function Logs() {
 
               {/* Center: Showing X to Y of Z */}
               <div className="font-mono text-xs text-slate-500">
-                Showing <strong className="font-bold text-slate-800">{startRecord}</strong>–
-                <strong className="font-bold text-slate-800">{endRecord}</strong> of{" "}
-                <strong className="font-bold text-slate-800">{totalFiltered}</strong>
+                Showing{" "}
+                <strong className="font-bold text-slate-800">
+                  {startRecord}
+                </strong>
+                –
+                <strong className="font-bold text-slate-800">
+                  {endRecord}
+                </strong>{" "}
+                of{" "}
+                <strong className="font-bold text-slate-800">
+                  {totalFiltered}
+                </strong>
               </div>
 
               {/* Right: Page navigation buttons */}
@@ -545,7 +559,7 @@ export default function Logs() {
                       Session Status
                     </span>
                     <span
-                      className={`inline-flex items-center gap-1 rounded-[4px] border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
+                      className={`inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
                         selectedLog.status === "SUCCESS"
                           ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                           : selectedLog.status === "ENROLLED"

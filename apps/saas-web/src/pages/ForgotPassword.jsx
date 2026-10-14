@@ -169,7 +169,7 @@ export default function ForgotPassword({ modal = false }) {
                   setEmail(e.target.value);
                   if (fieldErrors.email) setFieldErrors({});
                 }}
-                className={`block w-full rounded-[6px] border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
+                className={`block w-full rounded-md border py-2 pr-9 pl-9 text-sm font-medium transition-all ${
                   fieldErrors.email
                     ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
                     : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"

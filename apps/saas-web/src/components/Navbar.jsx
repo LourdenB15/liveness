@@ -60,7 +60,7 @@ const Navbar = () => {
       <nav
         className={`mx-auto flex items-center justify-between transition-[max-width,border-radius,box-shadow,background-color,padding] duration-300 ${
           isScrolled
-            ? "h-16 max-w-6xl rounded-[8px] border border-slate-200/90 bg-[#fafbfc]/90 px-6 shadow-sm backdrop-blur-md"
+            ? "h-16 max-w-6xl rounded-lg border border-slate-200/90 bg-[#fafbfc]/90 px-6 shadow-sm backdrop-blur-md"
             : `h-16 max-w-7xl border-b border-slate-200/80 px-4 backdrop-blur-md sm:px-6 md:h-18 md:px-12 ${
                 isDocsPage ? "bg-slate-50/90" : "bg-[#fafbfc]/85"
               }`
@@ -144,7 +144,7 @@ const Navbar = () => {
           <div
             className={`flex flex-col space-y-4 bg-white p-6 shadow-xl transition-[opacity,transform] duration-300 md:hidden ${
               isScrolled
-                ? "absolute top-full right-0 left-0 mt-2 rounded-[8px] border border-slate-200/90"
+                ? "absolute top-full right-0 left-0 mt-2 rounded-lg border border-slate-200/90"
                 : "absolute top-full right-0 left-0 border-b border-slate-200/80"
             }`}
           >

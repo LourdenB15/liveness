@@ -98,7 +98,9 @@ export default function Users() {
   const sortedUsers = [...filteredUsers].sort((a, b) => {
     let comparison = 0;
     if (sortField === "name") {
-      comparison = a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+      comparison = a.name.localeCompare(b.name, undefined, {
+        sensitivity: "base",
+      });
     } else if (sortField === "apiKey") {
       const keyA = a.apiKeyName || "";
       const keyB = b.apiKeyName || "";
@@ -366,9 +368,18 @@ export default function Users() {
 
               {/* Center: Showing X to Y of Z */}
               <div className="font-mono text-xs text-slate-500">
-                Showing <strong className="font-bold text-slate-800">{startRecord}</strong>–
-                <strong className="font-bold text-slate-800">{endRecord}</strong> of{" "}
-                <strong className="font-bold text-slate-800">{totalFiltered}</strong>
+                Showing{" "}
+                <strong className="font-bold text-slate-800">
+                  {startRecord}
+                </strong>
+                –
+                <strong className="font-bold text-slate-800">
+                  {endRecord}
+                </strong>{" "}
+                of{" "}
+                <strong className="font-bold text-slate-800">
+                  {totalFiltered}
+                </strong>
               </div>
 
               {/* Right: Page navigation buttons */}
@@ -546,7 +557,7 @@ export default function Users() {
                     <button
                       type="submit"
                       disabled={confirmInput !== deleteTarget.name}
-                      className={`rounded-[6px] px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors ${
+                      className={`rounded-md px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors ${
                         confirmInput === deleteTarget.name
                           ? "cursor-pointer bg-rose-600 hover:bg-rose-700"
                           : "cursor-not-allowed bg-slate-300 opacity-60 shadow-none"

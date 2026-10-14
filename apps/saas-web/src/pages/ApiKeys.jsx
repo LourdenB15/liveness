@@ -469,9 +469,18 @@ export default function ApiKeys() {
 
               {/* Center: Showing X to Y of Z */}
               <div className="font-mono text-xs text-slate-500">
-                Showing <strong className="font-bold text-slate-800">{startRecord}</strong>–
-                <strong className="font-bold text-slate-800">{endRecord}</strong> of{" "}
-                <strong className="font-bold text-slate-800">{totalKeys}</strong>
+                Showing{" "}
+                <strong className="font-bold text-slate-800">
+                  {startRecord}
+                </strong>
+                –
+                <strong className="font-bold text-slate-800">
+                  {endRecord}
+                </strong>{" "}
+                of{" "}
+                <strong className="font-bold text-slate-800">
+                  {totalKeys}
+                </strong>
               </div>
 
               {/* Right: Page navigation buttons */}
