@@ -180,6 +180,7 @@ export default function ApiKeys() {
                               }}
                               className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
                               title="Revoke API key"
+                              aria-label={`Revoke API key ${key.name}`}
                             >
                               <Ban className="h-4 w-4" />
                             </button>
@@ -191,6 +192,7 @@ export default function ApiKeys() {
                             }}
                             className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                             title="Delete API key"
+                            aria-label={`Delete API key ${key.name}`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

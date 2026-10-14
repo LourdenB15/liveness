@@ -222,6 +222,7 @@ export default function Users() {
                         }}
                         className="cursor-pointer rounded-sm p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600"
                         title="Delete identity"
+                        aria-label={`Delete identity profile for ${user.name}`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
