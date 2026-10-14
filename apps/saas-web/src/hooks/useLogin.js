@@ -80,6 +80,7 @@ export function useLogin({ modal = false } = {}) {
     setShowPassword,
     hasFieldErrors,
     sessionExpired,
+    location,
     handleClose,
     handleSubmit,
   };

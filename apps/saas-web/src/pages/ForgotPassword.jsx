@@ -22,6 +22,7 @@ export default function ForgotPassword({ modal = false }) {
     handleClose,
     handleSubmit,
     hasFieldErrors,
+    location,
   } = useForgotPassword({ modal });
 
   const formContent = (

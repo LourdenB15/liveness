@@ -67,5 +67,6 @@ export function useForgotPassword({ modal = false } = {}) {
     handleClose,
     handleSubmit,
     hasFieldErrors,
+    location,
   };
 }

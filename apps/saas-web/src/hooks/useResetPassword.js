@@ -73,5 +73,6 @@ export function useResetPassword({ modal = false } = {}) {
     loading,
     handleClose,
     handleSubmit,
+    location,
   };
 }

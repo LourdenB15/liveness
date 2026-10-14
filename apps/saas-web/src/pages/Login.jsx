@@ -25,6 +25,7 @@ export default function Login({ modal = false }) {
     setShowPassword,
     hasFieldErrors,
     sessionExpired,
+    location,
     handleClose,
     handleSubmit,
   } = useLogin({ modal });

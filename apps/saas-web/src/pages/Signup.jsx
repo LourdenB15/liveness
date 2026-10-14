@@ -27,6 +27,7 @@ export default function Signup({ modal = false }) {
     handleSubmit,
     getInputClass,
     hasFieldErrors,
+    location,
   } = useSignup({ modal });
 
   const formContent = (

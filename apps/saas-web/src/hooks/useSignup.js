@@ -108,5 +108,6 @@ export function useSignup({ modal = false } = {}) {
     handleSubmit,
     getInputClass,
     hasFieldErrors,
+    location,
   };
 }

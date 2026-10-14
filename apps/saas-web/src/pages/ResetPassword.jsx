@@ -14,6 +14,7 @@ export default function ResetPassword({ modal = false }) {
     loading,
     handleClose,
     handleSubmit,
+    location,
   } = useResetPassword({ modal });
 
   const formContent = (
