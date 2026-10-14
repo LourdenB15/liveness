@@ -70,7 +70,6 @@ export function useSignup({ modal = false } = {}) {
         formData.lastName,
         formData.email,
       );
-      await api.auth.login(formData.username, formData.password);
       navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "An error occurred during registration.");
