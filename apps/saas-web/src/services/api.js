@@ -126,12 +126,10 @@ export const api = {
         method: "PUT",
         body: JSON.stringify({ firstName, lastName }),
       });
-      const saved = JSON.parse(localStorage.getItem(ADMIN_KEY));
-      localStorage.setItem(
-        ADMIN_KEY,
-        JSON.stringify({ ...saved, ...updatedUser }),
-      );
-      return updatedUser;
+      const saved = api.auth.getCurrentUser() || {};
+      const mergedUser = { ...saved, ...updatedUser };
+      localStorage.setItem(ADMIN_KEY, JSON.stringify(mergedUser));
+      return mergedUser;
     },
   },
 
