@@ -134,3 +134,127 @@ export async function sendResetPasswordEmail(to, resetLink) {
     );
   }
 }
+
+export async function sendVerificationOtpEmail(to, otp) {
+  if (isDev) {
+    console.log(
+      `\n [EMAIL VERIFICATION OTP DISPATCH] To: ${to}\n Verification OTP: ${otp}\n`,
+    );
+  }
+
+  const resend = getClient();
+  if (!resend) {
+    console.warn(
+      "RESEND_API_KEY not configured. Verification OTP email not sent.",
+    );
+    return;
+  }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM,
+      to,
+      subject: `Your verification code is ${otp} - Liveness Cloud`,
+      html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Your Email</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+
+          <!-- Logo / Brand -->
+          <tr>
+            <td align="center" style="padding-bottom:28px;">
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background-color:#2563eb;border-radius:14px;padding:10px 14px;vertical-align:middle;">
+                    <span style="font-size:20px;color:#ffffff;font-weight:800;letter-spacing:-0.5px;">&#x2713; Liveness Cloud</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Card -->
+          <tr>
+            <td style="background-color:#ffffff;border-radius:24px;border:1px solid #e2e8f0;box-shadow:0 4px 24px rgba(0,0,0,0.06);padding:40px 36px;">
+
+              <!-- Icon -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <div style="display:inline-block;background-color:#eff6ff;border-radius:16px;padding:16px;">
+                      <span style="font-size:32px;">&#x2709;&#xFE0F;</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Heading -->
+              <h1 style="margin:0 0 8px;text-align:center;font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">Verify Your Email Address</h1>
+              <p style="margin:0 0 28px;text-align:center;font-size:14px;color:#64748b;line-height:1.6;">
+                Use the following 6-digit one-time password (OTP) to complete your account verification.
+              </p>
+
+              <!-- OTP Code Box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td align="center">
+                    <div style="display:inline-block;background-color:#f1f5f9;border:2px dashed #cbd5e1;border-radius:16px;padding:16px 36px;letter-spacing:10px;font-family:monospace,Courier;font-size:32px;font-weight:800;color:#0f172a;">
+                      ${otp}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Expiry Notice -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+                <tr>
+                  <td style="background-color:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;">
+                    <p style="margin:0;font-size:12px;font-weight:600;color:#92400e;">
+                      &#9200;&nbsp; This code expires in <strong>10 minutes</strong>. Do not share this code with anyone.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;font-size:12px;color:#94a3b8;text-align:center;">
+                If you did not request this verification, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding-top:24px;text-align:center;">
+              <p style="margin:0;font-size:11px;color:#94a3b8;">
+                &copy; ${new Date().getFullYear()} Liveness Cloud &bull; Automated message, please do not reply.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+      `,
+    });
+    if (error) {
+      console.error("Failed to send verification OTP email via Resend:", error);
+    }
+  } catch (err) {
+    console.error(
+      "Failed to send verification OTP email via Resend (network error):",
+      err,
+    );
+  }
+}

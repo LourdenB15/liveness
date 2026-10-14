@@ -36,8 +36,34 @@ const changePasswordLimiter = createRateLimiter({
   keyGenerator: (req) => req.user?.id || ipKeyGenerator(req.ip),
 });
 
+const verifyOtpLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  message: "Too many verification attempts, please try again later.",
+  keyGenerator: (req) => req.user?.id || ipKeyGenerator(req.ip),
+});
+
+const resendOtpLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: "Too many OTP resend requests, please wait before requesting another.",
+  keyGenerator: (req) => req.user?.id || ipKeyGenerator(req.ip),
+});
+
 router.post("/signup", signupLimiter, authController.signup);
 router.post("/login", loginLimiter, authController.login);
+router.post(
+  "/verify-otp",
+  authenticateToken,
+  verifyOtpLimiter,
+  authController.verifyOtp,
+);
+router.post(
+  "/resend-otp",
+  authenticateToken,
+  resendOtpLimiter,
+  authController.resendOtp,
+);
 router.post(
   "/forgot-password",
   forgotPasswordLimiter,

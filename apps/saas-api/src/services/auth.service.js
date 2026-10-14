@@ -2,7 +2,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as authRepositories from "../repositories/auth.repository.js";
 import crypto from "crypto";
-import { sendResetPasswordEmail } from "./email.service.js";
+import {
+  sendResetPasswordEmail,
+  sendVerificationOtpEmail,
+} from "./email.service.js";
 
 const getJwtSecret = () => {
   if (process.env.JWT_SECRET) {
@@ -22,6 +25,22 @@ const getJwtSecret = () => {
 const JWT_SECRET = getJwtSecret();
 const APP_URL = process.env.APP_URL || "http://localhost:5173";
 
+function generateSecureOtp() {
+  return crypto.randomInt(100000, 1000000).toString();
+}
+
+export async function sendOtpForAdmin(adminId, email) {
+  const otp = generateSecureOtp();
+  const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+  await authRepositories.createOtp(adminId, otpHash, expiresAt);
+
+  sendVerificationOtpEmail(email, otp).catch((err) => {
+    console.error("Failed to send verification OTP email:", err);
+  });
+}
+
 export async function signup(username, password, firstName, lastName, email) {
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -33,6 +52,10 @@ export async function signup(username, password, firstName, lastName, email) {
     lastName,
     email,
   );
+
+  // Automatically dispatch verification OTP on signup
+  await sendOtpForAdmin(admin.id, admin.email);
+
   const token = jwt.sign(
     {
       id: admin.id,
@@ -42,7 +65,12 @@ export async function signup(username, password, firstName, lastName, email) {
     JWT_SECRET,
     { algorithm: "HS256", expiresIn: "7d" },
   );
-  return { ...admin, token };
+
+  return {
+    ...admin,
+    emailVerified: false,
+    token,
+  };
 }
 
 export async function login(username, password) {
@@ -62,6 +90,13 @@ export async function login(username, password) {
     throw error;
   }
 
+  const isVerified = Boolean(admin.email_verified);
+
+  // If not verified, trigger OTP send on login so user can immediately verify
+  if (!isVerified) {
+    await sendOtpForAdmin(admin.id, admin.email);
+  }
+
   const token = jwt.sign(
     {
       id: admin.id,
@@ -78,8 +113,70 @@ export async function login(username, password) {
     firstName: admin.first_name,
     lastName: admin.last_name,
     email: admin.email,
+    emailVerified: isVerified,
     token: token,
   };
+}
+
+export async function verifyEmailOtp(adminId, otp) {
+  const cleanOtp = String(otp).trim();
+  const activeOtp = await authRepositories.findLatestActiveOtp(adminId);
+
+  if (!activeOtp) {
+    const error = new Error("No active verification code found. Please request a new one.");
+    error.status = 400;
+    throw error;
+  }
+
+  if (new Date(activeOtp.expires_at) < new Date()) {
+    const error = new Error("Verification code has expired. Please request a new code.");
+    error.status = 400;
+    throw error;
+  }
+
+  if (activeOtp.attempts >= 5) {
+    const error = new Error("Too many incorrect attempts. Please request a new code.");
+    error.status = 429;
+    throw error;
+  }
+
+  const inputHash = crypto.createHash("sha256").update(cleanOtp).digest("hex");
+  if (inputHash !== activeOtp.otp_hash) {
+    await authRepositories.incrementOtpAttempts(activeOtp.id);
+    const error = new Error("Invalid verification code. Please check and try again.");
+    error.status = 400;
+    throw error;
+  }
+
+  await authRepositories.markOtpUsed(activeOtp.id);
+  const updatedAdmin = await authRepositories.verifyAdminEmail(adminId);
+
+  return {
+    id: updatedAdmin.id,
+    username: updatedAdmin.username,
+    firstName: updatedAdmin.firstName,
+    lastName: updatedAdmin.lastName,
+    email: updatedAdmin.email,
+    emailVerified: true,
+  };
+}
+
+export async function resendVerificationOtp(adminId) {
+  const admin = await authRepositories.findAdminById(adminId);
+  if (!admin) {
+    const error = new Error("User not found");
+    error.status = 404;
+    throw error;
+  }
+
+  if (admin.email_verified) {
+    const error = new Error("Email is already verified");
+    error.status = 400;
+    throw error;
+  }
+
+  await sendOtpForAdmin(admin.id, admin.email);
+  return { message: "Verification code sent successfully" };
 }
 
 export async function forgotPassword(email) {
@@ -188,5 +285,7 @@ export async function getCurrentUser(adminId) {
     firstName: admin.first_name,
     lastName: admin.last_name,
     email: admin.email,
+    emailVerified: Boolean(admin.email_verified),
+    emailVerifiedAt: admin.email_verified_at || null,
   };
 }

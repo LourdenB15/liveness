@@ -7,8 +7,17 @@ export async function createAdmin(
   lastName,
   email,
 ) {
+  try {
+    await pool.query(
+      "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT FALSE;",
+    );
+    await pool.query(
+      "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMP WITH TIME ZONE;",
+    );
+  } catch {}
+
   const result = await pool.query(
-    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, token_version as "tokenVersion", created_at',
+    'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, email_verified as "emailVerified", token_version as "tokenVersion", created_at',
     [username, passwordHash, firstName, lastName, email],
   );
   return result.rows[0];
@@ -139,4 +148,75 @@ export async function incrementTokenVersion(adminId) {
       throw err;
     }
   }
+}
+
+export async function createOtp(adminId, otpHash, expiresAt) {
+  // Ensure table exists defensively
+  try {
+    await pool.query(
+      `CREATE TABLE IF NOT EXISTS email_verification_otps (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        admin_id UUID REFERENCES admins(id) ON DELETE CASCADE,
+        otp_hash VARCHAR(255) NOT NULL,
+        expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+        attempts INT NOT NULL DEFAULT 0,
+        used_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );`
+    );
+  } catch {}
+
+  const result = await pool.query(
+    "INSERT INTO email_verification_otps (admin_id, otp_hash, expires_at) VALUES ($1, $2, $3) RETURNING id, admin_id, expires_at, created_at",
+    [adminId, otpHash, expiresAt],
+  );
+  return result.rows[0];
+}
+
+export async function findLatestActiveOtp(adminId) {
+  try {
+    const result = await pool.query(
+      "SELECT id, admin_id, otp_hash, expires_at, attempts, used_at FROM email_verification_otps WHERE admin_id = $1 AND used_at IS NULL ORDER BY created_at DESC LIMIT 1",
+      [adminId],
+    );
+    return result.rows[0];
+  } catch (err) {
+    if (err.code === "42P01") {
+      // relation does not exist
+      return null;
+    }
+    throw err;
+  }
+}
+
+export async function incrementOtpAttempts(otpId) {
+  const result = await pool.query(
+    "UPDATE email_verification_otps SET attempts = attempts + 1 WHERE id = $1 RETURNING attempts",
+    [otpId],
+  );
+  return result.rows[0]?.attempts || 0;
+}
+
+export async function markOtpUsed(otpId) {
+  await pool.query(
+    "UPDATE email_verification_otps SET used_at = NOW() WHERE id = $1",
+    [otpId],
+  );
+}
+
+export async function verifyAdminEmail(adminId) {
+  try {
+    await pool.query(
+      "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT FALSE;",
+    );
+    await pool.query(
+      "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMP WITH TIME ZONE;",
+    );
+  } catch {}
+
+  const result = await pool.query(
+    'UPDATE admins SET email_verified = TRUE, email_verified_at = NOW() WHERE id = $1 RETURNING id, username, first_name as "firstName", last_name as "lastName", email, email_verified as "emailVerified", email_verified_at as "emailVerifiedAt"',
+    [adminId],
+  );
+  return result.rows[0];
 }

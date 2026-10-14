@@ -126,6 +126,49 @@ export async function login(req, res) {
   }
 }
 
+const verifyOtpSchema = z.object({
+  otp: z
+    .string()
+    .trim()
+    .length(6, "Verification code must be exactly 6 digits")
+    .regex(/^\d+$/, "Verification code must contain digits only"),
+});
+
+export async function verifyOtp(req, res) {
+  const validation = verifyOtpSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error.issues[0].message });
+  }
+
+  const { otp } = validation.data;
+  const adminId = req.user.id;
+
+  try {
+    const admin = await authServices.verifyEmailOtp(adminId, otp);
+    res.json({ ...admin, message: "Email verified successfully" });
+  } catch (error) {
+    console.error("Verify OTP error:", error);
+    if (error.status) {
+      return res.status(error.status).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Failed to verify email code." });
+  }
+}
+
+export async function resendOtp(req, res) {
+  const adminId = req.user.id;
+  try {
+    const result = await authServices.resendVerificationOtp(adminId);
+    res.json(result);
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    if (error.status) {
+      return res.status(error.status).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Failed to resend verification code." });
+  }
+}
+
 export async function forgotPassword(req, res) {
   const validation = forgotPasswordSchema.safeParse(req.body);
   if (!validation.success) {

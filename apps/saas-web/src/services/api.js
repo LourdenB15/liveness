@@ -122,6 +122,22 @@ export const api = {
       isInitialized = true;
       return inMemoryUser;
     },
+    verifyOtp: async (otp) => {
+      const updatedUser = await request("/dashboard/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ otp }),
+      });
+      inMemoryUser = { ...(inMemoryUser || {}), ...updatedUser, emailVerified: true };
+      window.dispatchEvent(
+        new CustomEvent("auth:user_updated", { detail: inMemoryUser }),
+      );
+      return inMemoryUser;
+    },
+    resendOtp: async () => {
+      return request("/dashboard/resend-otp", {
+        method: "POST",
+      });
+    },
     forgotPassword: (email) =>
       request("/dashboard/forgot-password", {
         method: "POST",

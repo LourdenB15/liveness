@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Landing from "./pages/Landing";
+import EmailOtpVerificationModal from "./components/EmailOtpVerificationModal";
 import { api } from "./services/api";
 
 const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
@@ -46,11 +47,13 @@ export function useCurrentUser() {
     window.addEventListener("auth:expired", handleAuthChange);
     window.addEventListener("auth:logout", handleAuthChange);
     window.addEventListener("auth:login", handleAuthChange);
+    window.addEventListener("auth:user_updated", handleAuthChange);
     return () => {
       mounted = false;
       window.removeEventListener("auth:expired", handleAuthChange);
       window.removeEventListener("auth:logout", handleAuthChange);
       window.removeEventListener("auth:login", handleAuthChange);
+      window.removeEventListener("auth:user_updated", handleAuthChange);
     };
   }, []);
 
@@ -87,7 +90,20 @@ function ProtectedRoute({ children }) {
       />
     );
   }
-  return <DashboardLayout>{children}</DashboardLayout>;
+
+  return (
+    <>
+      <DashboardLayout>{children}</DashboardLayout>
+      {user && !user.emailVerified && (
+        <EmailOtpVerificationModal
+          user={user}
+          onLogout={async () => {
+            await api.auth.logout();
+          }}
+        />
+      )}
+    </>
+  );
 }
 
 function PublicOnlyRoute({ children }) {
