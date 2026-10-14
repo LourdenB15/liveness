@@ -21,21 +21,41 @@ export function useApiKeys() {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchKeys = useCallback(async () => {
-    setLoading(true);
+  const fetchKeys = useCallback(async (isInitial = false) => {
+    if (isInitial) setLoading(true);
     try {
       const data = await api.apiKeys.list();
       setKeys(data);
     } catch (err) {
       console.error("Failed to fetch keys", err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchKeys();
-  }, [fetchKeys]);
+    let isMounted = true;
+
+    const loadData = async (isInitial = false) => {
+      if (isInitial) setLoading(true);
+      try {
+        const data = await api.apiKeys.list();
+        if (isMounted) setKeys(data);
+      } catch (err) {
+        console.error("Failed to fetch keys", err);
+      } finally {
+        if (isMounted && isInitial) setLoading(false);
+      }
+    };
+
+    loadData(true);
+    const interval = setInterval(() => loadData(false), 5000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const closeCreateModal = () => {
     setIsCreating(false);
@@ -180,6 +200,7 @@ export function useApiKeys() {
     handleCreateKey,
     confirmRevokeKey,
     confirmDeleteKey,
+    fetchKeys,
     copyToClipboard,
     handlePageSizeChange,
   };
