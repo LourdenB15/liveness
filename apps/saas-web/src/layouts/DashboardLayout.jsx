@@ -36,9 +36,13 @@ export default function DashboardLayout({ children }) {
       setUser(api.auth.getCurrentUser());
     };
     window.addEventListener("auth:login", handleAuthChange);
+    window.addEventListener("auth:logout", handleAuthChange);
+    window.addEventListener("auth:expired", handleAuthChange);
     window.addEventListener("storage", handleAuthChange);
     return () => {
       window.removeEventListener("auth:login", handleAuthChange);
+      window.removeEventListener("auth:logout", handleAuthChange);
+      window.removeEventListener("auth:expired", handleAuthChange);
       window.removeEventListener("storage", handleAuthChange);
     };
   }, []);
@@ -78,7 +82,7 @@ export default function DashboardLayout({ children }) {
     setProfileDropdownOpen(false);
     setMobileMenuOpen(false);
     await api.auth.logout();
-    navigate("/");
+    navigate("/login", { replace: true });
   };
 
   const navItems = [

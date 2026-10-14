@@ -91,7 +91,7 @@ export const api = {
       } finally {
         localStorage.removeItem(ADMIN_KEY);
         localStorage.removeItem(TOKEN_KEY);
-        window.dispatchEvent(new CustomEvent("auth:expired"));
+        window.dispatchEvent(new CustomEvent("auth:logout"));
       }
     },
     getCurrentUser: () => {

@@ -34,10 +34,12 @@ function useCurrentUser() {
       setUser(api.auth.getCurrentUser());
     };
     window.addEventListener("auth:expired", handleAuthChange);
+    window.addEventListener("auth:logout", handleAuthChange);
     window.addEventListener("auth:login", handleAuthChange);
     window.addEventListener("storage", handleAuthChange);
     return () => {
       window.removeEventListener("auth:expired", handleAuthChange);
+      window.removeEventListener("auth:logout", handleAuthChange);
       window.removeEventListener("auth:login", handleAuthChange);
       window.removeEventListener("storage", handleAuthChange);
     };
