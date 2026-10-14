@@ -244,6 +244,7 @@ export default function DashboardLayout({ children }) {
               <Link
                 key={item.path}
                 to={item.path}
+                aria-current={isActive ? "page" : undefined}
                 className={`flex flex-col items-center justify-center rounded-md px-3 py-1 transition-colors ${
                   isActive
                     ? "font-semibold text-blue-600"

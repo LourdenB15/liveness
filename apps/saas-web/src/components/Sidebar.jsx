@@ -93,6 +93,7 @@ export default function Sidebar({
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     title={isCollapsed ? item.label : undefined}
+                    aria-current={isActive ? "page" : undefined}
                     className={`group relative flex cursor-pointer items-center rounded-md py-2 text-xs font-medium transition-colors duration-150 sm:text-xs ${
                       isCollapsed ? "justify-center px-0" : "px-3"
                     } ${
@@ -132,6 +133,7 @@ export default function Sidebar({
               <Link
                 to="/settings"
                 onClick={() => setMobileMenuOpen(false)}
+                aria-current={location.pathname === "/settings" ? "page" : undefined}
                 className={`flex items-center rounded-md px-3 py-2 text-xs font-medium transition-colors duration-150 ${
                   location.pathname === "/settings"
                     ? "border border-blue-200/60 bg-blue-50/70 font-semibold text-blue-700"
