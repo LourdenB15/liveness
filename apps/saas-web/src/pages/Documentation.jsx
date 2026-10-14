@@ -1806,7 +1806,12 @@ const Documentation = () => {
         </button>
 
         {topicDropdownOpen && (
-          <div className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-[10px] border border-slate-200/90 bg-white p-2.5 shadow-lg duration-150">
+          <>
+            <div
+              className="fixed inset-0 z-30"
+              onClick={() => setTopicDropdownOpen(false)}
+            />
+            <div className="animate-in fade-in zoom-in-95 absolute top-full right-0 left-0 z-40 mt-2 rounded-[10px] border border-slate-200/90 bg-white p-2.5 shadow-lg duration-150">
             {menu.map((group, idx) => (
               <div key={idx} className="mb-3 last:mb-0">
                 <div className="mb-2 px-3 font-mono text-[11px] font-bold tracking-wider text-slate-500 uppercase">
@@ -1846,7 +1851,8 @@ const Documentation = () => {
               </div>
             ))}
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Desktop Sub-navigation Sidebar */}
