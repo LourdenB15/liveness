@@ -56,7 +56,20 @@ pre,
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
+
+#main-content {
+  scrollbar-gutter: stable;
+}
+
+@supports not (scrollbar-gutter: stable) {
+  html,
+  #main-content {
+    overflow-y: scroll;
+  }
+}
+
 
 /* Hallmark reveal motion engine */
 .reveal {
