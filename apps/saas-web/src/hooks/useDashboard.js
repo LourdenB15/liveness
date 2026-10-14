@@ -43,7 +43,7 @@ export function useDashboard(timeRange) {
           api.system
             .getHealth()
             .catch(() => ({ status: "error", database: "disconnected" })),
-          api.logs.list().catch(() => []),
+          api.logs.list(6).catch(() => []),
           api.apiKeys.list().catch(() => []),
         ]);
 
