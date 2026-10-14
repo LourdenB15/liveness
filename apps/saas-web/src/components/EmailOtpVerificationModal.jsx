@@ -69,6 +69,11 @@ export default function EmailOtpVerificationModal({
 
     if (index < 5 && cleanVal) {
       inputRefs.current[index + 1]?.focus();
+    } else if (index === 5 && cleanVal) {
+      const fullCode = newDigits.join("");
+      if (fullCode.length === 6) {
+        verifyCode(fullCode);
+      }
     }
   };
 
@@ -91,24 +96,23 @@ export default function EmailOtpVerificationModal({
     setDigits(newDigits);
     const nextIdx = Math.min(5, chars.length);
     inputRefs.current[nextIdx]?.focus();
+
+    if (chars.length === 6) {
+      verifyCode(chars.join(""));
+    }
   };
 
   const otpValue = digits.join("");
   const isComplete = otpValue.length === 6;
 
-  const handleVerify = async (e) => {
-    e?.preventDefault();
-    if (!isComplete) {
-      setError("Please enter the complete 6-digit verification code.");
-      return;
-    }
-
+  const verifyCode = async (code) => {
+    if (loading || success) return;
     setLoading(true);
     setError("");
     setResendStatus("");
 
     try {
-      const updatedUser = await api.auth.verifyOtp(otpValue);
+      const updatedUser = await api.auth.verifyOtp(code);
       setSuccess(true);
       setTimeout(() => {
         if (onVerified) onVerified(updatedUser);
@@ -118,6 +122,15 @@ export default function EmailOtpVerificationModal({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerify = async (e) => {
+    e?.preventDefault();
+    if (!isComplete) {
+      setError("Please enter the complete 6-digit verification code.");
+      return;
+    }
+    await verifyCode(otpValue);
   };
 
   const handleResend = async () => {
