@@ -15,21 +15,41 @@ export function useUsers() {
   const [isDeletingUser, setIsDeletingUser] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
-  const fetchUsers = useCallback(async () => {
-    setLoading(true);
+  const fetchUsers = useCallback(async (isInitial = false) => {
+    if (isInitial) setLoading(true);
     try {
       const data = await api.users.list();
       setUsers(data);
     } catch (err) {
       console.error("Failed to fetch users", err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    let isMounted = true;
+
+    const loadData = async (isInitial = false) => {
+      if (isInitial) setLoading(true);
+      try {
+        const data = await api.users.list();
+        if (isMounted) setUsers(data);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      } finally {
+        if (isMounted && isInitial) setLoading(false);
+      }
+    };
+
+    loadData(true);
+    const interval = setInterval(() => loadData(false), 5000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const closeDeleteModal = () => {
     setDeleteTarget(null);

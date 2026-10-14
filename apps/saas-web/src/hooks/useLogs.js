@@ -21,21 +21,41 @@ export function useLogs() {
   const selectedOption =
     filterOptions.find((o) => o.id === statusFilter) || filterOptions[0];
 
-  const fetchLogs = useCallback(async () => {
-    setLoading(true);
+  const fetchLogs = useCallback(async (isInitial = false) => {
+    if (isInitial) setLoading(true);
     try {
       const data = await api.logs.list();
       setLogs(data);
     } catch (err) {
       console.error("Failed to fetch logs", err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchLogs();
-  }, [fetchLogs]);
+    let isMounted = true;
+
+    const loadData = async (isInitial = false) => {
+      if (isInitial) setLoading(true);
+      try {
+        const data = await api.logs.list();
+        if (isMounted) setLogs(data);
+      } catch (err) {
+        console.error("Failed to fetch logs", err);
+      } finally {
+        if (isMounted && isInitial) setLoading(false);
+      }
+    };
+
+    loadData(true);
+    const interval = setInterval(() => loadData(false), 5000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleSearchChange = (val) => {
     setSearchTerm(val);
@@ -115,6 +135,7 @@ export function useLogs() {
     avgScore,
     filterOptions,
     selectedOption,
+    fetchLogs,
     handleSearchChange,
     handleStatusFilterChange,
     handlePageSizeChange,
