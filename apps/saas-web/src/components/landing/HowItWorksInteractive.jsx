@@ -72,10 +72,16 @@ export function HowItWorksInteractive() {
   return (
     <div className="w-full max-w-full overflow-hidden">
       {/* Mobile Step Selector Tabs (Visible on small screens < 1024px) */}
-      <div className="mb-6 flex items-center justify-between gap-1.5 rounded-md border border-slate-800 bg-[#101216] p-1.5 lg:hidden">
+      <div
+        role="tablist"
+        aria-label="Workflow steps"
+        className="mb-6 flex items-center justify-between gap-1.5 rounded-md border border-slate-800 bg-[#101216] p-1.5 lg:hidden"
+      >
         {STEPS_DATA.map((step, idx) => (
           <button
             key={step.id}
+            role="tab"
+            aria-selected={idx === activeStepIndex}
             onClick={() => {
               setActiveStepIndex(idx);
               setStepCopied(false);
@@ -93,12 +99,18 @@ export function HowItWorksInteractive() {
 
       <div className="grid items-stretch gap-6 text-left lg:grid-cols-12 lg:gap-8">
         {/* Left Column: Interactive Step Cards (Desktop / Tablet) */}
-        <div className="flex min-w-0 flex-col justify-between space-y-3 lg:col-span-5">
+        <div
+          role="tablist"
+          aria-label="Interactive workflow step details"
+          className="flex min-w-0 flex-col justify-between space-y-3 lg:col-span-5"
+        >
           {STEPS_DATA.map((step, idx) => {
             const isActive = idx === activeStepIndex;
             return (
               <button
                 key={step.id}
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => {
                   setActiveStepIndex(idx);
                   setStepCopied(false);
