@@ -12,6 +12,9 @@ export function useUsers() {
   const [sortField, setSortField] = useState("enrolledAt");
   const [sortOrder, setSortOrder] = useState("desc");
 
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -31,17 +34,23 @@ export function useUsers() {
   const closeDeleteModal = () => {
     setDeleteTarget(null);
     setConfirmInput("");
+    setDeleteError("");
   };
 
   const confirmDelete = async (e) => {
     e.preventDefault();
     if (!deleteTarget || confirmInput !== deleteTarget.name) return;
+    setIsDeletingUser(true);
+    setDeleteError("");
     try {
       await api.users.delete(deleteTarget.id);
       closeDeleteModal();
       fetchUsers();
     } catch (err) {
       console.error("Failed to delete user", err);
+      setDeleteError(err.message || "Failed to delete identity profile");
+    } finally {
+      setIsDeletingUser(false);
     }
   };
 
@@ -130,6 +139,8 @@ export function useUsers() {
     safeCurrentPage,
     closeDeleteModal,
     confirmDelete,
+    isDeletingUser,
+    deleteError,
     handleSearchChange,
     handlePageSizeChange,
     handleSortToggle,

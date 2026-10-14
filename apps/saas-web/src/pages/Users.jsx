@@ -34,6 +34,8 @@ export default function Users() {
     totalFiltered,
     closeDeleteModal,
     confirmDelete,
+    isDeletingUser,
+    deleteError,
     handleSearchChange,
     handlePageSizeChange,
     handleSortToggle,
@@ -259,6 +261,8 @@ export default function Users() {
         onConfirmChange={setConfirmInput}
         onSubmit={confirmDelete}
         onClose={closeDeleteModal}
+        isLoading={isDeletingUser}
+        error={deleteError}
       />
     </div>
   );

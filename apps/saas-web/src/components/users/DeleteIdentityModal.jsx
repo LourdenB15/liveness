@@ -7,6 +7,8 @@ export function DeleteIdentityModal({
   onConfirmChange,
   onSubmit,
   onClose,
+  isLoading,
+  error,
 }) {
   if (!target) return null;
 
@@ -101,6 +103,12 @@ export function DeleteIdentityModal({
               </div>
             </div>
 
+            {error && (
+              <div className="rounded-md border border-rose-200 bg-rose-50 p-2.5 text-xs font-semibold text-rose-700">
+                {error}
+              </div>
+            )}
+
             <div className="mt-2 flex items-center justify-end gap-2.5 border-t border-slate-100 pt-4">
               <button
                 type="button"
@@ -111,14 +119,14 @@ export function DeleteIdentityModal({
               </button>
               <button
                 type="submit"
-                disabled={confirmInput !== target.name}
+                disabled={confirmInput !== target.name || isLoading}
                 className={`rounded-md px-4 py-2 text-xs font-semibold text-white shadow-xs transition-colors ${
-                  confirmInput === target.name
+                  confirmInput === target.name && !isLoading
                     ? "cursor-pointer bg-rose-600 hover:bg-rose-700"
                     : "cursor-not-allowed bg-slate-300 opacity-60 shadow-none"
                 }`}
               >
-                Confirm Permanent Delete
+                {isLoading ? "Deleting..." : "Confirm Permanent Delete"}
               </button>
             </div>
           </form>
