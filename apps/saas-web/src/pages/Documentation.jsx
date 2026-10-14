@@ -1849,8 +1849,21 @@ const APIRefContent = () => (
 
 const Documentation = () => {
   const [activePage, setActivePage] = useState("introduction");
-  const user = api.auth.getCurrentUser();
+  const [user, setUser] = useState(() => api.auth.getCurrentUser());
   const location = useLocation();
+
+  useEffect(() => {
+    api.auth.init().then((u) => setUser(u));
+    const handleAuth = () => setUser(api.auth.getCurrentUser());
+    window.addEventListener("auth:login", handleAuth);
+    window.addEventListener("auth:logout", handleAuth);
+    window.addEventListener("auth:expired", handleAuth);
+    return () => {
+      window.removeEventListener("auth:login", handleAuth);
+      window.removeEventListener("auth:logout", handleAuth);
+      window.removeEventListener("auth:expired", handleAuth);
+    };
+  }, []);
 
   useEffect(() => {
     const hash = location.hash.replace("#", "");

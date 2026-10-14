@@ -74,12 +74,34 @@ const changePasswordSchema = z
   });
 
 export default function Settings() {
-  const user = api.auth.getCurrentUser();
+  const [user, setUser] = useState(() => api.auth.getCurrentUser());
   const [activeTab, setActiveTab] = useState("general");
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const email = user?.email || "";
+
+  useEffect(() => {
+    if (!user) {
+      api.auth.init().then((u) => {
+        if (u) {
+          setUser(u);
+          setFirstName(u.firstName || "");
+          setLastName(u.lastName || "");
+        }
+      });
+    }
+    const handleAuth = () => {
+      const u = api.auth.getCurrentUser();
+      setUser(u);
+      if (u) {
+        setFirstName(u.firstName || "");
+        setLastName(u.lastName || "");
+      }
+    };
+    window.addEventListener("auth:login", handleAuth);
+    return () => window.removeEventListener("auth:login", handleAuth);
+  }, [user]);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

@@ -38,12 +38,10 @@ export default function DashboardLayout({ children }) {
     window.addEventListener("auth:login", handleAuthChange);
     window.addEventListener("auth:logout", handleAuthChange);
     window.addEventListener("auth:expired", handleAuthChange);
-    window.addEventListener("storage", handleAuthChange);
     return () => {
       window.removeEventListener("auth:login", handleAuthChange);
       window.removeEventListener("auth:logout", handleAuthChange);
       window.removeEventListener("auth:expired", handleAuthChange);
-      window.removeEventListener("storage", handleAuthChange);
     };
   }, []);
 
