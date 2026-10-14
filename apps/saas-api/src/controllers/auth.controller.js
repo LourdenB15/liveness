@@ -264,10 +264,16 @@ export async function logout(req, res) {
 }
 
 export async function me(req, res) {
+  if (!req.user) {
+    return res.status(200).json(null);
+  }
   try {
     const admin = await authServices.getCurrentUser(req.user.id);
     res.status(200).json(admin);
   } catch (error) {
+    if (error.status === 404) {
+      return res.status(200).json(null);
+    }
     console.error("Error fetching current user:", error);
     if (error.status) {
       return res.status(error.status).json({ error: error.message });

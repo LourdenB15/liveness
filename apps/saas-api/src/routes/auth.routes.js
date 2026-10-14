@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { ipKeyGenerator } from "express-rate-limit";
 import * as authController from "../controllers/auth.controller.js";
-import { authenticateToken } from "../middleware/auth.js";
+import {
+  authenticateToken,
+  optionalAuthenticateToken,
+} from "../middleware/auth.js";
 import { createRateLimiter } from "../middleware/rateLimiter.js";
 const router = Router();
 
@@ -81,7 +84,7 @@ router.post(
   authController.changePassword,
 );
 router.put("/profile", authenticateToken, authController.updateProfile);
-router.get("/me", authenticateToken, authController.me);
+router.get("/me", optionalAuthenticateToken, authController.me);
 router.post("/logout", authController.logout);
 
 export default router;

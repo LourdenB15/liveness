@@ -41,7 +41,8 @@ const request = async (endpoint, options = {}) => {
     if (
       (response.status === 401 || response.status === 403) &&
       !endpoint.includes("/login") &&
-      !endpoint.includes("/signup")
+      !endpoint.includes("/signup") &&
+      !endpoint.includes("/me")
     ) {
       inMemoryUser = null;
       window.dispatchEvent(
@@ -127,7 +128,11 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ otp }),
       });
-      inMemoryUser = { ...(inMemoryUser || {}), ...updatedUser, emailVerified: true };
+      inMemoryUser = {
+        ...(inMemoryUser || {}),
+        ...updatedUser,
+        emailVerified: true,
+      };
       window.dispatchEvent(
         new CustomEvent("auth:user_updated", { detail: inMemoryUser }),
       );

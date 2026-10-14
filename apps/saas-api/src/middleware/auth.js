@@ -67,6 +67,52 @@ export const authenticateToken = (req, res, next) => {
   );
 };
 
+export const optionalAuthenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token =
+    (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null) ||
+    req.cookies?.token;
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  jwt.verify(
+    token,
+    JWT_SECRET,
+    { algorithms: ["HS256"] },
+    async (err, user) => {
+      if (err) {
+        res.clearCookie("token", getClearCookieOptions());
+        req.user = null;
+        return next();
+      }
+
+      try {
+        const currentVersion = await findAdminTokenVersion(user.id);
+        if (
+          currentVersion === null ||
+          (user.tokenVersion !== undefined &&
+            user.tokenVersion !== currentVersion)
+        ) {
+          res.clearCookie("token", getClearCookieOptions());
+          req.user = null;
+          return next();
+        }
+
+        req.user = user;
+        next();
+      } catch (dbError) {
+        console.error("Token version verification error:", dbError);
+        return res
+          .status(500)
+          .json({ error: "Internal server error during authentication" });
+      }
+    },
+  );
+};
+
 export async function authenticateApiKey(req, res, next) {
   const apiKey = req.headers["x-api-key"];
   if (!apiKey) {
