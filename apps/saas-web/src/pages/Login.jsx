@@ -9,14 +9,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
 import { api } from "../services/api";
-
-const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+import { loginSchema } from "../utils/validation";
 
 export default function Login({ modal = false }) {
   const location = useLocation();

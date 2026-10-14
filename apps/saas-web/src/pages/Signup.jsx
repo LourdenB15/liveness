@@ -10,70 +10,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
 import { api } from "../services/api";
-
-const BANNED_WORDS = [
-  "fuck",
-  "shit",
-  "ass",
-  "bitch",
-  "bastard",
-  "damn",
-  "cunt",
-  "dick",
-  "cock",
-  "piss",
-  "slut",
-  "whore",
-  "nigger",
-  "faggot",
-];
-const containsBannedWord = (val) =>
-  BANNED_WORDS.some((w) => val.toLowerCase().includes(w));
-
-const nameRule = z
-  .string()
-  .min(2, "Must be at least 2 characters")
-  .max(50, "Must be 50 characters or fewer")
-  .regex(
-    /^[a-zA-Z\s\-']+$/,
-    "Only letters, spaces, hyphens, and apostrophes allowed",
-  )
-  .refine((val) => !containsBannedWord(val), {
-    message: "Name contains inappropriate language",
-  });
-
-const signupSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(30, "Username must be 30 characters or fewer")
-      .regex(
-        /^[a-zA-Z0-9_.-]+$/,
-        "Username may only contain letters, numbers, underscores, dots, or hyphens",
-      )
-      .refine((val) => !containsBannedWord(val), {
-        message: "Username contains inappropriate language",
-      }),
-    password: z
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .max(72, "Password must not exceed 72 characters")
-      .regex(/[A-Z]/, "Password must have at least 1 upper case letter.")
-      .regex(/[a-z]/, "Password must have at least 1 lower case letter.")
-      .regex(/[0-9]/, "Password must have at least 1 number."),
-    confirmPassword: z.string(),
-    firstName: nameRule,
-    lastName: nameRule,
-    email: z.string().email("Invalid email address"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+import { signupSchema } from "../utils/validation";
 
 export default function Signup({ modal = false }) {
   const [formData, setFormData] = useState({

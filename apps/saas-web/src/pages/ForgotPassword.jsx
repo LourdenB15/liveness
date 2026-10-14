@@ -8,13 +8,9 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import AuthLayout from "../layouts/AuthLayout";
 import { api } from "../services/api";
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
+import { forgotPasswordSchema } from "../utils/validation";
 
 export default function ForgotPassword({ modal = false }) {
   const [email, setEmail] = useState("");
