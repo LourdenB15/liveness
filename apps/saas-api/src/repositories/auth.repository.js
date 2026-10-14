@@ -14,7 +14,9 @@ export async function createAdmin(
     await pool.query(
       "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMP WITH TIME ZONE;",
     );
-  } catch {}
+  } catch {
+    // Ignore schema update errors if columns already exist or concurrent migration
+  }
 
   const result = await pool.query(
     'INSERT INTO admins (username, password_hash, first_name, last_name, email) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, first_name as "firstName", last_name as "lastName", email, email_verified as "emailVerified", token_version as "tokenVersion", created_at',
@@ -164,7 +166,9 @@ export async function createOtp(adminId, otpHash, expiresAt) {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );`
     );
-  } catch {}
+  } catch {
+    // Ignore schema update errors if table already exists or concurrent migration
+  }
 
   const result = await pool.query(
     "INSERT INTO email_verification_otps (admin_id, otp_hash, expires_at) VALUES ($1, $2, $3) RETURNING id, admin_id, expires_at, created_at",
@@ -212,7 +216,9 @@ export async function verifyAdminEmail(adminId) {
     await pool.query(
       "ALTER TABLE admins ADD COLUMN IF NOT EXISTS email_verified_at TIMESTAMP WITH TIME ZONE;",
     );
-  } catch {}
+  } catch {
+    // Ignore schema update errors if columns already exist or concurrent migration
+  }
 
   const result = await pool.query(
     'UPDATE admins SET email_verified = TRUE, email_verified_at = NOW() WHERE id = $1 RETURNING id, username, first_name as "firstName", last_name as "lastName", email, email_verified as "emailVerified", email_verified_at as "emailVerifiedAt"',

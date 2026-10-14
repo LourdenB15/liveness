@@ -2,148 +2,17 @@ import {
   ArrowRight,
   Book,
   Bot,
-  Check,
   CheckCircle2,
   ChevronDown,
   Cloud,
-  Code2,
-  Copy,
-  FileCode,
   Key,
-  Layers,
   Terminal,
-  Wrench,
 } from "lucide-react";
-import Prism from "prismjs";
-import "prismjs/components/prism-bash.js";
-import "prismjs/components/prism-http.js";
-import "prismjs/components/prism-json.js";
-import "prismjs/components/prism-jsx.js";
-import "prismjs/components/prism-tsx.js";
-import "prismjs/components/prism-typescript.js";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { CodeBlock } from "../components/docs/CodeBlock";
+import { DocsSidebarItem } from "../components/docs/DocsSidebarItem";
+import { useDocumentation } from "../hooks/useDocumentation";
 import DashboardLayout from "../layouts/DashboardLayout";
-import { api } from "../services/api";
-
-const SidebarItem = ({ id, label, activeId, onClick, icon: Icon }) => (
-  <li>
-    <button
-      onClick={() => onClick(id)}
-      className={`group flex w-full cursor-pointer items-center rounded-md px-3.5 py-2 text-left text-xs font-semibold transition-all duration-150 sm:text-sm ${
-        activeId === id
-          ? "bg-blue-50/80 font-bold text-[#2f5bf5]"
-          : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
-      }`}
-    >
-      {Icon && (
-        <Icon
-          className={`mr-3 h-4.5 w-4.5 shrink-0 ${
-            activeId === id
-              ? "text-[#2f5bf5]"
-              : "text-slate-400 group-hover:text-slate-600"
-          }`}
-        />
-      )}
-      <span>{label}</span>
-    </button>
-  </li>
-);
-
-const LANG_MAP = {
-  html: "markup",
-  xml: "markup",
-  js: "javascript",
-  ts: "typescript",
-  shell: "bash",
-  sh: "bash",
-};
-
-const CodeBlock = ({ code, language = "javascript", title }) => {
-  const [copied, setCopied] = useState(false);
-
-  const cleanCode = (code || "").trim();
-  const prismLang =
-    LANG_MAP[language?.toLowerCase()] ||
-    language?.toLowerCase() ||
-    "javascript";
-  const grammar = Prism.languages[prismLang] || Prism.languages.javascript;
-  const highlighted = Prism.highlight(cleanCode, grammar, prismLang);
-
-  const lines = cleanCode.split("\n");
-  const showLineNumbers = lines.length > 2 && language !== "bash";
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(cleanCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore clipboard write errors
-    }
-  };
-
-  return (
-    <div className="relative my-6 overflow-hidden rounded-[10px] border border-slate-800/90 bg-[#181a20] shadow-md shadow-black/20">
-      {/* Codeblock Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 bg-[#14151b] px-4 py-2.5 backdrop-blur-xs">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate font-mono text-xs font-semibold text-slate-300">
-            {title || language}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-slate-600 hover:bg-slate-700 hover:text-white active:scale-95"
-            title="Copy code to clipboard"
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="font-semibold text-emerald-400">Copied</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5 text-slate-400" />
-                <span>Copy</span>
-              </>
-            )}
-          </button>
-          <span className="shrink-0 rounded-sm bg-slate-800/80 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-            {language}
-          </span>
-        </div>
-      </div>
-
-      {/* Code Container with Line Numbers */}
-      <div className="flex overflow-hidden">
-        {showLineNumbers && (
-          <div
-            className="shrink-0 border-r border-slate-800/60 py-4 pr-3 pl-4 text-right font-mono text-xs text-slate-600 select-none"
-            aria-hidden="true"
-          >
-            {lines.map((_, i) => (
-              <div key={i + 1} className="leading-relaxed">
-                {i + 1}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <pre className="code-scroll flex-1 overflow-x-auto p-4 font-mono text-xs leading-relaxed text-slate-200 sm:text-sm">
-          <code
-            className="prism-code block"
-            dangerouslySetInnerHTML={{ __html: highlighted }}
-          />
-        </pre>
-      </div>
-    </div>
-  );
-};
 
 const IntroContent = () => (
   <div>
@@ -1845,76 +1714,17 @@ const APIRefContent = () => (
 );
 
 const Documentation = () => {
-  const [activePage, setActivePage] = useState("introduction");
-  const [user, setUser] = useState(() => api.auth.getCurrentUser());
-  const location = useLocation();
-
-  useEffect(() => {
-    api.auth.init().then((u) => setUser(u));
-    const handleAuth = () => setUser(api.auth.getCurrentUser());
-    window.addEventListener("auth:login", handleAuth);
-    window.addEventListener("auth:logout", handleAuth);
-    window.addEventListener("auth:expired", handleAuth);
-    return () => {
-      window.removeEventListener("auth:login", handleAuth);
-      window.removeEventListener("auth:logout", handleAuth);
-      window.removeEventListener("auth:expired", handleAuth);
-    };
-  }, []);
-
-  useEffect(() => {
-    const hash = location.hash.replace("#", "");
-    const searchParams = new URLSearchParams(location.search);
-    const section = searchParams.get("section") || hash;
-    const validSections = [
-      "introduction",
-      "sdk-usage",
-      "cloud-usage",
-      "ai-skills",
-      "methodology",
-      "troubleshooting",
-      "api-ref",
-    ];
-    if (section && validSections.includes(section)) {
-      setActivePage(section);
-    }
-  }, [location]);
-
-  const scrollToTop = () => {
-    const mainEl = document.querySelector("main");
-    if (mainEl) mainEl.scrollTo({ top: 0, behavior: "smooth" });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleTopicChange = (id) => {
-    setActivePage(id);
-    scrollToTop();
-  };
-
-  const menu = [
-    {
-      title: "Getting Started",
-      items: [
-        { id: "introduction", label: "Introduction", icon: Book },
-        { id: "sdk-usage", label: "Frontend SDK", icon: Code2 },
-        { id: "cloud-usage", label: "Backend & Cloud API", icon: Cloud },
-        { id: "ai-skills", label: "AI Assistant Skills", icon: Bot },
-      ],
-    },
-    {
-      title: "Guides & Reference",
-      items: [
-        { id: "methodology", label: "Methodology", icon: Layers },
-        { id: "troubleshooting", label: "Troubleshooting", icon: Wrench },
-        { id: "api-ref", label: "API Reference", icon: FileCode },
-      ],
-    },
-  ];
-
-  const flatItems = menu.flatMap((g) => g.items);
-  const currentIndex = flatItems.findIndex((i) => i.id === activePage);
-  const prevItem = flatItems[currentIndex - 1];
-  const nextItem = flatItems[currentIndex + 1];
+  const {
+    activePage,
+    user,
+    menu,
+    currentItem,
+    prevItem,
+    nextItem,
+    topicDropdownOpen,
+    setTopicDropdownOpen,
+    handleTopicChange,
+  } = useDocumentation();
 
   const renderContent = () => (
     <div key={activePage}>
@@ -1950,7 +1760,7 @@ const Documentation = () => {
           </p>
           <ul className="space-y-1">
             {group.items.map((item) => (
-              <SidebarItem
+              <DocsSidebarItem
                 key={item.id}
                 id={item.id}
                 label={item.label}
@@ -1965,11 +1775,7 @@ const Documentation = () => {
     </>
   );
 
-  const currentItem =
-    flatItems.find((i) => i.id === activePage) || flatItems[0];
   const CurrentIcon = currentItem.icon;
-
-  const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
 
   const pageContent = (
     <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">

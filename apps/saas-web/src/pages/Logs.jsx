@@ -1,11 +1,7 @@
 import {
   Activity,
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
   Clock,
-  Code2,
-  Cpu,
   Filter,
   Fingerprint,
   Key,
@@ -13,111 +9,37 @@ import {
   ShieldAlert,
   ShieldCheck,
   User,
-  X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { api } from "../services/api";
+import { LogDetailModal } from "../components/log/LogDetailModal";
+import TablePagination from "../components/TablePagination";
+import { useLogs } from "../hooks/useLogs";
 
 export default function Logs() {
-  const [loading, setLoading] = useState(true);
-  const [logs, setLogs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
-  const [selectedLog, setSelectedLog] = useState(null);
-  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-
-  const [pageSize, setPageSize] = useState(10); // 10, 20, or "all"
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const filterOptions = [
-    { id: "ALL", label: "All Statuses", color: "bg-slate-400" },
-    { id: "SUCCESS", label: "Passed Verification", color: "bg-emerald-500" },
-    { id: "ENROLLED", label: "Enrolled Identities", color: "bg-purple-500" },
-    { id: "FAILURE", label: "Failed / Blocked", color: "bg-rose-500" },
-  ];
-
-  const selectedOption =
-    filterOptions.find((o) => o.id === statusFilter) || filterOptions[0];
-
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const data = await api.logs.list();
-      setLogs(data);
-    } catch (error) {
-      console.error("Failed to fetch logs", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearchChange = (val) => {
-    setSearchTerm(val);
-    setCurrentPage(1);
-  };
-
-  const handleStatusFilterChange = (status) => {
-    setStatusFilter(status);
-    setCurrentPage(1);
-    setStatusDropdownOpen(false);
-  };
-
-  const handlePageSizeChange = (size) => {
-    setPageSize(size);
-    setCurrentPage(1);
-  };
-
-  const filteredLogs = logs.filter((log) => {
-    const term = searchTerm.toLowerCase();
-    const matchesSearch =
-      (log.userName || "").toLowerCase().includes(term) ||
-      (log.apiKeyName || "").toLowerCase().includes(term) ||
-      (log.apiKeyMasked || "").toLowerCase().includes(term);
-    const matchesStatus = statusFilter === "ALL" || log.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const totalFiltered = filteredLogs.length;
-  const isAll = pageSize === "all";
-  const effectivePageSize = isAll ? Math.max(totalFiltered, 1) : pageSize;
-  const totalPages = isAll
-    ? 1
-    : Math.max(1, Math.ceil(totalFiltered / effectivePageSize));
-  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
-
-  const paginatedLogs = isAll
-    ? filteredLogs
-    : filteredLogs.slice(
-        (safeCurrentPage - 1) * effectivePageSize,
-        safeCurrentPage * effectivePageSize,
-      );
-
-  const startRecord =
-    totalFiltered === 0 ? 0 : (safeCurrentPage - 1) * effectivePageSize + 1;
-  const endRecord = isAll
-    ? totalFiltered
-    : Math.min(safeCurrentPage * effectivePageSize, totalFiltered);
-
-  const totalCount = logs.length;
-  const successCount = logs.filter(
-    (l) => l.status === "SUCCESS" || l.status === "ENROLLED",
-  ).length;
-  const passRate = totalCount
-    ? ((successCount / totalCount) * 100).toFixed(1)
-    : 0;
-  const avgScore = totalCount
-    ? (
-        (logs.reduce((acc, l) => acc + (l.score || 0), 0) / totalCount) *
-        100
-      ).toFixed(1)
-    : 0;
+  const {
+    loading,
+    filteredLogs,
+    paginatedLogs,
+    searchTerm,
+    statusFilter,
+    selectedLog,
+    setSelectedLog,
+    statusDropdownOpen,
+    setStatusDropdownOpen,
+    pageSize,
+    currentPage,
+    setCurrentPage,
+    totalFiltered,
+    totalCount,
+    passRate,
+    avgScore,
+    filterOptions,
+    selectedOption,
+    handleSearchChange,
+    handleStatusFilterChange,
+    handlePageSizeChange,
+  } = useLogs();
 
   return (
     <div className="animate-in fade-in space-y-6 duration-500">
@@ -242,7 +164,7 @@ export default function Logs() {
 
           <div className="flex items-center gap-4 rounded-[10px] border border-slate-200/80 bg-white p-4 shadow-2xs">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-purple-100 bg-purple-50 text-purple-600">
-              <Cpu className="h-5 w-5" />
+              <AlertCircle className="h-5 w-5" />
             </div>
             <div>
               <p className="font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
@@ -388,261 +310,18 @@ export default function Logs() {
             </table>
           </div>
 
-          {/* Pagination Controls */}
-          {filteredLogs.length > 0 && (
-            <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5 sm:flex-row">
-              {/* Left: Rows per page selector */}
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
-                <span className="font-mono text-[11px] text-slate-500 uppercase">
-                  Show:
-                </span>
-                <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5 shadow-2xs">
-                  {[10, 20, "all"].map((size) => (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => handlePageSizeChange(size)}
-                      className={`cursor-pointer rounded px-2.5 py-1 font-mono text-xs font-semibold transition-colors ${
-                        pageSize === size
-                          ? "bg-[#2f5bf5] text-white"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                      }`}
-                    >
-                      {size === "all" ? "All" : size}
-                    </button>
-                  ))}
-                </div>
-                <span className="hidden font-mono text-[11px] text-slate-400 sm:inline">
-                  entries
-                </span>
-              </div>
-
-              {/* Center: Showing X to Y of Z */}
-              <div className="font-mono text-xs text-slate-500">
-                Showing{" "}
-                <strong className="font-bold text-slate-800">
-                  {startRecord}
-                </strong>
-                –
-                <strong className="font-bold text-slate-800">
-                  {endRecord}
-                </strong>{" "}
-                of{" "}
-                <strong className="font-bold text-slate-800">
-                  {totalFiltered}
-                </strong>
-              </div>
-
-              {/* Right: Page navigation buttons */}
-              {!isAll && totalPages > 1 && (
-                <div className="flex items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={safeCurrentPage <= 1}
-                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-                    title="Previous page"
-                    aria-label="Previous page"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter((page) => {
-                        return (
-                          page === 1 ||
-                          page === totalPages ||
-                          Math.abs(page - safeCurrentPage) <= 1
-                        );
-                      })
-                      .map((page, idx, arr) => {
-                        const prev = arr[idx - 1];
-                        const showEllipsis = prev && page - prev > 1;
-                        return (
-                          <div key={page} className="flex items-center">
-                            {showEllipsis && (
-                              <span className="px-1.5 font-mono text-xs text-slate-400">
-                                …
-                              </span>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => setCurrentPage(page)}
-                              className={`h-8 min-w-8 cursor-pointer rounded-md px-2 font-mono text-xs font-semibold transition-colors ${
-                                safeCurrentPage === page
-                                  ? "bg-[#2f5bf5] text-white shadow-2xs"
-                                  : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          </div>
-                        );
-                      })}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={safeCurrentPage >= totalPages}
-                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 shadow-2xs transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-                    title="Next page"
-                    aria-label="Next page"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+          <TablePagination
+            totalItems={totalFiltered}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageSizeChange={handlePageSizeChange}
+            onPageChange={setCurrentPage}
+          />
         </div>
       )}
 
-      {/* Telemetry Detail Inspector Modal (React Portal) */}
-      {selectedLog &&
-        createPortal(
-          <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm duration-200">
-            <div
-              className="fixed inset-0 cursor-pointer"
-              onClick={() => setSelectedLog(null)}
-            />
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="log-detail-modal-title"
-              className="animate-in zoom-in-95 relative z-10 flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-[10px] border border-slate-200/80 bg-white p-6 shadow-2xl duration-200"
-            >
-              {/* Header */}
-              <div className="mb-4 flex shrink-0 items-start justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-900 text-white shadow-2xs">
-                    <Activity className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h2
-                      id="log-detail-modal-title"
-                      className="font-heading text-base font-bold text-slate-900"
-                    >
-                      Telemetry Session Detail
-                    </h2>
-                    <p className="font-mono text-xs font-medium text-slate-500">
-                      ID: {selectedLog.id}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedLog(null)}
-                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700"
-                  aria-label="Close modal"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              {/* Scrollable Content */}
-              <div className="space-y-4 overflow-y-auto pr-1 text-xs">
-                {/* Status & Subject Header Card */}
-                <div className="grid grid-cols-1 gap-3 rounded-md border border-slate-100 bg-slate-50 p-4 sm:grid-cols-3">
-                  <div>
-                    <span className="mb-1 block font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                      Subject Name
-                    </span>
-                    <span className="text-sm font-bold text-slate-900">
-                      {selectedLog.userName}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="mb-1 block font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                      Session Status
-                    </span>
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase ${
-                        selectedLog.status === "SUCCESS"
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : selectedLog.status === "ENROLLED"
-                            ? "border-purple-200 bg-purple-50 text-purple-700"
-                            : "border-rose-200 bg-rose-50 text-rose-700"
-                      }`}
-                    >
-                      {selectedLog.status}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="mb-1 block font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                      Origin API Key
-                    </span>
-                    <span className="text-xs font-semibold text-slate-800">
-                      {selectedLog.apiKeyName ? (
-                        <span className="inline-flex items-center gap-1">
-                          <Key className="h-3 w-3 shrink-0 text-slate-400" />
-                          <span>
-                            {selectedLog.apiKeyName}{" "}
-                            <span className="font-mono text-[10px] text-slate-400">
-                              ({selectedLog.apiKeyMasked || ""})
-                            </span>
-                          </span>
-                        </span>
-                      ) : (
-                        "—"
-                      )}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Score & Telemetry Breakdown */}
-                <div className="space-y-3 rounded-md border border-slate-200/80 bg-white p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-700">
-                      Liveness Match Score
-                    </span>
-                    <span className="font-mono font-bold text-slate-900">
-                      {((selectedLog.score || 0) * 100).toFixed(4)}%
-                    </span>
-                  </div>
-
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        selectedLog.status === "SUCCESS" ||
-                        selectedLog.status === "ENROLLED"
-                          ? "bg-emerald-500"
-                          : "bg-rose-500"
-                      }`}
-                      style={{ width: `${(selectedLog.score || 0) * 100}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Raw JSON Payload */}
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-wider text-slate-400 uppercase">
-                      <Code2 className="h-3.5 w-3.5" />
-                      Raw Telemetry Payload JSON
-                    </span>
-                  </div>
-                  <pre className="overflow-x-auto rounded-md border border-slate-800 bg-[#181a20] p-4 font-mono text-[11px] text-slate-300">
-                    {JSON.stringify(selectedLog, null, 2)}
-                  </pre>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="mt-4 flex shrink-0 items-center justify-end border-t border-slate-100 pt-4">
-                <button
-                  onClick={() => setSelectedLog(null)}
-                  className="cursor-pointer rounded-md border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
-                >
-                  Close Inspector
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
+      {/* Log Detail Modal */}
+      <LogDetailModal log={selectedLog} onClose={() => setSelectedLog(null)} />
     </div>
   );
 }
