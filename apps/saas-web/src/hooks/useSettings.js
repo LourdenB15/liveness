@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { changePasswordSchema, profileSchema } from "../utils/validation";
+import { useCurrentUser } from "./useCurrentUser";
 
 export function useSettings() {
-  const [user, setUser] = useState(() => api.auth.getCurrentUser());
+  const { user } = useCurrentUser();
   const [activeTab, setActiveTab] = useState("general");
 
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -12,25 +13,10 @@ export function useSettings() {
   const email = user?.email || "";
 
   useEffect(() => {
-    if (!user) {
-      api.auth.init().then((u) => {
-        if (u) {
-          setUser(u);
-          setFirstName(u.firstName || "");
-          setLastName(u.lastName || "");
-        }
-      });
+    if (user) {
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
     }
-    const handleAuth = () => {
-      const u = api.auth.getCurrentUser();
-      setUser(u);
-      if (u) {
-        setFirstName(u.firstName || "");
-        setLastName(u.lastName || "");
-      }
-    };
-    window.addEventListener("auth:login", handleAuth);
-    return () => window.removeEventListener("auth:login", handleAuth);
   }, [user]);
 
   const [currentPassword, setCurrentPassword] = useState("");
