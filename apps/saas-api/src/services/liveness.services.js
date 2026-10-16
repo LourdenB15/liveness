@@ -112,6 +112,7 @@ export async function verifyUser(
   let match = null;
 
   if (closestMatch.length > 0) {
+    match = closestMatch[0];
     const cosinePass = Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD;
     const euclideanPass = Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
     const isVerified =
@@ -168,6 +169,7 @@ export async function verifyUserById(
   let match = null;
 
   if (user.length > 0) {
+    match = user[0];
     const cosinePass = Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD;
     const euclideanPass = Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
     const isVerified =
