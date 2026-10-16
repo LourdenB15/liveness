@@ -42,6 +42,12 @@ export async function sendOtpForAdmin(adminId, email) {
 }
 
 export async function signup(username, password, firstName, lastName, email) {
+  if (/[A-Z]/.test(email)) {
+    const error = new Error("Email must not contain capital letters");
+    error.status = 400;
+    throw error;
+  }
+
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -74,8 +80,11 @@ export async function signup(username, password, firstName, lastName, email) {
 }
 
 export async function login(identifier, password) {
-  const cleanIdentifier =
+  let cleanIdentifier =
     typeof identifier === "string" ? identifier.trim() : identifier;
+  if (typeof cleanIdentifier === "string" && cleanIdentifier.includes("@")) {
+    cleanIdentifier = cleanIdentifier.toLowerCase();
+  }
   const admin = await authRepositories.findAdminByUsernameOrEmail(cleanIdentifier);
 
   if (!admin) {

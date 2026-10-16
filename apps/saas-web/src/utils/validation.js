@@ -53,7 +53,12 @@ export const passwordComplexityRule = z
   .regex(/[a-z]/, "Password must have at least 1 lower case letter.")
   .regex(/[0-9]/, "Password must have at least 1 number.");
 
-export const emailRule = z.string().email("Invalid email address");
+export const emailRule = z
+  .string()
+  .email("Invalid email address")
+  .refine((val) => !/[A-Z]/.test(val), {
+    message: "Email must not contain capital letters",
+  });
 
 export const signupSchema = z
   .object({

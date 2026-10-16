@@ -97,9 +97,16 @@ export const api = {
       return admin;
     },
     login: async (usernameOrEmail, password) => {
+      const cleanIdentifier =
+        typeof usernameOrEmail === "string" && usernameOrEmail.includes("@")
+          ? usernameOrEmail.trim().toLowerCase()
+          : typeof usernameOrEmail === "string"
+            ? usernameOrEmail.trim()
+            : usernameOrEmail;
+
       const result = await request("/dashboard/login", {
         method: "POST",
-        body: JSON.stringify({ username: usernameOrEmail, password }),
+        body: JSON.stringify({ username: cleanIdentifier, password }),
       });
       const { token: _token, ...admin } = result || {};
       inMemoryUser = admin;

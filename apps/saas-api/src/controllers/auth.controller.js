@@ -34,7 +34,10 @@ const signupSchema = z.object({
     .string()
     .trim()
     .email("Invalid email address")
-    .max(255, "Email must not exceed 255 characters"),
+    .max(255, "Email must not exceed 255 characters")
+    .refine((val) => !/[A-Z]/.test(val), {
+      message: "Email must not contain capital letters",
+    }),
 });
 
 const loginSchema = z
@@ -128,7 +131,12 @@ export async function login(req, res) {
   }
 
   const { username, email, identifier, password } = validation.data;
-  const loginIdentifier = (username || email || identifier).trim();
+  let loginIdentifier = (username || email || identifier).trim();
+  if (email) {
+    loginIdentifier = email.trim().toLowerCase();
+  } else if (loginIdentifier.includes("@")) {
+    loginIdentifier = loginIdentifier.toLowerCase();
+  }
 
   try {
     const result = await authServices.login(loginIdentifier, password);

@@ -39,7 +39,14 @@ export function useLogin({ modal = false } = {}) {
     setError("");
     setFieldErrors({});
 
-    const validation = loginSchema.safeParse({ username, password });
+    const normalizedIdentifier = username.trim().includes("@")
+      ? username.trim().toLowerCase()
+      : username.trim();
+
+    const validation = loginSchema.safeParse({
+      username: normalizedIdentifier,
+      password,
+    });
     if (!validation.success) {
       const formattedErrors = {};
       validation.error.issues.forEach((issue) => {
@@ -53,7 +60,7 @@ export function useLogin({ modal = false } = {}) {
 
     setLoading(true);
     try {
-      await api.auth.login(username.trim(), password);
+      await api.auth.login(normalizedIdentifier, password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || "Invalid credentials. Please try again.");
