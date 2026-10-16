@@ -53,20 +53,22 @@ export class LivenessSDK {
 
   async load() {
     if (typeof WebAssembly !== "object") {
-      this._emit("error", {
+      const errorPayload = {
         code: "WASM_NOT_SUPPORTED",
         message:
           "WebAssembly is not supported in this browser. Liveness detection requires WASM.",
-      });
-      return;
+      };
+      this._emit("error", errorPayload);
+      return Promise.reject(errorPayload);
     }
 
     if (!window.WebGLRenderingContext) {
-      this._emit("error", {
+      const errorPayload = {
         code: "WEBGL_NOT_SUPPORTED",
         message: "WebGL is not supported. Please enable hardware acceleration.",
-      });
-      return;
+      };
+      this._emit("error", errorPayload);
+      return Promise.reject(errorPayload);
     }
 
     return new Promise((resolve, reject) => {
