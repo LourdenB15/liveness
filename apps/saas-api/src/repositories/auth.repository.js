@@ -64,10 +64,11 @@ export async function findValidResetToken(tokenHash) {
 }
 
 export async function markTokenUsed(tokenId) {
-  await pool.query(
-    "UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1",
+  const result = await pool.query(
+    "UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1 AND used_at IS NULL RETURNING id",
     [tokenId],
   );
+  return result.rowCount > 0;
 }
 
 export async function updateAdminProfile(adminId, firstName, lastName) {
