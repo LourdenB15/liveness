@@ -22,7 +22,10 @@ export async function deleteUser(req, res) {
   const id = validation.data;
   const adminId = req.user.id;
   try {
-    await userServices.deleteUser(id, adminId);
+    const deleteCount = await userServices.deleteUser(id, adminId);
+    if (deleteCount === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
     return res.status(204).send();
   } catch (error) {
     console.error("User delete error:", error);

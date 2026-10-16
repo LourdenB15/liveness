@@ -71,7 +71,10 @@ export async function deleteApiKey(req, res) {
   const id = validation.data;
   const adminId = req.user.id;
   try {
-    await apiKeyServices.deleteApiKey(id, adminId);
+    const deleteCount = await apiKeyServices.deleteApiKey(id, adminId);
+    if (deleteCount === 0) {
+      return res.status(404).json({ error: "API key not found." });
+    }
     res.status(204).send();
   } catch (error) {
     console.error("API key delete error:", error);
