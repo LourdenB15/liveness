@@ -19,7 +19,7 @@ export default function EmailOtpVerificationModal({
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(60);
+  const [resendCooldown, setResendCooldown] = useState(30);
   const [resendStatus, setResendStatus] = useState("");
 
   const inputRefs = useRef([]);
@@ -33,7 +33,7 @@ export default function EmailOtpVerificationModal({
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
-  // Focus the first input on mount
+  // Focus the first input on mount & ensure initial OTP has been triggered
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);

@@ -36,9 +36,7 @@ export async function sendOtpForAdmin(adminId, email) {
 
   await authRepositories.createOtp(adminId, otpHash, expiresAt);
 
-  sendVerificationOtpEmail(email, otp).catch((err) => {
-    console.error("Failed to send verification OTP email:", err);
-  });
+  return sendVerificationOtpEmail(email, otp);
 }
 
 export async function signup(username, password, firstName, lastName, email) {
@@ -210,7 +208,14 @@ export async function resendVerificationOtp(adminId) {
     throw error;
   }
 
-  await sendOtpForAdmin(admin.id, admin.email);
+  const dispatchResult = await sendOtpForAdmin(admin.id, admin.email);
+  if (dispatchResult && dispatchResult.success === false) {
+    const error = new Error(
+      dispatchResult.error || "Failed to deliver verification email. Please check your email address.",
+    );
+    error.status = 502;
+    throw error;
+  }
   return { message: "Verification code sent successfully" };
 }
 

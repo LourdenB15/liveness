@@ -250,11 +250,14 @@ export async function sendVerificationOtpEmail(to, otp) {
     });
     if (error) {
       console.error("Failed to send verification OTP email via Resend:", error);
+      return { success: false, error: error.message || "Failed to deliver email" };
     }
+    return { success: true };
   } catch (err) {
     console.error(
       "Failed to send verification OTP email via Resend (network error):",
       err,
     );
+    return { success: false, error: err.message || "Network error while sending email" };
   }
 }
