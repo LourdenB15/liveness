@@ -39,6 +39,14 @@ export async function findAdminByEmail(email) {
   return result.rows[0];
 }
 
+export async function findAdminByUsernameOrEmail(identifier) {
+  const result = await pool.query(
+    "SELECT * FROM admins WHERE username = $1 OR LOWER(email) = LOWER($1)",
+    [identifier],
+  );
+  return result.rows[0];
+}
+
 export async function addToken(adminId, expiresAt, token_hash) {
   const result = await pool.query(
     "INSERT INTO password_reset_tokens(admin_id, expires_at, token_hash) VALUES($1, $2, $3)",

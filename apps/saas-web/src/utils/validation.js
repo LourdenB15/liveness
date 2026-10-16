@@ -93,8 +93,15 @@ export const changePasswordSchema = z
   });
 
 export const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z
+    .string()
+    .trim()
+    .min(1, "Username or email is required")
+    .min(3, "Username or email must be at least 3 characters"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters"),
 });
 
 export const forgotPasswordSchema = z.object({

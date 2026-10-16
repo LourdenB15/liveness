@@ -37,17 +37,34 @@ const signupSchema = z.object({
     .max(255, "Email must not exceed 255 characters"),
 });
 
-const loginSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .min(3, "Username must be at least 3 characters")
-    .max(255, "Username must not exceed 255 characters"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(72, "Password must not exceed 72 characters"),
-});
+const loginSchema = z
+  .object({
+    username: z.string().trim().max(255).optional(),
+    email: z.string().trim().max(255).optional(),
+    identifier: z.string().trim().max(255).optional(),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(72, "Password must not exceed 72 characters"),
+  })
+  .superRefine((data, ctx) => {
+    const id = data.username || data.email || data.identifier;
+    if (!id || id.trim().length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Username or email is required",
+        path: ["username"],
+      });
+      return;
+    }
+    if (id.trim().length < 3) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Username or email must be at least 3 characters",
+        path: ["username"],
+      });
+    }
+  });
 
 const forgotPasswordSchema = z.object({
   email: z
@@ -110,10 +127,11 @@ export async function login(req, res) {
     return res.status(400).json({ error: validation.error.issues[0].message });
   }
 
-  const { username, password } = validation.data;
+  const { username, email, identifier, password } = validation.data;
+  const loginIdentifier = (username || email || identifier).trim();
 
   try {
-    const result = await authServices.login(username, password);
+    const result = await authServices.login(loginIdentifier, password);
     const { token, ...admin } = result;
     res.cookie("token", token, getAuthCookieOptions());
     res.json({ ...admin, token });

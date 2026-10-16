@@ -84,7 +84,7 @@ export default function Login({ modal = false }) {
             htmlFor="username"
             className="mb-1.5 ml-0.5 block font-mono text-xs font-semibold tracking-wider text-slate-600 uppercase"
           >
-            Username
+            Username or Email
           </label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
@@ -100,6 +100,7 @@ export default function Login({ modal = false }) {
               type="text"
               required
               autoFocus
+              autoComplete="username"
               value={username}
               aria-invalid={Boolean(fieldErrors.username)}
               aria-describedby={
@@ -115,7 +116,7 @@ export default function Login({ modal = false }) {
                   ? "border-red-500 bg-red-50/20 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
                   : "border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/10 focus:outline-none"
               }`}
-              placeholder="johndoe"
+              placeholder="johndoe or name@example.com"
             />
             {fieldErrors.username && (
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

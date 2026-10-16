@@ -73,8 +73,10 @@ export async function signup(username, password, firstName, lastName, email) {
   };
 }
 
-export async function login(username, password) {
-  const admin = await authRepositories.findAdminByUsername(username);
+export async function login(identifier, password) {
+  const cleanIdentifier =
+    typeof identifier === "string" ? identifier.trim() : identifier;
+  const admin = await authRepositories.findAdminByUsernameOrEmail(cleanIdentifier);
 
   if (!admin) {
     const error = new Error("Invalid credentials");

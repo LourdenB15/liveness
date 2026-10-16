@@ -96,10 +96,10 @@ export const api = {
       window.dispatchEvent(new CustomEvent("auth:login", { detail: admin }));
       return admin;
     },
-    login: async (username, password) => {
+    login: async (usernameOrEmail, password) => {
       const result = await request("/dashboard/login", {
         method: "POST",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: usernameOrEmail, password }),
       });
       const { token: _token, ...admin } = result || {};
       inMemoryUser = admin;

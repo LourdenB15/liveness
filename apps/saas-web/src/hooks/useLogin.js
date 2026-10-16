@@ -53,7 +53,7 @@ export function useLogin({ modal = false } = {}) {
 
     setLoading(true);
     try {
-      await api.auth.login(username, password);
+      await api.auth.login(username.trim(), password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || "Invalid credentials. Please try again.");
