@@ -4,13 +4,20 @@ import { z } from "zod";
 const commonPayload = {
   descriptor: z
     .array(z.number().finite("Descriptor values must be finite numbers"))
-    .length(128, "Descriptor must be exactly 128 dimensions"),
+    .length(128, "Descriptor must be exactly 128 dimensions")
+    .refine(
+      (vec) => vec.some((val) => val !== 0),
+      "Descriptor cannot be an all-zero vector",
+    ),
   sessionToken: z
     .string()
     .trim()
     .min(1, "Session token is required")
     .max(128, "Session token must not exceed 128 characters"),
-  timestamp: z.number(),
+  timestamp: z
+    .number()
+    .finite("Timestamp must be a finite number")
+    .positive("Timestamp must be positive"),
   challenges: z
     .array(z.string().trim().max(50))
     .min(1, "Challenges are required")

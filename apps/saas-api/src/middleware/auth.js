@@ -109,13 +109,19 @@ export const optionalAuthenticateToken = (req, res, next) => {
 
 export async function authenticateApiKey(req, res, next) {
   const apiKey = req.headers["x-api-key"];
-  if (!apiKey) {
+  if (!apiKey || typeof apiKey !== "string") {
     return res
       .status(401)
       .json({ error: "API key is required in x-api-key header" });
   }
+
+  const cleanKey = apiKey.trim();
+  if (cleanKey.length < 16 || cleanKey.length > 128) {
+    return res.status(401).json({ error: "Invalid API key format" });
+  }
+
   try {
-    const details = await findApiKeyDetails(apiKey);
+    const details = await findApiKeyDetails(cleanKey);
     req.adminId = details.adminId;
     req.apiKeyId = details.apiKeyId;
     req.apiKeyName = details.keyName;
