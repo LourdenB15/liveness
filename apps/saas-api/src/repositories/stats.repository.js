@@ -40,7 +40,7 @@ export async function getDetailedStats(adminId) {
 }
 
 export async function getTimelineStats(adminId, days = 7) {
-  const intervalDays = Math.max(days - 1, 1).toString();
+  const intervalDays = Math.max(days - 1, 0).toString();
   const result = await pool.query(
     `WITH date_series AS (
        SELECT generate_series(
