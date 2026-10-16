@@ -31,12 +31,28 @@ export function createSession(
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
 
-  const challenges =
+  let challenges;
+  if (
     customChallenges &&
     Array.isArray(customChallenges) &&
     customChallenges.length > 0
-      ? customChallenges
-      : ["WAITING", ...shuffled, "WAITING"];
+  ) {
+    const hasWaiting = customChallenges.includes("WAITING");
+    const active = customChallenges.filter((c) => c !== "WAITING");
+    const shuffledActive = [...active];
+    for (let i = shuffledActive.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledActive[i], shuffledActive[j]] = [
+        shuffledActive[j],
+        shuffledActive[i],
+      ];
+    }
+    challenges = hasWaiting
+      ? ["WAITING", ...shuffledActive, "WAITING"]
+      : shuffledActive;
+  } else {
+    challenges = ["WAITING", ...shuffled, "WAITING"];
+  }
 
   const now = Date.now();
   const expiresAt = now + SESSION_TTL_MS;

@@ -431,6 +431,20 @@ export function LivenessChecker() {
         const apiKey = apiConfigRef.current.apiKey.trim();
 
         setInstruction("Requesting secure verification session...");
+        const hasWaiting = selectedChallenges.includes("WAITING");
+        const active = selectedChallenges.filter((c) => c !== "WAITING");
+        const shuffledActive = [...active];
+        for (let i = shuffledActive.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledActive[i], shuffledActive[j]] = [
+            shuffledActive[j],
+            shuffledActive[i],
+          ];
+        }
+        const requestedChallenges = hasWaiting
+          ? ["WAITING", ...shuffledActive, "WAITING"]
+          : shuffledActive;
+
         const sessionRes = await fetch(`${baseUrl}/session`, {
           method: "POST",
           headers: {
@@ -438,7 +452,7 @@ export function LivenessChecker() {
             "x-api-key": apiKey,
           },
           body: JSON.stringify({
-            challenges: selectedChallenges,
+            challenges: requestedChallenges,
           }),
         });
 
