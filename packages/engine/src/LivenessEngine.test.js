@@ -12,6 +12,9 @@ vi.mock("@mediapipe/face_mesh", () => {
   return {
     FaceMesh: class {
       setOptions() {}
+      initialize() {
+        return Promise.resolve();
+      }
       onResults(cb) {
         capturedOnResults = cb;
       }

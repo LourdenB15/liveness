@@ -90,7 +90,16 @@ export class LivenessEngine {
 
       const modelUrl = `${cleanBasePath}/face_recognition`;
       this.#recognitionModel = new FaceRecognitionNet();
-      await this.#recognitionModel.load(modelUrl);
+
+      const faceMeshInitPromise =
+        typeof this.#faceMesh.initialize === "function"
+          ? this.#faceMesh.initialize()
+          : Promise.resolve();
+
+      await Promise.all([
+        faceMeshInitPromise,
+        this.#recognitionModel.load(modelUrl),
+      ]);
 
       this.#isReady = true;
       this.#callbacks.onReady();
