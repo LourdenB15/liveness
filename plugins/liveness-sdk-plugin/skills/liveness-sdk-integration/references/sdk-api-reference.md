@@ -54,11 +54,15 @@ Checks browser WebAssembly and WebGL support, initializes `LivenessEngine`, and 
 
 ### `async start(videoElement: HTMLVideoElement, canvasElement: HTMLCanvasElement, options?: Partial<LivenessConfig>): Promise<void>`
 
-Initializes the webcam stream (if `videoElement.srcObject` is not attached) with `facingMode: "user"` and ideal resolution `1280x720`, synchronizes canvas dimensions to the video, and starts the detection loop.
+Initializes the webcam stream if `videoElement.srcObject` is not yet set. The SDK uses `facingMode: "user"`, requesting 720x1280 in portrait orientation and 1280x720 in landscape or desktop views. It then sizes the canvas to match the stream and starts the detection loop.
 
 ### `stop(videoElement?: HTMLVideoElement): void`
 
-Stops the internal detection loop, clears the canvas, and terminates all active media stream tracks on `videoElement.srcObject`.
+Stops the internal loop, clears the canvas, and releases camera hardware tracks. If `videoElement` is omitted, the method stops the stream element stored during `start()`.
+
+### `destroy(videoElement?: HTMLVideoElement): void`
+
+Calls `stop(videoElement)`, releases the underlying FaceMesh worker, disposes of all ResNet-34 WebGL weight tensors, and clears registered event listeners.
 
 ### `updateConfig(newConfig?: Partial<LivenessConfig>): this`
 

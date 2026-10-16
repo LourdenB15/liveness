@@ -25,6 +25,9 @@ const engine = new LivenessEngine({
   onSuccess: (data) => console.log("Liveness verified", data),
   onFailure: (error) => console.error("Verification failed", error),
 });
+
+// Clean up models and cancel animation frames
+engine.dispose();
 ```
 
 ## License

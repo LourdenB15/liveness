@@ -25,6 +25,9 @@ sdk.on("success", (result) => {
 
 await sdk.load();
 await sdk.start(videoElement, canvasElement);
+
+// Release camera tracks and WebGL memory when done
+sdk.destroy();
 ```
 
 ## Features
