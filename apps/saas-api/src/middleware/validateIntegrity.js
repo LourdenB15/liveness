@@ -98,9 +98,10 @@ export function validateIntegrity(req, res, next) {
       });
     }
     // Verify client submitted the required challenges
-    if (Array.isArray(challenges) && challenges.length > 0) {
+    if (serverSession.challenges && Array.isArray(serverSession.challenges)) {
       const expectedChallenges = serverSession.challenges;
       const isMatch =
+        Array.isArray(challenges) &&
         challenges.length === expectedChallenges.length &&
         challenges.every((c, idx) => c === expectedChallenges[idx]);
       if (!isMatch) {
