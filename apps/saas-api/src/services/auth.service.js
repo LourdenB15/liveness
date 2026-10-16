@@ -101,6 +101,10 @@ export async function signup(username, password, firstName, lastName, email) {
   };
 }
 
+// Pre-computed bcrypt cost-10 hash used to mitigate account enumeration timing attacks
+const DUMMY_BCRYPT_HASH =
+  "$2b$10$e8/N5L4qK5jL7iO8yV9M6.8vU0c5B6e7f8g9h0i1j2k3l4m5n6o7p";
+
 export async function login(identifier, password) {
   let cleanIdentifier =
     typeof identifier === "string" ? identifier.trim() : identifier;
@@ -109,15 +113,12 @@ export async function login(identifier, password) {
   }
   const admin = await authRepositories.findAdminByUsernameOrEmail(cleanIdentifier);
 
-  if (!admin) {
-    const error = new Error("Invalid credentials");
-    error.status = 401;
-    throw error;
-  }
+  const passwordHashToCompare = admin
+    ? admin.password_hash
+    : DUMMY_BCRYPT_HASH;
+  const isMatch = await bcrypt.compare(password, passwordHashToCompare);
 
-  const isMatch = await bcrypt.compare(password, admin.password_hash);
-
-  if (!isMatch) {
+  if (!admin || !isMatch) {
     const error = new Error("Invalid credentials");
     error.status = 401;
     throw error;
@@ -174,7 +175,13 @@ export async function verifyEmailOtp(adminId, otp) {
   }
 
   const inputHash = crypto.createHash("sha256").update(cleanOtp).digest("hex");
-  if (inputHash !== activeOtp.otp_hash) {
+  const inputBuf = Buffer.from(inputHash, "utf8");
+  const targetBuf = Buffer.from(activeOtp.otp_hash, "utf8");
+  const isHashMatch =
+    inputBuf.length === targetBuf.length &&
+    crypto.timingSafeEqual(inputBuf, targetBuf);
+
+  if (!isHashMatch) {
     await authRepositories.incrementOtpAttempts(activeOtp.id);
     const error = new Error("Invalid verification code. Please check and try again.");
     error.status = 400;
