@@ -367,9 +367,7 @@ export function useLiveness({
     });
 
     return () => {
-      if (videoRef.current) {
-        sdk.stop(videoRef.current);
-      }
+      sdk.destroy();
     };
   }, []);
 
@@ -557,18 +555,22 @@ export function LivenessModal({
 
       <div>
         <h3 className="mb-2 text-lg font-bold text-slate-900 sm:text-xl">
-          7. Releasing camera hardware
+          7. Releasing camera hardware and WebGL memory
         </h3>
         <p className="mb-3 text-sm text-slate-600">
-          In <code>LivenessSDK.js</code>, calling{" "}
-          <code>sdk.stop(videoElement)</code> halts the detection loop and stops
-          all media stream tracks on <code>videoElement.srcObject</code>:
+          In <code>LivenessSDK.js</code>, <code>sdk.stop()</code> halts the
+          detection loop and stops camera media tracks. To also clear the
+          FaceMesh worker and free WebGL weight tensors on unmount, call{" "}
+          <code>sdk.destroy()</code>:
         </p>
         <CodeBlock
           language="javascript"
-          title="Camera hardware release"
-          code={`// Stops the detection loop and stops each track on videoElement.srcObject
-sdk.stop(videoElement);`}
+          title="Hardware and memory cleanup"
+          code={`// Stops the detection loop and releases camera tracks
+sdk.stop();
+
+// Full cleanup: stops camera, disposes WebGL tensors, and clears listeners
+sdk.destroy();`}
         />
       </div>
     </div>
@@ -1099,19 +1101,19 @@ node scripts/setup-agent-skills.js --agent=windsurf,copilot`}
             </span>
             <span className="text-slate-600">
               {" "}
-              All generated video components must include <code>
-                autoPlay
-              </code>, <code>playsInline</code>, and <code>muted</code> for
-              mobile compatibility.
+              Video elements must include <code>autoPlay</code>,{" "}
+              <code>playsInline</code>, and <code>muted</code>. Request{" "}
+              <code>facingMode: "user"</code> with 720x1280 for mobile portrait
+              screens and 1280x720 for landscape or desktop.
             </span>
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
             <span className="font-bold text-slate-900">Hardware cleanup:</span>
             <span className="text-slate-600">
               {" "}
-              When a component unmounts, code must invoke{" "}
-              <code>sdk.stop(videoElement)</code> to stop detection and stop
-              every media track on the video element.
+              When a component unmounts, call <code>sdk.destroy()</code> or{" "}
+              <code>sdk.stop()</code> to release camera tracks and free WebGL
+              tensors.
             </span>
           </div>
           <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 text-sm">
