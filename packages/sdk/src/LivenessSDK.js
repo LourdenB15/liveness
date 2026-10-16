@@ -178,44 +178,49 @@ export class LivenessSDK {
       canvasElement.height = videoElement.videoHeight;
       const ctx = canvasElement.getContext("2d");
 
-      this.engine.start(videoElement, ctx);
-    } catch (error) {
-      let errorPayload = {
-        code: "CAMERA_ERROR",
-        message: error.message,
+    this.videoElement = videoElement;
+    this.engine.start(videoElement, ctx);
+  } catch (error) {
+    let errorPayload = {
+      code: "CAMERA_ERROR",
+      message: error.message,
+    };
+
+    if (
+      error.name === "NotAllowedError" ||
+      error.name === "PermissionDeniedError"
+    ) {
+      errorPayload = {
+        code: "CAMERA_ACCESS_DENIED",
+        message:
+          "Camera access was denied by the user. Please update browser permissions.",
       };
-
-      if (
-        error.name === "NotAllowedError" ||
-        error.name === "PermissionDeniedError"
-      ) {
-        errorPayload = {
-          code: "CAMERA_ACCESS_DENIED",
-          message:
-            "Camera access was denied by the user. Please update browser permissions.",
-        };
-      } else if (
-        error.name === "NotFoundError" ||
-        error.name === "DevicesNotFoundError"
-      ) {
-        errorPayload = {
-          code: "CAMERA_NOT_FOUND",
-          message: "No camera device was found on this system.",
-        };
-      }
-
-      this._emit("error", errorPayload);
-      this._emit("failure", errorPayload);
+    } else if (
+      error.name === "NotFoundError" ||
+      error.name === "DevicesNotFoundError"
+    ) {
+      errorPayload = {
+        code: "CAMERA_NOT_FOUND",
+        message: "No camera device was found on this system.",
+      };
     }
+
+    this._emit("error", errorPayload);
+    this._emit("failure", errorPayload);
   }
+}
 
-  stop(videoElement) {
-    if (this.engine) {
-      this.engine.stop();
-    }
-    if (videoElement && videoElement.srcObject) {
-      videoElement.srcObject.getTracks().forEach((track) => track.stop());
-      videoElement.srcObject = null;
-    }
+stop(videoElement) {
+  if (this.engine) {
+    this.engine.stop();
   }
+  const targetVideo = videoElement || this.videoElement;
+  if (targetVideo && targetVideo.srcObject) {
+    targetVideo.srcObject.getTracks().forEach((track) => track.stop());
+    targetVideo.srcObject = null;
+  }
+  if (targetVideo === this.videoElement) {
+    this.videoElement = null;
+  }
+}
 }
