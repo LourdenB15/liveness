@@ -66,7 +66,15 @@ const Navbar = () => {
               }`
         }`}
       >
-        <Link to="/" className="group flex cursor-pointer items-center gap-2">
+        <Link
+          to="/"
+          onClick={() => {
+            if (location.pathname === "/") {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+          className="group flex cursor-pointer items-center gap-2"
+        >
           <ShieldCheck className="h-6 w-6 shrink-0 text-[#2f5bf5]" />
           <span className="font-display text-lg font-semibold tracking-tight text-slate-900">
             Liveness
