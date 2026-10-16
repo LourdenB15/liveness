@@ -112,10 +112,14 @@ export async function verifyUser(
   let match = null;
 
   if (closestMatch.length > 0) {
-    match = closestMatch[0];
+    const cosinePass = Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD;
+    const euclideanPass = Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
     const isVerified =
-      Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD &&
-      Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
+      metric === "cosine"
+        ? cosinePass
+        : metric === "euclidean"
+          ? euclideanPass
+          : cosinePass && euclideanPass;
 
     if (isVerified) {
       status = "SUCCESS";
@@ -164,10 +168,14 @@ export async function verifyUserById(
   let match = null;
 
   if (user.length > 0) {
-    match = user[0];
+    const cosinePass = Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD;
+    const euclideanPass = Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
     const isVerified =
-      Number(match.similarity) >= COSINE_SIMILARITY_THRESHOLD &&
-      Number(match.distance) <= EUCLIDEAN_DISTANCE_THRESHOLD;
+      metric === "cosine"
+        ? cosinePass
+        : metric === "euclidean"
+          ? euclideanPass
+          : cosinePass && euclideanPass;
 
     if (isVerified) {
       status = "SUCCESS";
