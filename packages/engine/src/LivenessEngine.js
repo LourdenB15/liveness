@@ -188,10 +188,18 @@ export class LivenessEngine {
 
     if (elapsed > fpsInterval) {
       this.#lastFrameTime = now - (elapsed % fpsInterval);
-      await this.#faceMesh.send({ image: this.#videoElement });
+      try {
+        await this.#faceMesh.send({ image: this.#videoElement });
+      } catch (err) {
+        // Suppress frame processing errors if engine was stopped during await
+        if (this.#isStopped) return;
+        console.warn("FaceMesh frame processing error:", err);
+      }
     }
 
-    this.#detectionLoopId = requestAnimationFrame(this.#detectionLoop);
+    if (!this.#isStopped) {
+      this.#detectionLoopId = requestAnimationFrame(this.#detectionLoop);
+    }
   };
 
   #onFaceMeshResults = (results) => {
