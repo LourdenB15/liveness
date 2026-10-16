@@ -575,6 +575,7 @@ export class LivenessEngine {
       canvas.height = videoH;
     }
     this.#canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!FACEMESH_TESSELATION || !Array.isArray(FACEMESH_TESSELATION)) return;
     const landmarks = landmarksArray[0];
     for (const [start, end] of FACEMESH_TESSELATION) {
       const startPoint = landmarks[start];
