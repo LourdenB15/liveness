@@ -38,4 +38,5 @@ export class LivenessEngine {
     canvasCtx: CanvasRenderingContext2D,
   ): void;
   stop(): void;
+  dispose(): void;
 }

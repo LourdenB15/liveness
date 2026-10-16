@@ -237,4 +237,13 @@ export class LivenessSDK {
       this.videoElement = null;
     }
   }
+
+  destroy(videoElement) {
+    this.stop(videoElement);
+    if (this.engine && typeof this.engine.dispose === "function") {
+      this.engine.dispose();
+      this.engine = null;
+    }
+    this.listeners = {};
+  }
 }

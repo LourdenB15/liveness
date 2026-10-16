@@ -168,6 +168,19 @@ export class FaceRecognitionNet {
   }
 
   dispose() {
-    this.#params = null;
+    if (this.#params) {
+      const disposeNode = (node) => {
+        if (!node) return;
+        if (typeof node.dispose === "function") {
+          node.dispose();
+        } else if (typeof node === "object") {
+          for (const key of Object.keys(node)) {
+            disposeNode(node[key]);
+          }
+        }
+      };
+      disposeNode(this.#params);
+      this.#params = null;
+    }
   }
 }

@@ -152,6 +152,34 @@ export class LivenessEngine {
       );
   }
 
+  dispose() {
+    this.stop();
+    if (this.#faceMesh && typeof this.#faceMesh.close === "function") {
+      try {
+        this.#faceMesh.close();
+      } catch (err) {
+        console.warn("Error closing FaceMesh:", err);
+      }
+      this.#faceMesh = null;
+    }
+    if (
+      this.#recognitionModel &&
+      typeof this.#recognitionModel.dispose === "function"
+    ) {
+      try {
+        this.#recognitionModel.dispose();
+      } catch (err) {
+        console.warn("Error disposing FaceRecognitionNet:", err);
+      }
+      this.#recognitionModel = null;
+    }
+    this.#videoElement = null;
+    this.#canvasCtx = null;
+    this.#lastLandmarks = null;
+    this.#recordedDescriptor = null;
+    this.#isReady = false;
+  }
+
   #generateChallenges() {
     if (this.#config.challenges && Array.isArray(this.#config.challenges)) {
       const validChallenges = ["WAITING", "BLINK", "TURN_LEFT", "TURN_RIGHT"];

@@ -70,4 +70,5 @@ export class LivenessSDK {
     options?: Partial<LivenessConfig>,
   ): Promise<void>;
   stop(videoElement?: HTMLVideoElement): void;
+  destroy(videoElement?: HTMLVideoElement): void;
 }
