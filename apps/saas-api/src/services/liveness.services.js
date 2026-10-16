@@ -127,23 +127,26 @@ export async function verifyUser(
     }
   }
 
+  const isVerified = status === "SUCCESS";
+  const verifiedMatch = isVerified ? match : null;
+
   await livenessRepository.addVerificationLog(
     adminId,
-    match?.id || null,
-    match?.name || "Unknown",
+    verifiedMatch?.id || null,
+    verifiedMatch?.name || "Unknown",
     match?.similarity || 0,
     status,
     apiKeyId,
   );
 
   const responsePayload = {
-    verified: status === "SUCCESS",
-    match: match
+    verified: isVerified,
+    match: verifiedMatch
       ? {
-          id: match.id,
-          name: match.name,
-          similarity: Number(match.similarity),
-          distance: Number(match.distance),
+          id: verifiedMatch.id,
+          name: verifiedMatch.name,
+          similarity: Number(verifiedMatch.similarity),
+          distance: Number(verifiedMatch.distance),
         }
       : null,
     status,
