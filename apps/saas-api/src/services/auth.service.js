@@ -42,6 +42,30 @@ export async function sendOtpForAdmin(adminId, email) {
 }
 
 export async function signup(username, password, firstName, lastName, email) {
+  if (
+    typeof firstName === "string" &&
+    (firstName.toLowerCase() === firstName || !/^[A-Z]/.test(firstName))
+  ) {
+    const error = new Error(
+      firstName.toLowerCase() === firstName
+        ? "First name must not be all lowercase"
+        : "First letter of first name must be capitalized",
+    );
+    error.status = 400;
+    throw error;
+  }
+  if (
+    typeof lastName === "string" &&
+    (lastName.toLowerCase() === lastName || !/^[A-Z]/.test(lastName))
+  ) {
+    const error = new Error(
+      lastName.toLowerCase() === lastName
+        ? "Last name must not be all lowercase"
+        : "First letter of last name must be capitalized",
+    );
+    error.status = 400;
+    throw error;
+  }
   if (/[A-Z]/.test(email)) {
     const error = new Error("Email must not contain capital letters");
     error.status = 400;

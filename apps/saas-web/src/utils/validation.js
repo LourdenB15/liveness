@@ -23,12 +23,19 @@ export const containsBannedWord = (val) =>
 
 export const nameRule = z
   .string()
+  .trim()
   .min(2, "Must be at least 2 characters")
   .max(50, "Must be 50 characters or fewer")
   .regex(
     /^[a-zA-Z\s\-']+$/,
     "Only letters, spaces, hyphens, and apostrophes allowed",
   )
+  .refine((val) => val.toLowerCase() !== val, {
+    message: "Name must not be all lowercase",
+  })
+  .refine((val) => /^[A-Z]/.test(val), {
+    message: "First letter must be capitalized",
+  })
   .refine((val) => !containsBannedWord(val), {
     message: "Name contains inappropriate language",
   });

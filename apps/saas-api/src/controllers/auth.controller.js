@@ -24,12 +24,24 @@ const signupSchema = z.object({
     .string()
     .trim()
     .min(1, "First name is required")
-    .max(255, "First name must not exceed 255 characters"),
+    .max(255, "First name must not exceed 255 characters")
+    .refine((val) => val.toLowerCase() !== val, {
+      message: "First name must not be all lowercase",
+    })
+    .refine((val) => /^[A-Z]/.test(val), {
+      message: "First letter of first name must be capitalized",
+    }),
   lastName: z
     .string()
     .trim()
     .min(1, "Last name is required")
-    .max(255, "Last name must not exceed 255 characters"),
+    .max(255, "Last name must not exceed 255 characters")
+    .refine((val) => val.toLowerCase() !== val, {
+      message: "Last name must not be all lowercase",
+    })
+    .refine((val) => /^[A-Z]/.test(val), {
+      message: "First letter of last name must be capitalized",
+    }),
   email: z
     .string()
     .trim()
