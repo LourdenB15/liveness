@@ -42,11 +42,8 @@ export const authenticateToken = (req, res, next) => {
 
       try {
         const currentVersion = await findAdminTokenVersion(user.id);
-        if (
-          currentVersion === null ||
-          (user.tokenVersion !== undefined &&
-            user.tokenVersion !== currentVersion)
-        ) {
+        const tokenVersion = user.tokenVersion ?? 1;
+        if (currentVersion === null || tokenVersion !== currentVersion) {
           res.clearCookie("token", getClearCookieOptions());
           return res
             .status(401)
@@ -91,11 +88,8 @@ export const optionalAuthenticateToken = (req, res, next) => {
 
       try {
         const currentVersion = await findAdminTokenVersion(user.id);
-        if (
-          currentVersion === null ||
-          (user.tokenVersion !== undefined &&
-            user.tokenVersion !== currentVersion)
-        ) {
+        const tokenVersion = user.tokenVersion ?? 1;
+        if (currentVersion === null || tokenVersion !== currentVersion) {
           res.clearCookie("token", getClearCookieOptions());
           req.user = null;
           return next();
