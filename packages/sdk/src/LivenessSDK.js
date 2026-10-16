@@ -151,6 +151,12 @@ export class LivenessSDK {
     }
 
     try {
+      if (videoElement) {
+        videoElement.autoplay = true;
+        videoElement.playsInline = true;
+        videoElement.muted = true;
+      }
+
       if (!videoElement.srcObject) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -162,65 +168,73 @@ export class LivenessSDK {
         });
         videoElement.srcObject = stream;
 
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            reject(new Error("Camera stream timed out."));
-          }, 10000);
+        if (videoElement.readyState >= 1 && videoElement.videoWidth > 0) {
+          if (videoElement.paused) {
+            await videoElement.play();
+          }
+        } else {
+          await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error("Camera stream timed out."));
+            }, 10000);
 
-          videoElement.onloadedmetadata = () => {
-            clearTimeout(timeout);
-            videoElement.play().then(resolve).catch(reject);
-          };
-        });
+            videoElement.onloadedmetadata = () => {
+              clearTimeout(timeout);
+              videoElement.play().then(resolve).catch(reject);
+            };
+          });
+        }
+      } else if (videoElement.paused) {
+        await videoElement.play();
       }
 
-      canvasElement.width = videoElement.videoWidth;
-      canvasElement.height = videoElement.videoHeight;
+      canvasElement.width = videoElement.videoWidth || 1280;
+      canvasElement.height = videoElement.videoHeight || 720;
       const ctx = canvasElement.getContext("2d");
 
-    this.videoElement = videoElement;
-    this.engine.start(videoElement, ctx);
-  } catch (error) {
-    let errorPayload = {
-      code: "CAMERA_ERROR",
-      message: error.message,
-    };
+      this.videoElement = videoElement;
+      this.engine.start(videoElement, ctx);
+    } catch (error) {
+      let errorPayload = {
+        code: "CAMERA_ERROR",
+        message: error.message,
+      };
 
-    if (
-      error.name === "NotAllowedError" ||
-      error.name === "PermissionDeniedError"
-    ) {
-      errorPayload = {
-        code: "CAMERA_ACCESS_DENIED",
-        message:
-          "Camera access was denied by the user. Please update browser permissions.",
-      };
-    } else if (
-      error.name === "NotFoundError" ||
-      error.name === "DevicesNotFoundError"
-    ) {
-      errorPayload = {
-        code: "CAMERA_NOT_FOUND",
-        message: "No camera device was found on this system.",
-      };
+      if (
+        error.name === "NotAllowedError" ||
+        error.name === "PermissionDeniedError"
+      ) {
+        errorPayload = {
+          code: "CAMERA_ACCESS_DENIED",
+          message:
+            "Camera access was denied by the user. Please update browser permissions.",
+        };
+      } else if (
+        error.name === "NotFoundError" ||
+        error.name === "DevicesNotFoundError"
+      ) {
+        errorPayload = {
+          code: "CAMERA_NOT_FOUND",
+          message: "No camera device was found on this system.",
+        };
+      }
+
+      this._emit("error", errorPayload);
+      this._emit("failure", errorPayload);
     }
+  }
 
-    this._emit("error", errorPayload);
-    this._emit("failure", errorPayload);
+  stop(videoElement) {
+    if (this.engine) {
+      this.engine.stop();
+    }
+    const targetVideo = videoElement || this.videoElement;
+    if (targetVideo && targetVideo.srcObject) {
+      targetVideo.srcObject.getTracks().forEach((track) => track.stop());
+      targetVideo.srcObject = null;
+    }
+    if (targetVideo === this.videoElement) {
+      this.videoElement = null;
+    }
   }
-}
-
-stop(videoElement) {
-  if (this.engine) {
-    this.engine.stop();
-  }
-  const targetVideo = videoElement || this.videoElement;
-  if (targetVideo && targetVideo.srcObject) {
-    targetVideo.srcObject.getTracks().forEach((track) => track.stop());
-    targetVideo.srcObject = null;
-  }
-  if (targetVideo === this.videoElement) {
-    this.videoElement = null;
-  }
-}
 }

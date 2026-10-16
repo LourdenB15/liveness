@@ -763,6 +763,7 @@ export function LivenessChecker() {
       <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
         <video
           ref={videoRef}
+          autoPlay
           playsInline
           muted
           className="absolute inset-0 h-full w-full scale-x-[-1] transform object-cover"
