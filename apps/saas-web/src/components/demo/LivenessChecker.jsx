@@ -106,6 +106,12 @@ export function LivenessChecker() {
   const enrolledUsersRef = useRef(enrolledUsers);
   const apiConfigRef = useRef(apiConfig);
 
+  const modeRef = useRef(mode);
+
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
   useEffect(() => {
     userNameRef.current = userName;
   }, [userName]);
@@ -212,7 +218,7 @@ export function LivenessChecker() {
           let endpoint;
           let body;
 
-          if (mode === MODE.ENROLL) {
+          if (modeRef.current === MODE.ENROLL) {
             endpoint = `${baseUrl}/enroll`;
             body = { name: userNameRef.current || "User", ...livenessResult };
           } else if (verifyTypeRef.current === VERIFY_TYPE.ONE_TO_ONE) {
@@ -295,7 +301,7 @@ export function LivenessChecker() {
       }
       // Offline / LocalStorage Mode
       else {
-        if (mode === MODE.ENROLL) {
+        if (modeRef.current === MODE.ENROLL) {
           const newIdentity = {
             id: `local_${Date.now().toString(36)}`,
             name: userNameRef.current.trim() || "User",
@@ -409,7 +415,8 @@ export function LivenessChecker() {
 
     const currentVideo = videoRef.current;
     return () => sdkRef.current?.stop(currentVideo);
-  }, [mode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartClick = async () => {
     if (!videoRef.current || !canvasRef.current || !sdkRef.current) return;
