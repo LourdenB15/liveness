@@ -760,7 +760,7 @@ export function LivenessChecker() {
       )}
 
       {/* Camera Viewport */}
-      <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
+      <div className="relative aspect-3/4 sm:aspect-4/3 w-full max-w-sm sm:max-w-none mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
         <video
           ref={videoRef}
           autoPlay

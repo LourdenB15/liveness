@@ -158,10 +158,19 @@ export class LivenessSDK {
       }
 
       if (!videoElement.srcObject) {
+        const isPortrait =
+          typeof window !== "undefined" &&
+          (window.matchMedia?.("(orientation: portrait)")?.matches ||
+            window.innerHeight > window.innerWidth);
+
+        const idealWidth = isPortrait ? 720 : 1280;
+        const idealHeight = isPortrait ? 1280 : 720;
+
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: idealWidth },
+            height: { ideal: idealHeight },
+            aspectRatio: { ideal: idealWidth / idealHeight },
             facingMode: "user",
           },
           audio: false,
