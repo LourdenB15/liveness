@@ -209,6 +209,8 @@ export class LivenessEngine {
     if (!faces || faces.length === 0) {
       this.#hasDetectedOpenEyes = false;
 
+      if (this.#isChallengeProcessing) return;
+
       if (
         Date.now() - this.#lastChallengeTime >
         this.#config.challengeTimeout
