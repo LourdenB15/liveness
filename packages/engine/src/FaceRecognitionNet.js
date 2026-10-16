@@ -121,7 +121,16 @@ export class FaceRecognitionNet {
     }
     const manifest = await response.json();
     const weightMap = await tf.io.loadWeights(manifest, cleanBaseUrl);
-    this.#params = extractParams(weightMap);
+    try {
+      this.#params = extractParams(weightMap);
+    } catch (err) {
+      if (weightMap && typeof weightMap === "object") {
+        for (const key of Object.keys(weightMap)) {
+          weightMap[key]?.dispose?.();
+        }
+      }
+      throw err;
+    }
   }
 
   loadWithWeightMap(weightMap) {
