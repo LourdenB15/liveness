@@ -111,18 +111,21 @@ export function useLogs() {
       );
 
   const totalCount = logs.length;
-  const successCount = logs.filter(
-    (l) => l.status === "SUCCESS" || l.status === "ENROLLED",
-  ).length;
-  const passRate = totalCount
-    ? ((successCount / totalCount) * 100).toFixed(1)
-    : 0;
-  const avgScore = totalCount
+  const verificationLogs = logs.filter(
+    (l) => l.status === "SUCCESS" || l.status === "FAILURE",
+  );
+  const successLogs = logs.filter((l) => l.status === "SUCCESS");
+  const successCount = successLogs.length;
+  const passRate = verificationLogs.length
+    ? ((successCount / verificationLogs.length) * 100).toFixed(1)
+    : "0.0";
+  const avgScore = successLogs.length
     ? (
-        (logs.reduce((acc, l) => acc + (l.score || 0), 0) / totalCount) *
+        (successLogs.reduce((acc, l) => acc + (l.score || 0), 0) /
+          successLogs.length) *
         100
       ).toFixed(1)
-    : 0;
+    : "0.0";
 
   return {
     loading,

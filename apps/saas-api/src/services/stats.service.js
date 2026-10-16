@@ -12,7 +12,8 @@ export async function getStats(adminId, days = 7) {
   const passed = detailed?.passedChecks || 0;
   const failed = detailed?.failedChecks || 0;
   const enrolled = detailed?.enrolledChecks || 0;
-  const passRate = totalChecks > 0 ? (passed / totalChecks) * 100 : 0;
+  const totalVerifications = passed + failed;
+  const passRate = totalVerifications > 0 ? (passed / totalVerifications) * 100 : 0;
   const avgConfidence = (detailed?.avgConfidence || 0) * 100;
 
   return {
