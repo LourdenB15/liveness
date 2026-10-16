@@ -51,7 +51,7 @@ export function validateIntegrity(req, res, next) {
 
   const { descriptor, sessionToken, timestamp, challenges, integrity } =
     req.body;
-  if (!descriptor || !sessionToken || !timestamp || !integrity) {
+  if (!descriptor || !sessionToken || !timestamp || !integrity || !challenges) {
     return res.status(400).json({ error: "Missing security metadata" });
   }
 
@@ -69,7 +69,7 @@ export function validateIntegrity(req, res, next) {
 
   if (
     typeof timestamp !== "number" ||
-    isNaN(timestamp) ||
+    !Number.isFinite(timestamp) ||
     timestamp < now - maxPastWindow ||
     timestamp > now + maxFutureSkew
   ) {
@@ -80,6 +80,13 @@ export function validateIntegrity(req, res, next) {
 
   // Verify server-orchestrated session if token was server-issued
   const serverSession = getSession(sessionToken);
+  if (sessionToken.startsWith("live_sess_") && !serverSession) {
+    return res.status(400).json({
+      error:
+        "Verification session has expired or is invalid. Please request a new session.",
+    });
+  }
+
   if (serverSession) {
     if (serverSession.used) {
       return res.status(400).json({
@@ -95,6 +102,15 @@ export function validateIntegrity(req, res, next) {
     if (serverSession.adminId !== req.adminId) {
       return res.status(403).json({
         error: "Session does not belong to the authenticating account.",
+      });
+    }
+    if (
+      serverSession.apiKeyId &&
+      req.apiKeyId &&
+      serverSession.apiKeyId !== req.apiKeyId
+    ) {
+      return res.status(403).json({
+        error: "Session was created by a different API key.",
       });
     }
     // Verify client submitted the required challenges
