@@ -96,10 +96,12 @@ export class LivenessEngine {
       this.#callbacks.onReady();
     } catch (error) {
       console.error("Fatal error during model loading:", error);
-      this.#callbacks.onFailure({
+      const errorPayload = {
         code: "MODEL_LOAD_FAILED",
         message: `Failed to load models. Check console for details. Error: ${error.message}`,
-      });
+      };
+      this.#callbacks.onFailure(errorPayload);
+      throw error;
     }
   }
 
