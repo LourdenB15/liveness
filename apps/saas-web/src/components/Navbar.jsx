@@ -107,6 +107,16 @@ const Navbar = () => {
           >
             Docs
           </Link>
+          <Link
+            to="/demo"
+            className={`text-xs font-medium transition-colors ${
+              location.pathname === "/demo"
+                ? "font-semibold text-[#2f5bf5]"
+                : "text-slate-600 hover:text-[#2f5bf5]"
+            }`}
+          >
+            Demo
+          </Link>
         </div>
 
         {/* Desktop Action Buttons */}
@@ -181,6 +191,15 @@ const Navbar = () => {
               className="flex items-center justify-between text-sm font-medium text-slate-700 hover:text-[#2f5bf5]"
             >
               <span>Docs</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </Link>
+
+            <Link
+              to="/demo"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between text-sm font-medium text-slate-700 hover:text-[#2f5bf5]"
+            >
+              <span>Demo</span>
               <ChevronRight className="h-4 w-4 text-slate-400" />
             </Link>
 

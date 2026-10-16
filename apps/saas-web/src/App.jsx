@@ -9,6 +9,7 @@ const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
 
 const ApiKeys = lazy(() => import("./pages/ApiKeys"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Demo = lazy(() => import("./pages/Demo"));
 const Documentation = lazy(() => import("./pages/Documentation"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Login = lazy(() => import("./pages/Login"));
@@ -115,6 +116,7 @@ const ROUTE_TITLES = {
   "/api-keys": "API Keys | Liveness Cloud",
   "/settings": "Account Settings | Liveness Cloud",
   "/docs": "Documentation | Liveness Cloud",
+  "/demo": "Interactive Demo | Liveness Cloud",
   "/login": "Sign In | Liveness Cloud",
   "/signup": "Create Account | Liveness Cloud",
   "/forgot-password": "Forgot Password | Liveness Cloud",
@@ -197,6 +199,7 @@ function App() {
           />
 
           <Route path="/docs" element={<Documentation />} />
+          <Route path="/demo" element={<Demo />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
 

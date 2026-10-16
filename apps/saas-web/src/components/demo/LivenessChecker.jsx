@@ -541,366 +541,379 @@ export function LivenessChecker() {
     (mode === MODE.VERIFY && !isCloudMode && enrolledUsers.length === 0);
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
-      {/* Header bar: Status + Settings */}
-      <div className="mb-4 flex w-full items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div
-            className={`h-2 w-2 rounded-full ${
-              isCloudMode
-                ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
-                : "bg-slate-400"
-            }`}
-          />
-          <span className="text-xs font-bold tracking-wide text-slate-500 uppercase">
-            {isCloudMode ? "Cloud Mode" : "Offline (Local Storage)"}
+    <div className="flex w-full flex-col gap-6">
+      {/* Top Meta Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex h-2.5 w-2.5">
+            <span
+              className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
+                isCloudMode ? "bg-emerald-400" : "bg-blue-400"
+              }`}
+            />
+            <span
+              className={`relative inline-flex h-2.5 w-2.5 rounded-full ${
+                isCloudMode ? "bg-emerald-500" : "bg-blue-600"
+              }`}
+            />
+          </span>
+          <span className="text-xs font-bold tracking-wide text-slate-700 uppercase">
+            {isCloudMode ? "Cloud SaaS Orchestration" : "Client-Side Local Storage"}
           </span>
         </div>
         <ApiSettings config={apiConfig} onSave={setApiConfig} />
       </div>
 
-      {/* Main Mode Selector: Enroll vs Verify */}
-      <div className="mb-4 flex w-full max-w-sm rounded-xl bg-slate-100 p-1">
-        <button
-          onClick={() => {
-            setMode(MODE.ENROLL);
-            setUiState(UI_STATE.READY_TO_START);
-          }}
-          className={`flex-1 cursor-pointer rounded-lg py-2 text-sm font-semibold transition-all ${
-            mode === MODE.ENROLL
-              ? "bg-white text-blue-600 shadow"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          Enroll
-        </button>
-        <button
-          onClick={() => {
-            setMode(MODE.VERIFY);
-            setUiState(UI_STATE.READY_TO_START);
-          }}
-          disabled={!isCloudMode && enrolledUsers.length === 0}
-          className={`flex-1 cursor-pointer rounded-lg py-2 text-sm font-semibold transition-all ${
-            mode === MODE.VERIFY
-              ? "bg-white text-blue-600 shadow"
-              : "text-slate-500 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-          }`}
-        >
-          Verify
-        </button>
-      </div>
+      {/* Main Studio Area: 2 Columns on desktop */}
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        {/* Left Column: Biometric Camera Viewport & HUD (7 cols) */}
+        <div className="lg:col-span-7">
+          <div className="relative aspect-3/4 sm:aspect-4/3 w-full overflow-hidden rounded-2xl bg-slate-950 shadow-xl ring-1 ring-slate-900/10">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="absolute inset-0 h-full w-full scale-x-[-1] transform object-cover"
+            />
+            <canvas
+              ref={canvasRef}
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            />
 
-      {/* Verification Type (1:N vs 1:1) */}
-      {mode === MODE.VERIFY && (
-        <div className="mb-5 w-full max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase">
-              Verification Mode
-            </span>
-            <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 font-mono text-[10px] font-bold text-blue-600">
-              {isCloudMode
-                ? verifyType === VERIFY_TYPE.ONE_TO_ONE
-                  ? "POST /api/liveness/verify-one"
-                  : "POST /api/liveness/verify"
-                : verifyType === VERIFY_TYPE.ONE_TO_ONE
-                  ? "Local 1:1 Match"
-                  : "Local 1:N Search"}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={() => {
-                setVerifyType(VERIFY_TYPE.ONE_TO_MANY);
-                setUiState(UI_STATE.READY_TO_START);
-              }}
-              className={`flex cursor-pointer flex-col items-start rounded-xl border p-3 text-left transition-all ${
-                verifyType === VERIFY_TYPE.ONE_TO_MANY
-                  ? "border-blue-500 bg-blue-50/70 text-blue-900 shadow-xs ring-1 ring-blue-500/30"
-                  : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100/80"
-              }`}
-            >
-              <span className="text-xs font-bold">1:N Identification</span>
-              <span className="mt-1 text-[11px] text-slate-500">
-                {isCloudMode ? "Search database" : "Search local identities"}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setVerifyType(VERIFY_TYPE.ONE_TO_ONE);
-                setUiState(UI_STATE.READY_TO_START);
-              }}
-              className={`flex cursor-pointer flex-col items-start rounded-xl border p-3 text-left transition-all ${
-                verifyType === VERIFY_TYPE.ONE_TO_ONE
-                  ? "border-indigo-500 bg-indigo-50/70 text-indigo-900 shadow-xs ring-1 ring-indigo-500/30"
-                  : "border-slate-200 bg-slate-50/60 text-slate-600 hover:bg-slate-100/80"
-              }`}
-            >
-              <div className="flex items-center gap-1 text-xs font-bold">
-                <span>1:1 Verification</span>
+            {/* Biometric Circle Reticle Guide (Preserves 1:1 circle on portrait/landscape) */}
+            {uiState === UI_STATE.CHECKING && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-6">
+                <div className="relative aspect-square w-full max-w-65 sm:max-w-70 rounded-full border-2 border-dashed border-white/30 transition-all">
+                  {/* Subtle alignment corner ticks */}
+                  <span className="absolute -top-1 left-1/2 h-2.5 w-0.5 -translate-x-1/2 bg-white/60" />
+                  <span className="absolute -bottom-1 left-1/2 h-2.5 w-0.5 -translate-x-1/2 bg-white/60" />
+                  <span className="absolute top-1/2 -left-1 h-0.5 w-2.5 -translate-y-1/2 bg-white/60" />
+                  <span className="absolute top-1/2 -right-1 h-0.5 w-2.5 -translate-y-1/2 bg-white/60" />
+                </div>
               </div>
-              <span className="mt-1 text-[11px] text-slate-500">
-                {isCloudMode ? "Target user ID" : "Target local user"}
-              </span>
-            </button>
+            )}
+
+            {/* Top Floating Instruction Pill */}
+            <div className="absolute top-4 right-0 left-0 z-10 flex justify-center px-4">
+              <div className="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-5 py-2 text-center text-xs font-medium text-white shadow-lg backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-[#2f5bf5] animate-pulse" />
+                <span>
+                  {uiState === UI_STATE.LOADING_MODELS
+                    ? "Loading neural network weights..."
+                    : instruction || "Position your face in the frame"}
+                </span>
+              </div>
+            </div>
+
+            {/* Distance Hint Badge */}
+            {currentChallenge === "WAITING" && distanceHint && (
+              <div className="absolute top-1/2 right-0 left-0 z-10 flex justify-center">
+                <div className="rounded-full border border-amber-400/30 bg-amber-500/90 px-5 py-2 text-xs font-bold text-slate-950 shadow-lg backdrop-blur-md">
+                  {distanceHint === "CLOSER" ? "Move closer to camera" : "Step slightly back"}
+                </div>
+              </div>
+            )}
+
+            {/* Start / Retry Overlay */}
+            {(uiState === UI_STATE.READY_TO_START ||
+              uiState === UI_STATE.FAILURE) && (
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/60 p-6 backdrop-blur-xs">
+                <button
+                  onClick={handleStartClick}
+                  disabled={isStartDisabled}
+                  className={`cursor-pointer rounded-xl px-7 py-3 text-sm font-semibold shadow-md transition-all ${
+                    isStartDisabled
+                      ? "cursor-not-allowed bg-slate-800 text-slate-500 opacity-60"
+                      : "bg-[#2f5bf5] text-white hover:bg-[#204be8] active:scale-95"
+                  }`}
+                >
+                  {uiState === UI_STATE.READY_TO_START
+                    ? "Start Verification"
+                    : "Retry Session"}
+                </button>
+                {isStartDisabled && (
+                  <p className="mt-3 text-xs text-slate-300">
+                    {mode === MODE.ENROLL
+                      ? "Enter a full name on the right to begin"
+                      : "Provide a target user ID or enroll a face first"}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Turn Head Progress Bar */}
+            {(currentChallenge === "TURN_LEFT" ||
+              currentChallenge === "TURN_RIGHT") && (
+              <div className="absolute right-0 bottom-0 left-0 z-10 p-5">
+                <ProgressBar
+                  progress={progress}
+                  direction={currentChallenge === "TURN_LEFT" ? "left" : "right"}
+                />
+              </div>
+            )}
+
+            {/* Result Modal Overlay */}
+            {uiState === UI_STATE.SUCCESS && (
+              <div
+                className={`absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-white backdrop-blur-md ${
+                  verificationPassed === false
+                    ? "bg-rose-950/90"
+                    : "bg-emerald-950/90"
+                }`}
+              >
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-xl">
+                  {verificationPassed === false ? (
+                    <svg
+                      className="h-8 w-8 text-rose-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-8 w-8 text-emerald-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+
+                <h3 className="px-4 text-center text-xl font-bold">
+                  {instruction}
+                </h3>
+
+                {mode === MODE.VERIFY && matchMetrics !== null && (
+                  <div className="mt-3 flex items-center gap-3 rounded-full bg-black/40 px-4 py-1.5 font-mono text-xs text-white/90">
+                    <span>Cosine: {(matchMetrics.similarity * 100).toFixed(1)}%</span>
+                    <span className="text-white/30">•</span>
+                    <span>
+                      Distance:{" "}
+                      {matchMetrics.distance !== undefined &&
+                      matchMetrics.distance !== Infinity
+                        ? matchMetrics.distance.toFixed(3)
+                        : "N/A"}
+                    </span>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setUiState(UI_STATE.READY_TO_START)}
+                  className="mt-6 cursor-pointer rounded-xl bg-white px-6 py-2 text-xs font-bold text-slate-900 shadow-sm transition-transform hover:bg-slate-100 active:scale-95"
+                >
+                  Continue
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Interactive Configuration & Parameters (5 cols) */}
+        <div className="flex flex-col gap-5 lg:col-span-5">
+          {/* Mode Switcher: Enroll vs Verify */}
+          <div>
+            <label className="mb-2 block text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Verification Objective
+            </label>
+            <div className="grid grid-cols-2 gap-2 rounded-xl border border-slate-200/80 bg-slate-100/80 p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(MODE.ENROLL);
+                  setUiState(UI_STATE.READY_TO_START);
+                }}
+                className={`cursor-pointer rounded-lg py-2 text-xs font-bold transition-all ${
+                  mode === MODE.ENROLL
+                    ? "bg-white text-[#2f5bf5] shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Enroll Identity
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(MODE.VERIFY);
+                  setUiState(UI_STATE.READY_TO_START);
+                }}
+                disabled={!isCloudMode && enrolledUsers.length === 0}
+                className={`cursor-pointer rounded-lg py-2 text-xs font-bold transition-all ${
+                  mode === MODE.VERIFY
+                    ? "bg-white text-[#2f5bf5] shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+                }`}
+              >
+                Verify Identity
+              </button>
+            </div>
           </div>
 
-          {/* 1:1 Cloud Target ID Input */}
-          {verifyType === VERIFY_TYPE.ONE_TO_ONE && isCloudMode && (
-            <div className="mt-3.5 space-y-2 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
+          {/* Enroll Name Input */}
+          {mode === MODE.ENROLL && (
+            <div className="rounded-xl border border-slate-200/80 bg-white p-4">
+              <label className="mb-1.5 block text-xs font-bold text-slate-700">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. John Doe"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-[#2f5bf5] focus:ring-2 focus:ring-[#2f5bf5]/20 focus:outline-none"
+              />
+              <p className="mt-1.5 text-[11px] text-slate-500">
+                Captured biometric descriptor vector will be bound to this profile.
+              </p>
+            </div>
+          )}
+
+          {/* Verification Type (1:N vs 1:1) */}
+          {mode === MODE.VERIFY && (
+            <div className="space-y-3 rounded-xl border border-slate-200/80 bg-white p-4">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700">
-                  Target User ID (UUID) <span className="text-red-500">*</span>
-                </label>
+                <span className="text-xs font-bold text-slate-700">Matching Mode</span>
                 <span className="font-mono text-[10px] text-slate-400">
-                  UUID v4
+                  {isCloudMode ? "Cloud Endpoints" : "Local Vector Store"}
                 </span>
               </div>
 
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
-                  value={targetId}
-                  onChange={(e) => setTargetId(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 pr-8 font-mono text-xs focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                />
-                {targetId && (
-                  <button
-                    onClick={() => setTargetId("")}
-                    className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-slate-600"
-                    type="button"
-                  >
-                    ✕
-                  </button>
-                )}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVerifyType(VERIFY_TYPE.ONE_TO_MANY);
+                    setUiState(UI_STATE.READY_TO_START);
+                  }}
+                  className={`flex cursor-pointer flex-col rounded-lg border p-2.5 text-left transition-all ${
+                    verifyType === VERIFY_TYPE.ONE_TO_MANY
+                      ? "border-[#2f5bf5] bg-blue-50/60 text-slate-900 ring-1 ring-[#2f5bf5]/30"
+                      : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="text-xs font-bold">1:N Identification</span>
+                  <span className="mt-0.5 text-[11px] text-slate-500">Search database</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVerifyType(VERIFY_TYPE.ONE_TO_ONE);
+                    setUiState(UI_STATE.READY_TO_START);
+                  }}
+                  className={`flex cursor-pointer flex-col rounded-lg border p-2.5 text-left transition-all ${
+                    verifyType === VERIFY_TYPE.ONE_TO_ONE
+                      ? "border-[#2f5bf5] bg-blue-50/60 text-slate-900 ring-1 ring-[#2f5bf5]/30"
+                      : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className="text-xs font-bold">1:1 Verification</span>
+                  <span className="mt-0.5 text-[11px] text-slate-500">Target identity</span>
+                </button>
               </div>
 
-              {recentCloudUsers.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {recentCloudUsers.map((user) => (
-                    <button
-                      key={user.id}
-                      type="button"
-                      onClick={() => setTargetId(user.id)}
-                      className={`cursor-pointer rounded-md border px-2 py-1 text-[11px] transition-all ${
-                        targetId === user.id
-                          ? "border-indigo-500 bg-indigo-100 font-bold text-indigo-800"
-                          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      {user.name} ({user.id.slice(0, 8)}...)
-                    </button>
-                  ))}
+              {/* 1:1 Target ID Input */}
+              {verifyType === VERIFY_TYPE.ONE_TO_ONE && (
+                <div className="pt-2 border-t border-slate-100">
+                  {isCloudMode ? (
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-700">
+                        Target User UUID
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="550e8400-e29b-41d4-a716-446655440000"
+                        value={targetId}
+                        onChange={(e) => setTargetId(e.target.value)}
+                        className="w-full rounded-lg border border-slate-300 px-3 py-1.5 font-mono text-xs focus:border-[#2f5bf5] focus:outline-none"
+                      />
+                      {recentCloudUsers.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {recentCloudUsers.map((u) => (
+                            <button
+                              key={u.id}
+                              type="button"
+                              onClick={() => setTargetId(u.id)}
+                              className="cursor-pointer rounded bg-slate-100 px-2 py-0.5 font-mono text-[10px] text-slate-700 hover:bg-slate-200"
+                            >
+                              {u.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-700">
+                        Select Local User
+                      </label>
+                      <select
+                        value={selectedLocalIndex}
+                        onChange={(e) => setSelectedLocalIndex(Number(e.target.value))}
+                        className="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs text-slate-800"
+                      >
+                        {enrolledUsers.map((u, i) => (
+                          <option key={u.id || i} value={i}>
+                            {u.name} ({u.id})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
 
-          {/* 1:1 Local Selector */}
-          {verifyType === VERIFY_TYPE.ONE_TO_ONE &&
-            !isCloudMode &&
-            enrolledUsers.length > 0 && (
-              <div className="mt-3.5 space-y-1.5 rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5">
-                <label className="block text-xs font-bold text-slate-700">
-                  Target Identity:
+          {/* Active Challenges Config */}
+          <div className="rounded-xl border border-slate-200/80 bg-white p-4">
+            <h4 className="mb-2.5 text-xs font-bold text-slate-700">
+              Active Liveness Challenges
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { id: "WAITING", label: "Center Face" },
+                { id: "BLINK", label: "Eye Blink" },
+                { id: "TURN_LEFT", label: "Turn Left" },
+                { id: "TURN_RIGHT", label: "Turn Right" },
+              ].map((ch) => (
+                <label
+                  key={ch.id}
+                  className={`flex cursor-pointer items-center justify-between rounded-lg border p-2.5 text-xs font-semibold transition-colors ${
+                    selectedChallenges.includes(ch.id)
+                      ? "border-blue-200 bg-blue-50/70 text-[#2f5bf5]"
+                      : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{ch.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={selectedChallenges.includes(ch.id)}
+                    onChange={() => toggleChallenge(ch.id)}
+                    className="h-3.5 w-3.5 rounded border-slate-300 text-[#2f5bf5] focus:ring-[#2f5bf5]"
+                  />
                 </label>
-                <select
-                  value={selectedLocalIndex}
-                  onChange={(e) =>
-                    setSelectedLocalIndex(Number(e.target.value))
-                  }
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
-                >
-                  {enrolledUsers.map((user, idx) => (
-                    <option key={user.id || idx} value={idx}>
-                      {user.name} (#{idx + 1})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-        </div>
-      )}
-
-      {/* Enroll Name Input */}
-      {mode === MODE.ENROLL && uiState === UI_STATE.READY_TO_START && (
-        <div className="mb-4 w-full max-w-sm">
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-      )}
-
-      {/* Challenges Sequence */}
-      {uiState === UI_STATE.READY_TO_START && (
-        <div className="mb-6 w-full max-w-sm rounded-2xl border border-slate-200 bg-slate-50 p-4">
-          <h4 className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
-            Active Challenges
-          </h4>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { id: "WAITING", label: "Center Face" },
-              { id: "BLINK", label: "Eye Blink" },
-              { id: "TURN_LEFT", label: "Turn Left" },
-              { id: "TURN_RIGHT", label: "Turn Right" },
-            ].map((ch) => (
-              <label
-                key={ch.id}
-                className={`flex cursor-pointer items-center justify-between rounded-xl border p-3 text-xs font-bold transition-all ${
-                  selectedChallenges.includes(ch.id)
-                    ? "border-blue-200 bg-blue-50 text-blue-700"
-                    : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
-                }`}
-              >
-                <span>{ch.label}</span>
-                <input
-                  type="checkbox"
-                  checked={selectedChallenges.includes(ch.id)}
-                  onChange={() => toggleChallenge(ch.id)}
-                  className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                />
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Camera Viewport */}
-      <div className="relative aspect-3/4 sm:aspect-4/3 w-full max-w-sm sm:max-w-none mx-auto overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-slate-900/10">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className="absolute inset-0 h-full w-full scale-x-[-1] transform object-cover"
-        />
-        <canvas
-          ref={canvasRef}
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        />
-
-        <div className="absolute top-4 right-0 left-0 z-10 flex justify-center px-4">
-          <div className="rounded-full border border-white/10 bg-black/60 px-6 py-2 text-center text-sm font-medium text-white shadow-lg backdrop-blur-md">
-            {uiState === UI_STATE.LOADING_MODELS
-              ? "Loading AI Models..."
-              : instruction}
-          </div>
-        </div>
-
-        {currentChallenge === "WAITING" && distanceHint && (
-          <div className="absolute top-1/2 right-0 left-0 z-10 flex justify-center">
-            <div className="rounded-full border border-white/10 bg-red-500/80 px-6 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
-              {`Move ${distanceHint}`}
+              ))}
             </div>
+            <p className="mt-2 text-[11px] text-slate-400">
+              Challenges are automatically randomized during verification to prevent replay spoofs.
+            </p>
           </div>
-        )}
-
-        {(uiState === UI_STATE.READY_TO_START ||
-          uiState === UI_STATE.FAILURE) && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-            <button
-              onClick={handleStartClick}
-              disabled={isStartDisabled}
-              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold shadow-xs transition-colors ${
-                isStartDisabled
-                  ? "cursor-not-allowed bg-slate-600 text-slate-300 opacity-75"
-                  : "cursor-pointer bg-blue-600 text-white hover:bg-blue-500"
-              }`}
-            >
-              {uiState === UI_STATE.READY_TO_START
-                ? "Start Session"
-                : "Retry Check"}
-            </button>
-          </div>
-        )}
-
-        {(currentChallenge === "TURN_LEFT" ||
-          currentChallenge === "TURN_RIGHT") && (
-          <div className="absolute right-0 bottom-0 left-0 z-10 p-6">
-            <ProgressBar
-              progress={progress}
-              direction={currentChallenge === "TURN_LEFT" ? "left" : "right"}
-            />
-          </div>
-        )}
-
-        {/* Result Overlay */}
-        {uiState === UI_STATE.SUCCESS && (
-          <div
-            className={`absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-white backdrop-blur-md ${
-              verificationPassed === false
-                ? "bg-red-500/90"
-                : "bg-green-500/90"
-            }`}
-          >
-            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl">
-              {verificationPassed === false ? (
-                <svg
-                  className="h-10 w-10 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M6 18L18 6M6 6l12 12"
-                  ></path>
-                </svg>
-              ) : (
-                <svg
-                  className="h-10 w-10 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-              )}
-            </div>
-
-            <h3 className="px-6 text-center text-2xl font-bold">
-              {instruction}
-            </h3>
-
-            {mode === MODE.VERIFY && matchMetrics !== null && (
-              <div className="mt-3 flex items-center gap-2.5 rounded-full bg-black/30 px-4 py-1.5 font-mono text-xs text-white/95 shadow-sm">
-                <span>
-                  Cosine: {(matchMetrics.similarity * 100).toFixed(1)}%
-                </span>
-                <span className="text-white/40">•</span>
-                <span>
-                  Distance:{" "}
-                  {matchMetrics.distance !== undefined &&
-                  matchMetrics.distance !== Infinity
-                    ? matchMetrics.distance.toFixed(3)
-                    : "N/A"}
-                </span>
-              </div>
-            )}
-
-            <button
-              onClick={() => setUiState(UI_STATE.READY_TO_START)}
-              className="mt-6 cursor-pointer rounded-full bg-white px-6 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-slate-100"
-            >
-              Done
-            </button>
-          </div>
-        )}
+        </div>
       </div>
 
       {/* Local Identities Directory (Offline Mode) */}

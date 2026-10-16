@@ -16,8 +16,7 @@ JavaScript SDK for browser-based active liveness detection and face verification
 
 Repository layout:
 
-- `apps/demo`: React demonstration app.
-- `apps/saas-web`: SaaS platform dashboard and documentation.
+- `apps/saas-web`: SaaS platform, interactive demo (`/demo`), and documentation.
 - `apps/saas-api`: Verification and orchestration backend.
 - `packages/engine`: Core vision engine and mathematical utilities.
 - `packages/sdk`: Public SDK wrapper package.
@@ -70,9 +69,8 @@ await sdk.start(videoElement, canvasElement);
 
 Start services from the root directory:
 
-- Demo app: `npm run dev`
+- Web platform & demo: `npm run dev` (or `npm run dev:saas`)
 - SaaS API: `npm run dev:api`
-- SaaS dashboard: `npm run dev:saas`
 
 ## Testing and building
 

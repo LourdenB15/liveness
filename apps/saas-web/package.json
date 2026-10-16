@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@liveness/engine": "*",
     "@liveness/sdk": "*",
     "lucide-react": "^0.477.0",
     "prismjs": "^1.30.0",

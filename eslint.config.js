@@ -16,7 +16,6 @@ export default [
   // Browser-based code (Apps, SDK, and Engine Core)
   {
     files: [
-      "apps/demo/**/*.{js,jsx}",
       "apps/saas-web/**/*.{js,jsx}",
       "packages/sdk/**/*.{js,jsx}",
       "packages/engine/src/LivenessEngine.js",
