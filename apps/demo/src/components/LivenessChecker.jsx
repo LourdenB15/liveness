@@ -419,23 +419,61 @@ export function LivenessChecker() {
     setCurrentChallenge(null);
     setUiState(UI_STATE.CHECKING);
 
-    const sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
+    let sessionToken = `sess_${Math.random().toString(36).substring(2, 15)}`;
     let challengeList = selectedChallenges;
-    if (selectedChallenges.includes("WAITING")) {
-      const active = selectedChallenges.filter((c) => c !== "WAITING");
-      const shuffled = [...active];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+
+    if (apiConfigRef.current.enabled && apiConfigRef.current.apiKey) {
+      try {
+        const rawUrl =
+          apiConfigRef.current.apiUrl?.trim() ||
+          "http://localhost:3000/api/liveness";
+        const baseUrl = rawUrl.replace(/\/+$/, "");
+        const apiKey = apiConfigRef.current.apiKey.trim();
+
+        setInstruction("Requesting secure verification session...");
+        const sessionRes = await fetch(`${baseUrl}/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+          },
+          body: JSON.stringify({
+            challenges: selectedChallenges,
+          }),
+        });
+
+        if (!sessionRes.ok) {
+          const errData = await sessionRes.json().catch(() => ({}));
+          throw new Error(
+            errData.error || `Session creation failed (${sessionRes.status})`,
+          );
+        }
+
+        const sessionData = await sessionRes.json();
+        sessionToken = sessionData.sessionToken;
+        challengeList = sessionData.challenges;
+      } catch (err) {
+        setUiState(UI_STATE.FAILURE);
+        setInstruction(`Cloud Session Error: ${err.message}`);
+        return;
       }
-      challengeList = ["WAITING", ...shuffled, "WAITING"];
     } else {
-      const shuffled = [...selectedChallenges];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      if (selectedChallenges.includes("WAITING")) {
+        const active = selectedChallenges.filter((c) => c !== "WAITING");
+        const shuffled = [...active];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        challengeList = ["WAITING", ...shuffled, "WAITING"];
+      } else {
+        const shuffled = [...selectedChallenges];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        challengeList = shuffled;
       }
-      challengeList = shuffled;
     }
 
     sdkRef.current.updateConfig({
