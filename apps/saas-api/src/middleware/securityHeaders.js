@@ -34,5 +34,14 @@ export function securityHeaders(req, res, next) {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 
+  // Restrict sensitive browser features via Permissions-Policy
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(self), microphone=(), geolocation=(), payment=()",
+  );
+
+  // Modern browser defense: disable legacy buggy reflective XSS auditor
+  res.setHeader("X-XSS-Protection", "0");
+
   next();
 }
