@@ -52,6 +52,7 @@ export class LivenessEngine {
   #lastFrameTime = 0;
   #lastLandmarks = null;
   #recordedDescriptor = null;
+  #nextChallengeTimeoutId = null;
 
   constructor(callbacks, config = {}) {
     if (
@@ -118,6 +119,10 @@ export class LivenessEngine {
     this.#hasDetectedOpenEyes = false;
     this.#lastFrameTime = 0;
     this.#recordedDescriptor = null;
+    if (this.#nextChallengeTimeoutId) {
+      clearTimeout(this.#nextChallengeTimeoutId);
+      this.#nextChallengeTimeoutId = null;
+    }
 
     this.#challenges = this.#generateChallenges();
 
@@ -130,6 +135,10 @@ export class LivenessEngine {
 
   stop() {
     this.#isStopped = true;
+    if (this.#nextChallengeTimeoutId) {
+      clearTimeout(this.#nextChallengeTimeoutId);
+      this.#nextChallengeTimeoutId = null;
+    }
     if (this.#detectionLoopId) {
       cancelAnimationFrame(this.#detectionLoopId);
       this.#detectionLoopId = null;
@@ -227,8 +236,10 @@ export class LivenessEngine {
         } else {
           const turnRatio = Math.abs(calculateHeadTurnV2(landmarks));
           if (turnRatio <= 0.2) {
-            challengePassed = true;
-            this.#recordCenterFace(landmarks);
+            const recorded = this.#recordCenterFace(landmarks);
+            if (recorded) {
+              challengePassed = true;
+            }
           }
         }
         this.#callbacks.onChallengeChanged(currentChallenge, distance);
@@ -287,9 +298,12 @@ export class LivenessEngine {
     const clampedProgress = Math.max(0, Math.min(progress, 1));
     this.#callbacks.onProgress?.(clampedProgress, rawValue);
 
-    if (challengePassed) {
+    if (challengePassed && !this.#isStopped) {
       this.#isChallengeProcessing = true;
-      setTimeout(() => this.#moveToNextChallenge(), 300);
+      this.#nextChallengeTimeoutId = setTimeout(
+        () => this.#moveToNextChallenge(),
+        300,
+      );
     } else if (
       Date.now() - this.#lastChallengeTime >
       this.#config.challengeTimeout
@@ -307,6 +321,8 @@ export class LivenessEngine {
   }
 
   #moveToNextChallenge() {
+    this.#nextChallengeTimeoutId = null;
+    if (this.#isStopped) return;
     this.#currentChallengeIndex++;
     this.#hasDetectedOpenEyes = false;
     if (this.#currentChallengeIndex >= this.#challenges.length) {
@@ -335,35 +351,40 @@ export class LivenessEngine {
 
       if (brightness < this.#config.minBrightness) {
         tf.dispose(rawFaceTensor);
-        return this.#failChallenge({
+        this.#failChallenge({
           code: "POOR_LIGHTING",
           message: "Environment is too dark. Please move to a brighter area.",
         });
+        return false;
       }
 
       if (brightness > this.#config.maxBrightness) {
         tf.dispose(rawFaceTensor);
-        return this.#failChallenge({
+        this.#failChallenge({
           code: "POOR_LIGHTING",
           message:
             "Environment is too bright (Glare detected). Please adjust lighting.",
         });
+        return false;
       }
 
       if (occlusionDetected) {
         tf.dispose(rawFaceTensor);
-        return this.#failChallenge({
+        this.#failChallenge({
           code: "OCCLUSION_DETECTED",
           message:
             "Face is partially covered. Please remove any masks or obstructions.",
         });
+        return false;
       }
 
       const predictionTensor = this.#recognitionModel.predict(rawFaceTensor);
       this.#recordedDescriptor = Array.from(predictionTensor.dataSync());
       tf.dispose([rawFaceTensor, predictionTensor]);
+      return true;
     } catch (err) {
       console.warn("Failed to record center face descriptor:", err);
+      return false;
     }
   }
 
