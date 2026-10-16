@@ -50,6 +50,7 @@ export function LivenessChecker() {
   });
 
   const [matchMetrics, setMatchMetrics] = useState(null);
+  const [verificationPassed, setVerificationPassed] = useState(null);
   const [currentChallenge, setCurrentChallenge] = useState(null);
   const [distanceHint, setDistanceHint] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -257,6 +258,7 @@ export function LivenessChecker() {
               return [newCloudUser, ...filtered].slice(0, 10);
             });
             setTargetId(cloudResult.id);
+            setVerificationPassed(true);
             setUiState(UI_STATE.SUCCESS);
             setInstruction(`Cloud Identity Enrolled: ${cloudResult.name}`);
             setUserName("");
@@ -265,6 +267,7 @@ export function LivenessChecker() {
               similarity: cloudResult.match?.similarity ?? 0,
               distance: cloudResult.match?.distance ?? Infinity,
             });
+            setVerificationPassed(Boolean(cloudResult.verified));
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
               cloudResult.verified
@@ -276,6 +279,7 @@ export function LivenessChecker() {
               similarity: cloudResult.match?.similarity ?? 0,
               distance: cloudResult.match?.distance ?? Infinity,
             });
+            setVerificationPassed(Boolean(cloudResult.verified));
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
               cloudResult.verified
@@ -284,6 +288,7 @@ export function LivenessChecker() {
             );
           }
         } catch (err) {
+          setVerificationPassed(false);
           setUiState(UI_STATE.FAILURE);
           setInstruction(`Cloud API Error: ${err.message}`);
         }
@@ -303,6 +308,7 @@ export function LivenessChecker() {
             return updated;
           });
 
+          setVerificationPassed(true);
           setUiState(UI_STATE.SUCCESS);
           setInstruction(`Enrolled ${newIdentity.name} locally!`);
           setUserName("");
@@ -310,6 +316,7 @@ export function LivenessChecker() {
           const targetUser =
             enrolledUsersRef.current[selectedLocalIndexRef.current];
           if (!targetUser) {
+            setVerificationPassed(false);
             setUiState(UI_STATE.FAILURE);
             setInstruction("No local identity selected for 1:1 verification.");
             return;
@@ -328,6 +335,7 @@ export function LivenessChecker() {
           const isMatch =
             similarity >= MATCH_THRESHOLD && distance <= EUCLIDEAN_THRESHOLD;
 
+          setVerificationPassed(isMatch);
           setUiState(UI_STATE.SUCCESS);
           setInstruction(
             isMatch
@@ -367,24 +375,31 @@ export function LivenessChecker() {
               finalSim >= MATCH_THRESHOLD &&
               bestMatch.distance <= EUCLIDEAN_THRESHOLD;
 
+            setVerificationPassed(isMatch);
             setUiState(UI_STATE.SUCCESS);
             setInstruction(
               isMatch
                 ? `1:N Verified: Identified as ${bestMatch.name}`
                 : "1:N Identification Failed: No match found.",
             );
+          } else {
+            setVerificationPassed(false);
+            setUiState(UI_STATE.FAILURE);
+            setInstruction("No local identities found.");
           }
         }
       }
     });
 
     sdk.on("failure", (error) => {
+      setVerificationPassed(false);
       setUiState(UI_STATE.FAILURE);
       setInstruction(`Error: ${error.message}`);
       setCurrentChallenge(null);
     });
 
     sdk.on("error", (err) => {
+      setVerificationPassed(false);
       setUiState(UI_STATE.FAILURE);
       setInstruction(`System Error: ${err.message}`);
     });
@@ -400,6 +415,7 @@ export function LivenessChecker() {
     if (!videoRef.current || !canvasRef.current || !sdkRef.current) return;
     setProgress(0);
     setMatchMetrics(null);
+    setVerificationPassed(null);
     setCurrentChallenge(null);
     setUiState(UI_STATE.CHECKING);
 
@@ -438,6 +454,7 @@ export function LivenessChecker() {
     localStorage.removeItem("face_identity");
     setEnrolledUsers([]);
     setUserName("");
+    setVerificationPassed(null);
     setMode(MODE.ENROLL);
     setUiState(UI_STATE.READY_TO_START);
   };
@@ -766,23 +783,13 @@ export function LivenessChecker() {
         {uiState === UI_STATE.SUCCESS && (
           <div
             className={`absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-white backdrop-blur-md ${
-              instruction.includes("Mismatch") ||
-              instruction.includes("Failed") ||
-              (mode === MODE.VERIFY &&
-                matchMetrics !== null &&
-                (matchMetrics.similarity < MATCH_THRESHOLD ||
-                  matchMetrics.distance > EUCLIDEAN_THRESHOLD))
+              verificationPassed === false
                 ? "bg-red-500/90"
                 : "bg-green-500/90"
             }`}
           >
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl">
-              {instruction.includes("Mismatch") ||
-              instruction.includes("Failed") ||
-              (mode === MODE.VERIFY &&
-                matchMetrics !== null &&
-                (matchMetrics.similarity < MATCH_THRESHOLD ||
-                  matchMetrics.distance > EUCLIDEAN_THRESHOLD)) ? (
+              {verificationPassed === false ? (
                 <svg
                   className="h-10 w-10 text-red-600"
                   fill="none"
